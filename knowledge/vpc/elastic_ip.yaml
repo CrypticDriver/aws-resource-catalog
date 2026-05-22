@@ -64,6 +64,27 @@ tags:
   - network
   - quick_win
 
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_addresses
+    response_path: Addresses
+    id_field: AllocationId
+    name_field: PublicIp
+  orphan_check:
+    type: field_check
+    field: AssociationId
+    condition: empty
+  cost_estimate:
+    monthly_usd: 3.65
+    cur_usage_type: "*ElasticIP:IdleAddress*"
+  cleanup:
+    boto3_method: release_address
+    args_template:
+      AllocationId: "{AllocationId}"
+    cli_command: aws ec2 release-address --allocation-id {AllocationId}
+    safety: safe
+
 verification:
   last_verified: "2026-05-22"
   source_doc_version: ec2-userguide-2024

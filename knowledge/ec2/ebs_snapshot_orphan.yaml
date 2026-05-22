@@ -69,6 +69,31 @@ tags:
   - orphan_prone
   - storage
 
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_snapshots
+    args:
+      OwnerIds: [self]
+    response_path: Snapshots
+    id_field: SnapshotId
+    name_field: SnapshotId
+    paginated: true
+  orphan_check:
+    type: cross_reference
+    field: VolumeId
+    reference_resource: ec2/volume
+    min_age_days: 30
+  cost_estimate:
+    monthly_usd_per_gb: 0.05
+    size_field: VolumeSize
+  cleanup:
+    boto3_method: delete_snapshot
+    args_template:
+      SnapshotId: "{SnapshotId}"
+    cli_command: aws ec2 delete-snapshot --snapshot-id {SnapshotId}
+    safety: needs_review
+
 verification:
   last_verified: "2026-05-22"
   source_doc_version: ec2-userguide-2024

@@ -70,6 +70,35 @@ tags:
   - network
   - high_value
 
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_nat_gateways
+    args:
+      Filter:
+        - Name: state
+          Values: [available]
+    response_path: NatGateways
+    id_field: NatGatewayId
+    name_field: NatGatewayId
+    paginated: true
+  orphan_check:
+    type: no_traffic
+    metric_namespace: AWS/NATGateway
+    metric_name: BytesOutToDestination
+    lookback_days: 30
+    threshold: 1000000000
+    min_age_days: 7
+  cost_estimate:
+    monthly_usd: 32.40
+    cur_usage_type: "*NatGateway-Hours*"
+  cleanup:
+    boto3_method: delete_nat_gateway
+    args_template:
+      NatGatewayId: "{NatGatewayId}"
+    cli_command: aws ec2 delete-nat-gateway --nat-gateway-id {NatGatewayId}
+    safety: needs_review
+
 verification:
   last_verified: "2026-05-22"
   source_doc_version: vpc-userguide-2024

@@ -118,6 +118,66 @@
       "items": {"type": "string"},
       "description": "Free-form labels: billable / orphan_prone / storage / network / serverless ..."
     },
+    "scan": {
+      "type": "object",
+      "description": "Machine-readable scan configuration for the orphan-scanner engine.",
+      "properties": {
+        "list": {
+          "type": "object",
+          "required": ["boto3_client", "method"],
+          "properties": {
+            "boto3_client": {"type": "string", "description": "boto3 client name, e.g. 'ec2'."},
+            "method": {"type": "string", "description": "boto3 method name, e.g. 'describe_addresses'."},
+            "args": {"type": "object", "description": "Static kwargs for the call."},
+            "response_path": {"type": "string", "description": "Key in the response that holds the resource list."},
+            "id_field": {"type": "string", "description": "Field name on each item that uniquely identifies the resource."},
+            "name_field": {"type": "string", "description": "Field name to use as a human-readable label."},
+            "paginated": {"type": "boolean", "default": false}
+          }
+        },
+        "orphan_check": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["field_check", "parent_terminated", "no_traffic", "cross_reference", "custom"]
+            },
+            "field": {"type": "string", "description": "field_check: which field to inspect."},
+            "condition": {
+              "type": "string",
+              "enum": ["empty", "not_empty", "equals", "not_equals", "older_than"]
+            },
+            "value": {"description": "Comparison value when condition is equals/not_equals/older_than."},
+            "metric_namespace": {"type": "string", "description": "no_traffic: CloudWatch namespace."},
+            "metric_name": {"type": "string"},
+            "lookback_days": {"type": "integer", "minimum": 1},
+            "threshold": {"type": "number"},
+            "min_age_days": {"type": "integer", "description": "Only consider resources older than this."},
+            "reference_resource": {"type": "string", "description": "cross_reference: the catalog id to diff against."},
+            "custom_module": {"type": "string", "description": "custom: dotted python path to a callable."}
+          }
+        },
+        "cost_estimate": {
+          "type": "object",
+          "properties": {
+            "monthly_usd": {"type": "number", "description": "Hard-coded monthly USD per orphan."},
+            "monthly_usd_per_gb": {"type": "number", "description": "Per-GB monthly when storage based."},
+            "size_field": {"type": "string", "description": "Field on the resource that holds size in GB."},
+            "cur_usage_type": {"type": "string"}
+          }
+        },
+        "cleanup": {
+          "type": "object",
+          "properties": {
+            "boto3_method": {"type": "string"},
+            "args_template": {"type": "object", "description": "kwargs template; values can reference {fields} from the resource."},
+            "cli_command": {"type": "string", "description": "Shell-friendly form for runbooks."},
+            "safety": {"type": "string", "enum": ["safe", "needs_review", "destructive"]}
+          }
+        }
+      }
+    },
     "verification": {
       "type": "object",
       "properties": {

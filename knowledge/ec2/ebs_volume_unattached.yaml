@@ -66,6 +66,35 @@ tags:
   - storage
   - quick_win
 
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_volumes
+    args:
+      Filters:
+        - Name: status
+          Values: [available]
+    response_path: Volumes
+    id_field: VolumeId
+    name_field: VolumeId
+    paginated: true
+  orphan_check:
+    type: field_check
+    field: State
+    condition: equals
+    value: available
+    min_age_days: 14
+  cost_estimate:
+    monthly_usd_per_gb: 0.08
+    size_field: Size
+    cur_usage_type: "*EBS:VolumeUsage*"
+  cleanup:
+    boto3_method: delete_volume
+    args_template:
+      VolumeId: "{VolumeId}"
+    cli_command: aws ec2 delete-volume --volume-id {VolumeId}
+    safety: needs_review
+
 verification:
   last_verified: "2026-05-22"
   source_doc_version: ec2-userguide-2024

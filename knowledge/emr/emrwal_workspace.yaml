@@ -78,6 +78,27 @@ tags:
   - independent_service
   - high_value
 
+scan:
+  list:
+    boto3_client: emrwal
+    method: list_workspaces
+    response_path: Workspaces
+    id_field: WorkspaceName
+    name_field: WorkspaceName
+    paginated: true
+  orphan_check:
+    type: parent_terminated
+    parent_resource: emr_cluster
+    min_age_days: 30
+  cost_estimate:
+    monthly_usd: 50
+  cleanup:
+    boto3_method: delete_workspace
+    args_template:
+      WorkspaceName: "{WorkspaceName}"
+    cli_command: emrwal deleteWorkspace -w {WorkspaceName}
+    safety: needs_review
+
 verification:
   last_verified: "2026-05-22"
   source_doc_version: emr-release-7.x
