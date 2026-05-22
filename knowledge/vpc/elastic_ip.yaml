@@ -1,0 +1,70 @@
+schema_version: v1
+service: ec2
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: elastic_ip
+  human_name: Elastic IP Address
+  human_name_zh: 弹性 IP
+  cfn: AWS::EC2::EIP
+  config: AWS::EC2::EIP
+  resource_explorer: AWS::EC2::EIP
+  cli_list: aws ec2 describe-addresses
+  boto3:
+    client: ec2
+    list_method: describe_addresses
+  arn_pattern: arn:aws:ec2:{region}:{account}:elastic-ip/{allocation-id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    Charged per hour when an Elastic IP is allocated but NOT associated
+    with a running instance (or is associated to a stopped instance).
+    Effective ~$3.65/month per dangling EIP.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*ElasticIP:IdleAddress*"
+    - "*Elastic IP:IdleAddress*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ec2/pricing/on-demand/#Elastic_IP_Addresses
+
+lifecycle:
+  parent_resource: ec2_instance
+  parent_link: |
+    AssociationId / InstanceId on the Address. An EIP without an
+    AssociationId is orphan by definition.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: null
+  retention_caveats:
+    - When an instance terminates, EIPs allocated against it remain in the account and continue to bill.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    Any Elastic IP whose AssociationId is empty is an orphan. Charging
+    is silent; customers commonly accumulate these over time.
+  rule_pseudocode: |
+    for eip in describe_addresses():
+        if not eip.AssociationId:
+            yield Orphan(eip)
+  cleanup_command: aws ec2 release-address --allocation-id {allocation-id}
+  cleanup_safety: safe
+  iam_required:
+    - ec2:DescribeAddresses
+    - ec2:ReleaseAddress
+
+tags:
+  - billable
+  - orphan_prone
+  - network
+  - quick_win
+
+verification:
+  last_verified: "2026-05-22"
+  source_doc_version: ec2-userguide-2024
+  contributor: brad@aws

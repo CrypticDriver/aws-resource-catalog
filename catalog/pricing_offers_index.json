@@ -1,0 +1,1876 @@
+{
+  "publication_date": "2026-05-22T05:38:58Z",
+  "format_version": "v1.0",
+  "service_count": 267,
+  "services": [
+    {
+      "service_code": "A4B",
+      "name": "A4B",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/A4B/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/A4B/current/region_index.json"
+    },
+    {
+      "service_code": "ACM",
+      "name": "ACM",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/ACM/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/ACM/current/region_index.json"
+    },
+    {
+      "service_code": "AMSOperations",
+      "name": "AMSOperations",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AMSOperations/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AMSOperations/current/region_index.json"
+    },
+    {
+      "service_code": "AWSAmplify",
+      "name": "AWSAmplify",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSAmplify/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSAmplify/current/region_index.json"
+    },
+    {
+      "service_code": "AWSAppFabric",
+      "name": "AWSAppFabric",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSAppFabric/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSAppFabric/current/region_index.json"
+    },
+    {
+      "service_code": "AWSAppRunner",
+      "name": "AWSAppRunner",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSAppRunner/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSAppRunner/current/region_index.json"
+    },
+    {
+      "service_code": "AWSAppStudio",
+      "name": "AWSAppStudio",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSAppStudio/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSAppStudio/current/region_index.json"
+    },
+    {
+      "service_code": "AWSAppSync",
+      "name": "AWSAppSync",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSAppSync/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSAppSync/current/region_index.json"
+    },
+    {
+      "service_code": "AWSApplicationMigrationSvc",
+      "name": "AWSApplicationMigrationSvc",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSApplicationMigrationSvc/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSApplicationMigrationSvc/current/region_index.json"
+    },
+    {
+      "service_code": "AWSB2Bi",
+      "name": "AWSB2Bi",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSB2Bi/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSB2Bi/current/region_index.json"
+    },
+    {
+      "service_code": "AWSBCMPricingCalculator",
+      "name": "AWSBCMPricingCalculator",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSBCMPricingCalculator/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSBCMPricingCalculator/current/region_index.json"
+    },
+    {
+      "service_code": "AWSBackup",
+      "name": "AWSBackup",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSBackup/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSBackup/current/region_index.json"
+    },
+    {
+      "service_code": "AWSBillingConductor",
+      "name": "AWSBillingConductor",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSBillingConductor/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSBillingConductor/current/region_index.json"
+    },
+    {
+      "service_code": "AWSBudgets",
+      "name": "AWSBudgets",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSBudgets/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSBudgets/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCertificateManager",
+      "name": "AWSCertificateManager",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCertificateManager/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCertificateManager/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCleanRooms",
+      "name": "AWSCleanRooms",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCleanRooms/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCleanRooms/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCloudFormation",
+      "name": "AWSCloudFormation",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCloudFormation/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCloudFormation/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCloudMap",
+      "name": "AWSCloudMap",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCloudMap/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCloudMap/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCloudTrail",
+      "name": "AWSCloudTrail",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCloudTrail/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCloudTrail/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCloudWAN",
+      "name": "AWSCloudWAN",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCloudWAN/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCloudWAN/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCodeArtifact",
+      "name": "AWSCodeArtifact",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCodeArtifact/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCodeArtifact/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCodeCommit",
+      "name": "AWSCodeCommit",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCodeCommit/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCodeCommit/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCodeDeploy",
+      "name": "AWSCodeDeploy",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCodeDeploy/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCodeDeploy/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCodePipeline",
+      "name": "AWSCodePipeline",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCodePipeline/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCodePipeline/current/region_index.json"
+    },
+    {
+      "service_code": "AWSComputeOptimizer",
+      "name": "AWSComputeOptimizer",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSComputeOptimizer/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSComputeOptimizer/current/region_index.json"
+    },
+    {
+      "service_code": "AWSConfig",
+      "name": "AWSConfig",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSConfig/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSConfig/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCostExplorer",
+      "name": "AWSCostExplorer",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCostExplorer/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCostExplorer/current/region_index.json"
+    },
+    {
+      "service_code": "AWSCountdown",
+      "name": "AWSCountdown",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSCountdown/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSCountdown/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDataExchange",
+      "name": "AWSDataExchange",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDataExchange/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDataExchange/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDataSync",
+      "name": "AWSDataSync",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDataSync/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDataSync/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDataTransfer",
+      "name": "AWSDataTransfer",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDataTransfer/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDataTransfer/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDatabaseMigrationSvc",
+      "name": "AWSDatabaseMigrationSvc",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDatabaseMigrationSvc/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDatabaseMigrationSvc/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDeepRacer",
+      "name": "AWSDeepRacer",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDeepRacer/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDeepRacer/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDeveloperSupport",
+      "name": "AWSDeveloperSupport",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDeveloperSupport/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDeveloperSupport/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDeviceFarm",
+      "name": "AWSDeviceFarm",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDeviceFarm/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDeviceFarm/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDirectConnect",
+      "name": "AWSDirectConnect",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDirectConnect/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDirectConnect/current/region_index.json"
+    },
+    {
+      "service_code": "AWSDirectoryService",
+      "name": "AWSDirectoryService",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSDirectoryService/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSDirectoryService/current/region_index.json"
+    },
+    {
+      "service_code": "AWSELB",
+      "name": "AWSELB",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSELB/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSELB/current/region_index.json"
+    },
+    {
+      "service_code": "AWSElasticDisasterRecovery",
+      "name": "AWSElasticDisasterRecovery",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSElasticDisasterRecovery/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSElasticDisasterRecovery/current/region_index.json"
+    },
+    {
+      "service_code": "AWSElementalInference",
+      "name": "AWSElementalInference",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSElementalInference/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSElementalInference/current/region_index.json"
+    },
+    {
+      "service_code": "AWSElementalMediaConvert",
+      "name": "AWSElementalMediaConvert",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSElementalMediaConvert/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSElementalMediaConvert/current/region_index.json"
+    },
+    {
+      "service_code": "AWSElementalMediaLive",
+      "name": "AWSElementalMediaLive",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSElementalMediaLive/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSElementalMediaLive/current/region_index.json"
+    },
+    {
+      "service_code": "AWSElementalMediaPackage",
+      "name": "AWSElementalMediaPackage",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSElementalMediaPackage/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSElementalMediaPackage/current/region_index.json"
+    },
+    {
+      "service_code": "AWSElementalMediaStore",
+      "name": "AWSElementalMediaStore",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSElementalMediaStore/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSElementalMediaStore/current/region_index.json"
+    },
+    {
+      "service_code": "AWSElementalMediaTailor",
+      "name": "AWSElementalMediaTailor",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSElementalMediaTailor/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSElementalMediaTailor/current/region_index.json"
+    },
+    {
+      "service_code": "AWSEndUserMessaging3pFees",
+      "name": "AWSEndUserMessaging3pFees",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSEndUserMessaging3pFees/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSEndUserMessaging3pFees/current/region_index.json"
+    },
+    {
+      "service_code": "AWSEnterpriseOnRamp",
+      "name": "AWSEnterpriseOnRamp",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSEnterpriseOnRamp/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSEnterpriseOnRamp/current/region_index.json"
+    },
+    {
+      "service_code": "AWSEntityResolution",
+      "name": "AWSEntityResolution",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSEntityResolution/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSEntityResolution/current/region_index.json"
+    },
+    {
+      "service_code": "AWSEvents",
+      "name": "AWSEvents",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSEvents/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSEvents/current/region_index.json"
+    },
+    {
+      "service_code": "AWSFIS",
+      "name": "AWSFIS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSFIS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSFIS/current/region_index.json"
+    },
+    {
+      "service_code": "AWSFMS",
+      "name": "AWSFMS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSFMS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSFMS/current/region_index.json"
+    },
+    {
+      "service_code": "AWSGlobalAccelerator",
+      "name": "AWSGlobalAccelerator",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSGlobalAccelerator/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSGlobalAccelerator/current/region_index.json"
+    },
+    {
+      "service_code": "AWSGlue",
+      "name": "AWSGlue",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSGlue/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSGlue/current/region_index.json"
+    },
+    {
+      "service_code": "AWSGlueElasticViews",
+      "name": "AWSGlueElasticViews",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSGlueElasticViews/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSGlueElasticViews/current/region_index.json"
+    },
+    {
+      "service_code": "AWSGreengrass",
+      "name": "AWSGreengrass",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSGreengrass/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSGreengrass/current/region_index.json"
+    },
+    {
+      "service_code": "AWSGroundStation",
+      "name": "AWSGroundStation",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSGroundStation/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSGroundStation/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIAMAccessAnalyzer",
+      "name": "AWSIAMAccessAnalyzer",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIAMAccessAnalyzer/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIAMAccessAnalyzer/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIncidentDetectionResponse",
+      "name": "AWSIncidentDetectionResponse",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIncidentDetectionResponse/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIncidentDetectionResponse/current/region_index.json"
+    },
+    {
+      "service_code": "AWSInterconnect",
+      "name": "AWSInterconnect",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSInterconnect/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSInterconnect/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIoT",
+      "name": "AWSIoT",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIoT/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIoT/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIoT1Click",
+      "name": "AWSIoT1Click",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIoT1Click/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIoT1Click/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIoTAnalytics",
+      "name": "AWSIoTAnalytics",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIoTAnalytics/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIoTAnalytics/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIoTEvents",
+      "name": "AWSIoTEvents",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIoTEvents/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIoTEvents/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIoTFleetWise",
+      "name": "AWSIoTFleetWise",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIoTFleetWise/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIoTFleetWise/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIoTSiteWise",
+      "name": "AWSIoTSiteWise",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIoTSiteWise/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIoTSiteWise/current/region_index.json"
+    },
+    {
+      "service_code": "AWSIoTThingsGraph",
+      "name": "AWSIoTThingsGraph",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSIoTThingsGraph/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSIoTThingsGraph/current/region_index.json"
+    },
+    {
+      "service_code": "AWSLakeFormation",
+      "name": "AWSLakeFormation",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSLakeFormation/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSLakeFormation/current/region_index.json"
+    },
+    {
+      "service_code": "AWSLambda",
+      "name": "AWSLambda",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSLambda/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSLambda/current/region_index.json"
+    },
+    {
+      "service_code": "AWSM2",
+      "name": "AWSM2",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSM2/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSM2/current/region_index.json"
+    },
+    {
+      "service_code": "AWSMDC",
+      "name": "AWSMDC",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSMDC/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSMDC/current/region_index.json"
+    },
+    {
+      "service_code": "AWSManagedServices",
+      "name": "AWSManagedServices",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSManagedServices/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSManagedServices/current/region_index.json"
+    },
+    {
+      "service_code": "AWSMediaConnect",
+      "name": "AWSMediaConnect",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSMediaConnect/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSMediaConnect/current/region_index.json"
+    },
+    {
+      "service_code": "AWSMigrationHubRefactorSpaces",
+      "name": "AWSMigrationHubRefactorSpaces",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSMigrationHubRefactorSpaces/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSMigrationHubRefactorSpaces/current/region_index.json"
+    },
+    {
+      "service_code": "AWSNetworkFirewall",
+      "name": "AWSNetworkFirewall",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSNetworkFirewall/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSNetworkFirewall/current/region_index.json"
+    },
+    {
+      "service_code": "AWSOutposts",
+      "name": "AWSOutposts",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSOutposts/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSOutposts/current/region_index.json"
+    },
+    {
+      "service_code": "AWSPCS",
+      "name": "AWSPCS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSPCS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSPCS/current/region_index.json"
+    },
+    {
+      "service_code": "AWSPrivate5G",
+      "name": "AWSPrivate5G",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSPrivate5G/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSPrivate5G/current/region_index.json"
+    },
+    {
+      "service_code": "AWSQueueService",
+      "name": "AWSQueueService",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSQueueService/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSQueueService/current/region_index.json"
+    },
+    {
+      "service_code": "AWSR53AppRecoveryController",
+      "name": "AWSR53AppRecoveryController",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSR53AppRecoveryController/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSR53AppRecoveryController/current/region_index.json"
+    },
+    {
+      "service_code": "AWSRTBFabric",
+      "name": "AWSRTBFabric",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSRTBFabric/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSRTBFabric/current/region_index.json"
+    },
+    {
+      "service_code": "AWSResilienceHub",
+      "name": "AWSResilienceHub",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSResilienceHub/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSResilienceHub/current/region_index.json"
+    },
+    {
+      "service_code": "AWSRoboMaker",
+      "name": "AWSRoboMaker",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSRoboMaker/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSRoboMaker/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSecretsManager",
+      "name": "AWSSecretsManager",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSecretsManager/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSecretsManager/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSecurityHub",
+      "name": "AWSSecurityHub",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSecurityHub/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSecurityHub/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSecurityIncidentResponse",
+      "name": "AWSSecurityIncidentResponse",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSecurityIncidentResponse/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSecurityIncidentResponse/current/region_index.json"
+    },
+    {
+      "service_code": "AWSServiceCatalog",
+      "name": "AWSServiceCatalog",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSServiceCatalog/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSServiceCatalog/current/region_index.json"
+    },
+    {
+      "service_code": "AWSShield",
+      "name": "AWSShield",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSShield/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSShield/current/region_index.json"
+    },
+    {
+      "service_code": "AWSStorageGateway",
+      "name": "AWSStorageGateway",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSStorageGateway/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSStorageGateway/current/region_index.json"
+    },
+    {
+      "service_code": "AWSStorageGatewayDeepArchive",
+      "name": "AWSStorageGatewayDeepArchive",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSStorageGatewayDeepArchive/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSStorageGatewayDeepArchive/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSupplyChain",
+      "name": "AWSSupplyChain",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSupplyChain/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSupplyChain/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSupportBusiness",
+      "name": "AWSSupportBusiness",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSupportBusiness/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSupportBusiness/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSupportEnterprise",
+      "name": "AWSSupportEnterprise",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSupportEnterprise/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSupportEnterprise/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSupportEssential",
+      "name": "AWSSupportEssential",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSupportEssential/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSupportEssential/current/region_index.json"
+    },
+    {
+      "service_code": "AWSSystemsManager",
+      "name": "AWSSystemsManager",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSSystemsManager/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSSystemsManager/current/region_index.json"
+    },
+    {
+      "service_code": "AWSTelcoNetworkBuilder",
+      "name": "AWSTelcoNetworkBuilder",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSTelcoNetworkBuilder/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSTelcoNetworkBuilder/current/region_index.json"
+    },
+    {
+      "service_code": "AWSTransfer",
+      "name": "AWSTransfer",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSTransfer/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSTransfer/current/region_index.json"
+    },
+    {
+      "service_code": "AWSTransform",
+      "name": "AWSTransform",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSTransform/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSTransform/current/region_index.json"
+    },
+    {
+      "service_code": "AWSUnifiedOperations",
+      "name": "AWSUnifiedOperations",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSUnifiedOperations/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSUnifiedOperations/current/region_index.json"
+    },
+    {
+      "service_code": "AWSWickr",
+      "name": "AWSWickr",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSWickr/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSWickr/current/region_index.json"
+    },
+    {
+      "service_code": "AWSWisdom",
+      "name": "AWSWisdom",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSWisdom/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSWisdom/current/region_index.json"
+    },
+    {
+      "service_code": "AWSXRay",
+      "name": "AWSXRay",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AWSXRay/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AWSXRay/current/region_index.json"
+    },
+    {
+      "service_code": "AlexaTopSites",
+      "name": "AlexaTopSites",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AlexaTopSites/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AlexaTopSites/current/region_index.json"
+    },
+    {
+      "service_code": "AlexaWebInfoService",
+      "name": "AlexaWebInfoService",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AlexaWebInfoService/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AlexaWebInfoService/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonA2I",
+      "name": "AmazonA2I",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonA2I/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonA2I/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonApiGateway",
+      "name": "AmazonApiGateway",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonApiGateway/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonApiGateway/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonAppStream",
+      "name": "AmazonAppStream",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonAppStream/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonAppStream/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonAthena",
+      "name": "AmazonAthena",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonAthena/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonAthena/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonBedrock",
+      "name": "AmazonBedrock",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonBedrock/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonBedrock/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonBedrockAgentCore",
+      "name": "AmazonBedrockAgentCore",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonBedrockAgentCore/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonBedrockAgentCore/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonBedrockFoundationModels",
+      "name": "AmazonBedrockFoundationModels",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonBedrockFoundationModels/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonBedrockFoundationModels/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonBedrockService",
+      "name": "AmazonBedrockService",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonBedrockService/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonBedrockService/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonBraket",
+      "name": "AmazonBraket",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonBraket/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonBraket/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChime",
+      "name": "AmazonChime",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChime/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChime/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeBusinessCalling",
+      "name": "AmazonChimeBusinessCalling",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeBusinessCalling/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeBusinessCalling/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeCallMe",
+      "name": "AmazonChimeCallMe",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeCallMe/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeCallMe/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeCallMeAMCS",
+      "name": "AmazonChimeCallMeAMCS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeCallMeAMCS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeCallMeAMCS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeDialInAMCS",
+      "name": "AmazonChimeDialInAMCS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeDialInAMCS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeDialInAMCS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeDialin",
+      "name": "AmazonChimeDialin",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeDialin/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeDialin/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeFeatures",
+      "name": "AmazonChimeFeatures",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeFeatures/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeFeatures/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeServices",
+      "name": "AmazonChimeServices",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeServices/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeServices/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonChimeVoiceConnector",
+      "name": "AmazonChimeVoiceConnector",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonChimeVoiceConnector/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonChimeVoiceConnector/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonCloudDirectory",
+      "name": "AmazonCloudDirectory",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonCloudDirectory/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonCloudDirectory/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonCloudFront",
+      "name": "AmazonCloudFront",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonCloudFront/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonCloudFront/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonCloudSearch",
+      "name": "AmazonCloudSearch",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonCloudSearch/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonCloudSearch/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonCloudWatch",
+      "name": "AmazonCloudWatch",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonCloudWatch/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonCloudWatch/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonCodeWhisperer",
+      "name": "AmazonCodeWhisperer",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonCodeWhisperer/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonCodeWhisperer/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonCognito",
+      "name": "AmazonCognito",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonCognito/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonCognito/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonCognitoSync",
+      "name": "AmazonCognitoSync",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonCognitoSync/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonCognitoSync/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonConnect",
+      "name": "AmazonConnect",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonConnect/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonConnect/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonConnectCases",
+      "name": "AmazonConnectCases",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonConnectCases/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonConnectCases/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonConnectVoiceID",
+      "name": "AmazonConnectVoiceID",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonConnectVoiceID/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonConnectVoiceID/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonDAX",
+      "name": "AmazonDAX",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonDAX/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonDAX/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonDataZone",
+      "name": "AmazonDataZone",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonDataZone/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonDataZone/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonDeadline",
+      "name": "AmazonDeadline",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonDeadline/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonDeadline/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonDetective",
+      "name": "AmazonDetective",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonDetective/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonDetective/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonDevOpsGuru",
+      "name": "AmazonDevOpsGuru",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonDevOpsGuru/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonDevOpsGuru/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonDocDB",
+      "name": "AmazonDocDB",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonDocDB/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonDocDB/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonDynamoDB",
+      "name": "AmazonDynamoDB",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonDynamoDB/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonDynamoDB/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEC2",
+      "name": "AmazonEC2",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEC2/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEC2/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEC2OCPULicenseFees",
+      "name": "AmazonEC2OCPULicenseFees",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEC2OCPULicenseFees/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEC2OCPULicenseFees/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonECR",
+      "name": "AmazonECR",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonECR/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonECR/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonECRPublic",
+      "name": "AmazonECRPublic",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonECRPublic/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonECRPublic/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonECS",
+      "name": "AmazonECS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonECS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonECS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEFS",
+      "name": "AmazonEFS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEFS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEFS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEI",
+      "name": "AmazonEI",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEI/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEI/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEKS",
+      "name": "AmazonEKS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEKS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEKS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEKSAnywhere",
+      "name": "AmazonEKSAnywhere",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEKSAnywhere/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEKSAnywhere/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonES",
+      "name": "AmazonES",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonES/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonES/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonETS",
+      "name": "AmazonETS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonETS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonETS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEVS",
+      "name": "AmazonEVS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEVS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEVS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonEVSLicensesIncluded",
+      "name": "AmazonEVSLicensesIncluded",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonEVSLicensesIncluded/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonEVSLicensesIncluded/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonElastiCache",
+      "name": "AmazonElastiCache",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonElastiCache/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonElastiCache/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonFSx",
+      "name": "AmazonFSx",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonFSx/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonFSx/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonFinSpace",
+      "name": "AmazonFinSpace",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonFinSpace/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonFinSpace/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonForecast",
+      "name": "AmazonForecast",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonForecast/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonForecast/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonFraudDetector",
+      "name": "AmazonFraudDetector",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonFraudDetector/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonFraudDetector/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonGameLift",
+      "name": "AmazonGameLift",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonGameLift/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonGameLift/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonGameLiftStreams",
+      "name": "AmazonGameLiftStreams",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonGameLiftStreams/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonGameLiftStreams/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonGlacier",
+      "name": "AmazonGlacier",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonGlacier/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonGlacier/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonGrafana",
+      "name": "AmazonGrafana",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonGrafana/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonGrafana/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonGuardDuty",
+      "name": "AmazonGuardDuty",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonGuardDuty/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonGuardDuty/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonHealthLake",
+      "name": "AmazonHealthLake",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonHealthLake/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonHealthLake/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonHoneycode",
+      "name": "AmazonHoneycode",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonHoneycode/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonHoneycode/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonIVS",
+      "name": "AmazonIVS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonIVS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonIVS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonIVSChat",
+      "name": "AmazonIVSChat",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonIVSChat/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonIVSChat/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonInspector",
+      "name": "AmazonInspector",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonInspector/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonInspector/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonInspectorV2",
+      "name": "AmazonInspectorV2",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonInspectorV2/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonInspectorV2/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonKendra",
+      "name": "AmazonKendra",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonKendra/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonKendra/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonKinesis",
+      "name": "AmazonKinesis",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonKinesis/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonKinesis/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonKinesisAnalytics",
+      "name": "AmazonKinesisAnalytics",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonKinesisAnalytics/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonKinesisAnalytics/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonKinesisFirehose",
+      "name": "AmazonKinesisFirehose",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonKinesisFirehose/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonKinesisFirehose/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonKinesisVideo",
+      "name": "AmazonKinesisVideo",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonKinesisVideo/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonKinesisVideo/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonLex",
+      "name": "AmazonLex",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonLex/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonLex/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonLightsail",
+      "name": "AmazonLightsail",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonLightsail/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonLightsail/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonLocationService",
+      "name": "AmazonLocationService",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonLocationService/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonLocationService/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonLookoutEquipment",
+      "name": "AmazonLookoutEquipment",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonLookoutEquipment/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonLookoutEquipment/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonLookoutMetrics",
+      "name": "AmazonLookoutMetrics",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonLookoutMetrics/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonLookoutMetrics/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonLookoutVision",
+      "name": "AmazonLookoutVision",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonLookoutVision/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonLookoutVision/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMCS",
+      "name": "AmazonMCS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMCS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMCS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonML",
+      "name": "AmazonML",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonML/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonML/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMQ",
+      "name": "AmazonMQ",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMQ/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMQ/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMSK",
+      "name": "AmazonMSK",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMSK/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMSK/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMWAA",
+      "name": "AmazonMWAA",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMWAA/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMWAA/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMacie",
+      "name": "AmazonMacie",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMacie/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMacie/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonManagedBlockchain",
+      "name": "AmazonManagedBlockchain",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonManagedBlockchain/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonManagedBlockchain/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMedicalImaging",
+      "name": "AmazonMedicalImaging",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMedicalImaging/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMedicalImaging/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMemoryDB",
+      "name": "AmazonMemoryDB",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMemoryDB/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMemoryDB/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonMonitron",
+      "name": "AmazonMonitron",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonMonitron/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonMonitron/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonNeptune",
+      "name": "AmazonNeptune",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonNeptune/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonNeptune/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonOmics",
+      "name": "AmazonOmics",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonOmics/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonOmics/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonPersonalize",
+      "name": "AmazonPersonalize",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonPersonalize/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonPersonalize/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonPinpoint",
+      "name": "AmazonPinpoint",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonPinpoint/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonPinpoint/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonPolly",
+      "name": "AmazonPolly",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonPolly/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonPolly/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonPrometheus",
+      "name": "AmazonPrometheus",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonPrometheus/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonPrometheus/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonQ",
+      "name": "AmazonQ",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonQ/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonQ/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonQLDB",
+      "name": "AmazonQLDB",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonQLDB/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonQLDB/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonQuickSight",
+      "name": "AmazonQuickSight",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonQuickSight/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonQuickSight/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonQuickSuite",
+      "name": "AmazonQuickSuite",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonQuickSuite/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonQuickSuite/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonRDS",
+      "name": "AmazonRDS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonRDS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonRDS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonRDSOCPULicenseFees",
+      "name": "AmazonRDSOCPULicenseFees",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonRDSOCPULicenseFees/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonRDSOCPULicenseFees/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonRedshift",
+      "name": "AmazonRedshift",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonRedshift/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonRedshift/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonRekognition",
+      "name": "AmazonRekognition",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonRekognition/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonRekognition/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonRoute53",
+      "name": "AmazonRoute53",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonRoute53/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonRoute53/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonS3",
+      "name": "AmazonS3",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonS3/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonS3/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonS3GlacierDeepArchive",
+      "name": "AmazonS3GlacierDeepArchive",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonS3GlacierDeepArchive/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonS3GlacierDeepArchive/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonSES",
+      "name": "AmazonSES",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonSES/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonSES/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonSNS",
+      "name": "AmazonSNS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonSNS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonSNS/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonSWF",
+      "name": "AmazonSWF",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonSWF/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonSWF/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonSageMaker",
+      "name": "AmazonSageMaker",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonSageMaker/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonSageMaker/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonSecurityLake",
+      "name": "AmazonSecurityLake",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonSecurityLake/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonSecurityLake/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonSimpleDB",
+      "name": "AmazonSimpleDB",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonSimpleDB/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonSimpleDB/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonStates",
+      "name": "AmazonStates",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonStates/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonStates/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonSumerian",
+      "name": "AmazonSumerian",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonSumerian/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonSumerian/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonTextract",
+      "name": "AmazonTextract",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonTextract/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonTextract/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonTimestream",
+      "name": "AmazonTimestream",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonTimestream/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonTimestream/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonVPC",
+      "name": "AmazonVPC",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonVPC/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonVPC/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonVerifiedPermissions",
+      "name": "AmazonVerifiedPermissions",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonVerifiedPermissions/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonVerifiedPermissions/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWAM",
+      "name": "AmazonWAM",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWAM/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWAM/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWorkDocs",
+      "name": "AmazonWorkDocs",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWorkDocs/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWorkDocs/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWorkLink",
+      "name": "AmazonWorkLink",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWorkLink/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWorkLink/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWorkMail",
+      "name": "AmazonWorkMail",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWorkMail/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWorkMail/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWorkSpaces",
+      "name": "AmazonWorkSpaces",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWorkSpaces/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWorkSpaces/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWorkSpacesInstances",
+      "name": "AmazonWorkSpacesInstances",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWorkSpacesInstances/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWorkSpacesInstances/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWorkSpacesThinClient",
+      "name": "AmazonWorkSpacesThinClient",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWorkSpacesThinClient/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWorkSpacesThinClient/current/region_index.json"
+    },
+    {
+      "service_code": "AmazonWorkSpacesWeb",
+      "name": "AmazonWorkSpacesWeb",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AmazonWorkSpacesWeb/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AmazonWorkSpacesWeb/current/region_index.json"
+    },
+    {
+      "service_code": "AppFlow",
+      "name": "AppFlow",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AppFlow/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AppFlow/current/region_index.json"
+    },
+    {
+      "service_code": "AuroraDSQL",
+      "name": "AuroraDSQL",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/AuroraDSQL/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/AuroraDSQL/current/region_index.json"
+    },
+    {
+      "service_code": "CloudFrontPlans",
+      "name": "CloudFrontPlans",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/CloudFrontPlans/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/CloudFrontPlans/current/region_index.json"
+    },
+    {
+      "service_code": "CloudHSM",
+      "name": "CloudHSM",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/CloudHSM/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/CloudHSM/current/region_index.json"
+    },
+    {
+      "service_code": "CodeBuild",
+      "name": "CodeBuild",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/CodeBuild/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/CodeBuild/current/region_index.json"
+    },
+    {
+      "service_code": "CodeCatalyst",
+      "name": "CodeCatalyst",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/CodeCatalyst/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/CodeCatalyst/current/region_index.json"
+    },
+    {
+      "service_code": "CodeGuru",
+      "name": "CodeGuru",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/CodeGuru/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/CodeGuru/current/region_index.json"
+    },
+    {
+      "service_code": "ContactCenterTelecomm",
+      "name": "ContactCenterTelecomm",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/ContactCenterTelecomm/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/ContactCenterTelecomm/current/region_index.json"
+    },
+    {
+      "service_code": "ContactCenterTelecommKR",
+      "name": "ContactCenterTelecommKR",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/ContactCenterTelecommKR/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/ContactCenterTelecommKR/current/region_index.json"
+    },
+    {
+      "service_code": "ContactCenterTelecommZA",
+      "name": "ContactCenterTelecommZA",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/ContactCenterTelecommZA/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/ContactCenterTelecommZA/current/region_index.json"
+    },
+    {
+      "service_code": "ContactLensAmazonConnect",
+      "name": "ContactLensAmazonConnect",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/ContactLensAmazonConnect/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/ContactLensAmazonConnect/current/region_index.json"
+    },
+    {
+      "service_code": "CustomerProfiles",
+      "name": "CustomerProfiles",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/CustomerProfiles/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/CustomerProfiles/current/region_index.json"
+    },
+    {
+      "service_code": "DevOpsAgent",
+      "name": "DevOpsAgent",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/DevOpsAgent/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/DevOpsAgent/current/region_index.json"
+    },
+    {
+      "service_code": "ElasticMapReduce",
+      "name": "ElasticMapReduce",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/ElasticMapReduce/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/ElasticMapReduce/current/region_index.json"
+    },
+    {
+      "service_code": "IngestionService",
+      "name": "IngestionService",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/IngestionService/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/IngestionService/current/region_index.json"
+    },
+    {
+      "service_code": "IngestionServiceSnowball",
+      "name": "IngestionServiceSnowball",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/IngestionServiceSnowball/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/IngestionServiceSnowball/current/region_index.json"
+    },
+    {
+      "service_code": "IoTDeviceDefender",
+      "name": "IoTDeviceDefender",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/IoTDeviceDefender/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/IoTDeviceDefender/current/region_index.json"
+    },
+    {
+      "service_code": "IoTDeviceManagement",
+      "name": "IoTDeviceManagement",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/IoTDeviceManagement/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/IoTDeviceManagement/current/region_index.json"
+    },
+    {
+      "service_code": "IoTTwinMaker",
+      "name": "IoTTwinMaker",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/IoTTwinMaker/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/IoTTwinMaker/current/region_index.json"
+    },
+    {
+      "service_code": "Kiro",
+      "name": "Kiro",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/Kiro/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/Kiro/current/region_index.json"
+    },
+    {
+      "service_code": "NovaAct",
+      "name": "NovaAct",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/NovaAct/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/NovaAct/current/region_index.json"
+    },
+    {
+      "service_code": "OpsWorks",
+      "name": "OpsWorks",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/OpsWorks/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/OpsWorks/current/region_index.json"
+    },
+    {
+      "service_code": "OracleDbAtAWS",
+      "name": "OracleDbAtAWS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/OracleDbAtAWS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/OracleDbAtAWS/current/region_index.json"
+    },
+    {
+      "service_code": "PaymentCryptography",
+      "name": "PaymentCryptography",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/PaymentCryptography/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/PaymentCryptography/current/region_index.json"
+    },
+    {
+      "service_code": "SSMSAP",
+      "name": "SSMSAP",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/SSMSAP/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/SSMSAP/current/region_index.json"
+    },
+    {
+      "service_code": "SecAgent",
+      "name": "SecAgent",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/SecAgent/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/SecAgent/current/region_index.json"
+    },
+    {
+      "service_code": "SimSpaceWeaver",
+      "name": "SimSpaceWeaver",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/SimSpaceWeaver/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/SimSpaceWeaver/current/region_index.json"
+    },
+    {
+      "service_code": "SnowballExtraDays",
+      "name": "SnowballExtraDays",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/SnowballExtraDays/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/SnowballExtraDays/current/region_index.json"
+    },
+    {
+      "service_code": "VMwareCloudOnAWS",
+      "name": "VMwareCloudOnAWS",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/VMwareCloudOnAWS/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/VMwareCloudOnAWS/current/region_index.json"
+    },
+    {
+      "service_code": "auditmanager",
+      "name": "auditmanager",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/auditmanager/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/auditmanager/current/region_index.json"
+    },
+    {
+      "service_code": "awskms",
+      "name": "awskms",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/awskms/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/awskms/current/region_index.json"
+    },
+    {
+      "service_code": "awswaf",
+      "name": "awswaf",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/awswaf/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/awswaf/current/region_index.json"
+    },
+    {
+      "service_code": "comprehend",
+      "name": "comprehend",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/comprehend/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/comprehend/current/region_index.json"
+    },
+    {
+      "service_code": "comprehendmedical",
+      "name": "comprehendmedical",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/comprehendmedical/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/comprehendmedical/current/region_index.json"
+    },
+    {
+      "service_code": "datapipeline",
+      "name": "datapipeline",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/datapipeline/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/datapipeline/current/region_index.json"
+    },
+    {
+      "service_code": "healthagent",
+      "name": "healthagent",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/healthagent/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/healthagent/current/region_index.json"
+    },
+    {
+      "service_code": "mobileanalytics",
+      "name": "mobileanalytics",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/mobileanalytics/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/mobileanalytics/current/region_index.json"
+    },
+    {
+      "service_code": "nimble",
+      "name": "nimble",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/nimble/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/nimble/current/region_index.json"
+    },
+    {
+      "service_code": "repostspace",
+      "name": "repostspace",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/repostspace/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/repostspace/current/region_index.json"
+    },
+    {
+      "service_code": "researchstudio",
+      "name": "researchstudio",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/researchstudio/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/researchstudio/current/region_index.json"
+    },
+    {
+      "service_code": "transcribe",
+      "name": "transcribe",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/transcribe/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/transcribe/current/region_index.json"
+    },
+    {
+      "service_code": "translate",
+      "name": "translate",
+      "version": "index.json",
+      "current_offer_url": "/offers/v1.0/aws/translate/current/index.json",
+      "current_region_index": "/offers/v1.0/aws/translate/current/region_index.json"
+    }
+  ]
+}

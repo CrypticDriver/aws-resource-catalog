@@ -1,0 +1,76 @@
+schema_version: v1
+service: ec2
+service_code_pricing: AmazonVPC
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: nat_gateway
+  human_name: NAT Gateway
+  human_name_zh: NAT 网关
+  cfn: AWS::EC2::NatGateway
+  config: AWS::EC2::NatGateway
+  resource_explorer: AWS::EC2::NatGateway
+  cli_list: aws ec2 describe-nat-gateways
+  boto3:
+    client: ec2
+    list_method: describe_nat_gateways
+  arn_pattern: arn:aws:ec2:{region}:{account}:natgateway/{nat-gw-id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    Hourly base charge per NAT Gateway plus per-GB data processing.
+    Charged regardless of utilization; even an idle NAT Gateway
+    accrues the hourly fee.
+  cur_product_codes:
+    - AmazonVPC
+  cur_usage_type_patterns:
+    - "*NatGateway-Hours*"
+    - "*NatGateway-Bytes*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/vpc/pricing/
+
+lifecycle:
+  parent_resource: vpc
+  parent_link: VPC + Subnet reference. Survives VPC reconfiguration unless explicitly deleted.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: null
+  retention_caveats:
+    - VPC delete is blocked while a NAT Gateway exists; but a misconfigured route table can leave a NAT Gateway with no actual traffic flow.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A NAT Gateway is suspect when no route table has a 0.0.0.0/0 route
+    pointing to it, OR when its bytes-processed in the last 30 days is
+    near zero. Either condition typically means it is no longer needed.
+  rule_pseudocode: |
+    for nat in describe_nat_gateways(state="available"):
+        used_in_routes = any(
+            r["NatGatewayId"] == nat.id and r["DestinationCidrBlock"] == "0.0.0.0/0"
+            for rt in describe_route_tables() for r in rt["Routes"]
+        )
+        bytes_30d = cloudwatch_sum("AWS/NATGateway", "BytesOutToDestination", 30d, nat.id)
+        if not used_in_routes or bytes_30d < 1_000_000_000:
+            yield Suspect(nat)
+  cleanup_command: aws ec2 delete-nat-gateway --nat-gateway-id {nat-gw-id}
+  cleanup_safety: needs_review
+  iam_required:
+    - ec2:DescribeNatGateways
+    - ec2:DescribeRouteTables
+    - cloudwatch:GetMetricStatistics
+    - ec2:DeleteNatGateway
+
+tags:
+  - billable
+  - orphan_prone
+  - network
+  - high_value
+
+verification:
+  last_verified: "2026-05-22"
+  source_doc_version: vpc-userguide-2024
+  contributor: brad@aws

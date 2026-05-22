@@ -1,0 +1,75 @@
+schema_version: v1
+service: ec2
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: ebs_snapshot_orphan
+  human_name: Orphan EBS Snapshot
+  human_name_zh: 孤儿 EBS 快照
+  cfn: AWS::EC2::Snapshot
+  config: AWS::EC2::Snapshot
+  resource_explorer: AWS::EC2::Snapshot
+  cli_list: aws ec2 describe-snapshots --owner-ids self
+  boto3:
+    client: ec2
+    list_method: describe_snapshots
+  arn_pattern: arn:aws:ec2:{region}::snapshot/{snapshot-id}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    Snapshots are billed per GB-month of changed data on the snapshot
+    chain (~$0.05/GB-month standard). Snapshots can persist long after
+    their source volume / AMI is gone.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*EBS:SnapshotUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ebs/pricing/
+
+lifecycle:
+  parent_resource: ebs_volume_or_ami
+  parent_link: |
+    VolumeId on the snapshot. When the source volume is deleted the
+    snapshot survives. When an AMI is deregistered its backing
+    snapshots are NOT auto-deleted (a frequent surprise).
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: null
+  retention_caveats:
+    - AMI deregister does not delete backing snapshots; explicit ec2:DeleteSnapshot is required.
+    - Snapshots referenced by a Launch Template, AMI, or Backup recovery point cannot be deleted.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-deleting-snapshot.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A snapshot is an orphan when (a) its source VolumeId no longer
+    exists AND (b) no AMI references it AND (c) no AWS Backup
+    recovery point references it.
+  rule_pseudocode: |
+    live_volumes = {v.id for v in describe_volumes()}
+    referenced_by_ami = {bd.SnapshotId for ami in describe_images(owners=["self"]) for bd in ami.BlockDeviceMappings}
+    for snap in describe_snapshots(owners=["self"]):
+        if snap.VolumeId not in live_volumes and snap.id not in referenced_by_ami:
+            yield Orphan(snap)
+  cleanup_command: aws ec2 delete-snapshot --snapshot-id {snapshot-id}
+  cleanup_safety: needs_review
+  iam_required:
+    - ec2:DescribeSnapshots
+    - ec2:DescribeVolumes
+    - ec2:DescribeImages
+    - ec2:DeleteSnapshot
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+
+verification:
+  last_verified: "2026-05-22"
+  source_doc_version: ec2-userguide-2024
+  contributor: brad@aws

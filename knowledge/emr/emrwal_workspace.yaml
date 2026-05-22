@@ -1,0 +1,84 @@
+schema_version: v1
+service: emr
+service_code_pricing: ElasticMapReduce
+service_code_arn_namespace: emrwal
+
+resource_type:
+  name: emrwal_workspace
+  human_name: Amazon EMR WAL Workspace
+  human_name_zh: Amazon EMR WAL 工作空间
+  cfn: null
+  config: null
+  resource_explorer: null
+  cli_list: emrwal listWorkspaces
+  boto3: null   # No standard SDK client; uses on-cluster emrwal CLI
+  arn_pattern: arn:aws:emrwal::{account}:workspace/{workspace-name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Charged per WAL-region-hour (active uptime) plus per-GB-month for
+    workspace storage. Persists independently of EMR cluster lifecycle.
+  cur_product_codes:
+    - AmazonElasticMapReduce
+  cur_usage_type_patterns:
+    - "*EMRWAL-WALHours*"
+    - "*EMRWAL-WALStorage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/emr/pricing/
+
+lifecycle:
+  parent_resource: emr_cluster
+  parent_link: |
+    No direct ARN reference. The workspace is associated with a cluster
+    via the shared S3 root directory configured at cluster launch
+    (hbase.rootdir in hbase-site Configuration). Multiple clusters can
+    point to the same workspace.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: P30D
+  retention_caveats:
+    - |
+      The 30-day auto-delete is BLOCKED if a new WAL-enabled cluster is
+      launched against the same hbase.rootdir within those 30 days.
+      In that case the workspace persists indefinitely until manually
+      deleted, even after every related cluster has terminated.
+    - |
+      Workspace must be in an idle state (no active WAL writes) before
+      it can be deleted. Check via `emrwal listWals -w <ws>`.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-hbase-wal.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A workspace is an orphan when every EMR cluster that ever pointed
+    to it has been terminated for more than 30 days, AND no new cluster
+    has been launched against the same S3 root directory.
+  rule_pseudocode: |
+    for ws in listWorkspaces():
+        clusters = find_emr_clusters_referencing(ws)  # by hbase.rootdir
+        if all(c.state == "TERMINATED" and (now - c.terminated_at).days > 30 for c in clusters):
+            if not any_active_cluster_with_same_rootdir(clusters[0].rootdir):
+                yield Orphan(ws)
+  cleanup_command: emrwal deleteWorkspace -w {workspace}
+  cleanup_safety: needs_review
+  iam_required:
+    - emrwal:ListWorkspaces
+    - emrwal:ListWals
+    - emrwal:DeleteWorkspace
+    - emrwal:DeleteWal
+    - elasticmapreduce:ListClusters
+    - elasticmapreduce:DescribeCluster
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - independent_service
+  - high_value
+
+verification:
+  last_verified: "2026-05-22"
+  source_doc_version: emr-release-7.x
+  contributor: brad@aws

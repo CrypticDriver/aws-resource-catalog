@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://aws-resource-catalog.dev/schemas/resource.v1.json",
+  "title": "AWS Resource Catalog Entry",
+  "description": "One file per billable AWS resource type.",
+  "type": "object",
+  "required": ["service", "resource_type", "billing", "lifecycle"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "v1"
+    },
+    "service": {
+      "type": "string",
+      "description": "Short service name, e.g. emr / ec2 / sagemaker. Lowercase."
+    },
+    "service_code_pricing": {
+      "type": "string",
+      "description": "AWS Pricing API service code, e.g. ElasticMapReduce."
+    },
+    "service_code_arn_namespace": {
+      "type": "string",
+      "description": "ARN service namespace, e.g. emrwal / ec2 / sagemaker."
+    },
+    "resource_type": {
+      "type": "object",
+      "required": ["name", "human_name"],
+      "properties": {
+        "name": {"type": "string", "description": "Short id, e.g. emrwal_workspace."},
+        "human_name": {"type": "string", "description": "Display name."},
+        "human_name_zh": {"type": "string"},
+        "cfn": {"type": ["string", "null"], "description": "AWS::Service::Resource form, or null if unsupported."},
+        "config": {"type": ["string", "null"], "description": "AWS Config resourceType, or null."},
+        "resource_explorer": {"type": ["string", "null"]},
+        "cli_list": {"type": ["string", "null"], "description": "Shell command to list resources."},
+        "boto3": {
+          "type": ["object", "null"],
+          "properties": {
+            "client": {"type": "string"},
+            "list_method": {"type": "string"}
+          }
+        },
+        "arn_pattern": {"type": "string"}
+      }
+    },
+    "billing": {
+      "type": "object",
+      "required": ["billable", "model"],
+      "properties": {
+        "billable": {"type": "boolean"},
+        "model": {
+          "type": "string",
+          "enum": ["per-hour", "per-second", "per-gb-month", "per-request", "tiered-storage", "flat-monthly", "free", "complex"]
+        },
+        "summary": {"type": "string", "description": "One-line plain-language description of what is charged."},
+        "cur_product_codes": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "cur_usage_type_patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Glob/regex of CUR usage_type. Helps map a billing line to this resource type."
+        },
+        "free_tier": {"type": "boolean"},
+        "doc_pricing_page": {"type": "string", "format": "uri"}
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "properties": {
+        "parent_resource": {
+          "type": ["string", "null"],
+          "description": "Logical parent resource type. null means top-level."
+        },
+        "parent_link": {
+          "type": ["string", "null"],
+          "description": "How this resource is logically tied to its parent (e.g. shared S3 root, ARN reference, tag, name match)."
+        },
+        "auto_delete_on_parent_delete": {
+          "type": "boolean",
+          "description": "True if AWS automatically deletes this when its parent goes away."
+        },
+        "retention_after_parent_delete": {
+          "type": ["string", "null"],
+          "description": "ISO-ish duration if AWS holds it for a while (e.g. P30D)."
+        },
+        "retention_caveats": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Edge cases that break the auto-delete promise."
+        },
+        "doc_lifecycle_anchor": {"type": "string", "format": "uri"}
+      }
+    },
+    "orphan_detection": {
+      "type": "object",
+      "properties": {
+        "orphan_prone": {"type": "boolean"},
+        "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+        "rule_human": {"type": "string", "description": "Plain-language judgment rule."},
+        "rule_pseudocode": {"type": "string"},
+        "cleanup_command": {"type": "string"},
+        "cleanup_safety": {"type": "string", "enum": ["safe", "needs_review", "destructive"]},
+        "iam_required": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Free-form labels: billable / orphan_prone / storage / network / serverless ..."
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "last_verified": {"type": "string", "format": "date"},
+        "source_doc_version": {"type": "string"},
+        "contributor": {"type": "string"}
+      }
+    }
+  }
+}

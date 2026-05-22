@@ -1,0 +1,3823 @@
+{
+  "boto3_version": "1.43.13",
+  "botocore_version": "1.43.13",
+  "service_count": 424,
+  "services": [
+    {
+      "service": "accessanalyzer",
+      "endpoint_prefix": "access-analyzer",
+      "service_id": "AccessAnalyzer",
+      "api_version": "2019-11-01",
+      "protocol": "rest-json",
+      "signing_name": "access-analyzer",
+      "operation_count": 39
+    },
+    {
+      "service": "account",
+      "endpoint_prefix": "account",
+      "service_id": "Account",
+      "api_version": "2021-02-01",
+      "protocol": "rest-json",
+      "signing_name": "account",
+      "operation_count": 15
+    },
+    {
+      "service": "acm",
+      "endpoint_prefix": "acm",
+      "service_id": "ACM",
+      "api_version": "2015-12-08",
+      "protocol": "json",
+      "signing_name": "acm",
+      "operation_count": 17
+    },
+    {
+      "service": "acm-pca",
+      "endpoint_prefix": "acm-pca",
+      "service_id": "ACM PCA",
+      "api_version": "2017-08-22",
+      "protocol": "json",
+      "signing_name": "acm-pca",
+      "operation_count": 23
+    },
+    {
+      "service": "aiops",
+      "endpoint_prefix": "aiops",
+      "service_id": "AIOps",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "aiops",
+      "operation_count": 11
+    },
+    {
+      "service": "amp",
+      "endpoint_prefix": "aps",
+      "service_id": "amp",
+      "api_version": "2020-08-01",
+      "protocol": "rest-json",
+      "signing_name": "aps",
+      "operation_count": 44
+    },
+    {
+      "service": "amplify",
+      "endpoint_prefix": "amplify",
+      "service_id": "Amplify",
+      "api_version": "2017-07-25",
+      "protocol": "rest-json",
+      "signing_name": "amplify",
+      "operation_count": 37
+    },
+    {
+      "service": "amplifybackend",
+      "endpoint_prefix": "amplifybackend",
+      "service_id": "AmplifyBackend",
+      "api_version": "2020-08-11",
+      "protocol": "rest-json",
+      "signing_name": "amplifybackend",
+      "operation_count": 31
+    },
+    {
+      "service": "amplifyuibuilder",
+      "endpoint_prefix": "amplifyuibuilder",
+      "service_id": "AmplifyUIBuilder",
+      "api_version": "2021-08-11",
+      "protocol": "rest-json",
+      "signing_name": "amplifyuibuilder",
+      "operation_count": 28
+    },
+    {
+      "service": "apigateway",
+      "endpoint_prefix": "apigateway",
+      "service_id": "API Gateway",
+      "api_version": "2015-07-09",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 124
+    },
+    {
+      "service": "apigatewaymanagementapi",
+      "endpoint_prefix": "execute-api",
+      "service_id": "ApiGatewayManagementApi",
+      "api_version": "2018-11-29",
+      "protocol": "rest-json",
+      "signing_name": "execute-api",
+      "operation_count": 3
+    },
+    {
+      "service": "apigatewayv2",
+      "endpoint_prefix": "apigateway",
+      "service_id": "ApiGatewayV2",
+      "api_version": "2018-11-29",
+      "protocol": "rest-json",
+      "signing_name": "apigateway",
+      "operation_count": 103
+    },
+    {
+      "service": "appconfig",
+      "endpoint_prefix": "appconfig",
+      "service_id": "AppConfig",
+      "api_version": "2019-10-09",
+      "protocol": "rest-json",
+      "signing_name": "appconfig",
+      "operation_count": 45
+    },
+    {
+      "service": "appconfigdata",
+      "endpoint_prefix": "appconfigdata",
+      "service_id": "AppConfigData",
+      "api_version": "2021-11-11",
+      "protocol": "rest-json",
+      "signing_name": "appconfig",
+      "operation_count": 2
+    },
+    {
+      "service": "appfabric",
+      "endpoint_prefix": "appfabric",
+      "service_id": "AppFabric",
+      "api_version": "2023-05-19",
+      "protocol": "rest-json",
+      "signing_name": "appfabric",
+      "operation_count": 26
+    },
+    {
+      "service": "appflow",
+      "endpoint_prefix": "appflow",
+      "service_id": "Appflow",
+      "api_version": "2020-08-23",
+      "protocol": "rest-json",
+      "signing_name": "appflow",
+      "operation_count": 25
+    },
+    {
+      "service": "appintegrations",
+      "endpoint_prefix": "app-integrations",
+      "service_id": "AppIntegrations",
+      "api_version": "2020-07-29",
+      "protocol": "rest-json",
+      "signing_name": "app-integrations",
+      "operation_count": 23
+    },
+    {
+      "service": "application-autoscaling",
+      "endpoint_prefix": "application-autoscaling",
+      "service_id": "Application Auto Scaling",
+      "api_version": "2016-02-06",
+      "protocol": "json",
+      "signing_name": "application-autoscaling",
+      "operation_count": 14
+    },
+    {
+      "service": "application-insights",
+      "endpoint_prefix": "applicationinsights",
+      "service_id": "Application Insights",
+      "api_version": "2018-11-25",
+      "protocol": "json",
+      "signing_name": "applicationinsights",
+      "operation_count": 33
+    },
+    {
+      "service": "application-signals",
+      "endpoint_prefix": "application-signals",
+      "service_id": "Application Signals",
+      "api_version": "2024-04-15",
+      "protocol": "rest-json",
+      "signing_name": "application-signals",
+      "operation_count": 23
+    },
+    {
+      "service": "applicationcostprofiler",
+      "endpoint_prefix": "application-cost-profiler",
+      "service_id": "ApplicationCostProfiler",
+      "api_version": "2020-09-10",
+      "protocol": "rest-json",
+      "signing_name": "application-cost-profiler",
+      "operation_count": 6
+    },
+    {
+      "service": "appmesh",
+      "endpoint_prefix": "appmesh",
+      "service_id": "App Mesh",
+      "api_version": "2019-01-25",
+      "protocol": "rest-json",
+      "signing_name": "appmesh",
+      "operation_count": 38
+    },
+    {
+      "service": "apprunner",
+      "endpoint_prefix": "apprunner",
+      "service_id": "AppRunner",
+      "api_version": "2020-05-15",
+      "protocol": "json",
+      "signing_name": "apprunner",
+      "operation_count": 37
+    },
+    {
+      "service": "appstream",
+      "endpoint_prefix": "appstream2",
+      "service_id": "AppStream",
+      "api_version": "2016-12-01",
+      "protocol": "json",
+      "signing_name": "appstream",
+      "operation_count": 89
+    },
+    {
+      "service": "appsync",
+      "endpoint_prefix": "appsync",
+      "service_id": "AppSync",
+      "api_version": "2017-07-25",
+      "protocol": "rest-json",
+      "signing_name": "appsync",
+      "operation_count": 74
+    },
+    {
+      "service": "arc-region-switch",
+      "endpoint_prefix": "arc-region-switch",
+      "service_id": "ARC Region switch",
+      "api_version": "2022-07-26",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": "arc-region-switch",
+      "operation_count": 21
+    },
+    {
+      "service": "arc-zonal-shift",
+      "endpoint_prefix": "arc-zonal-shift",
+      "service_id": "ARC Zonal Shift",
+      "api_version": "2022-10-30",
+      "protocol": "rest-json",
+      "signing_name": "arc-zonal-shift",
+      "operation_count": 15
+    },
+    {
+      "service": "artifact",
+      "endpoint_prefix": "artifact",
+      "service_id": "Artifact",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "artifact",
+      "operation_count": 8
+    },
+    {
+      "service": "athena",
+      "endpoint_prefix": "athena",
+      "service_id": "Athena",
+      "api_version": "2017-05-18",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 70
+    },
+    {
+      "service": "auditmanager",
+      "endpoint_prefix": "auditmanager",
+      "service_id": "AuditManager",
+      "api_version": "2017-07-25",
+      "protocol": "rest-json",
+      "signing_name": "auditmanager",
+      "operation_count": 62
+    },
+    {
+      "service": "autoscaling",
+      "endpoint_prefix": "autoscaling",
+      "service_id": "Auto Scaling",
+      "api_version": "2011-01-01",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 66
+    },
+    {
+      "service": "autoscaling-plans",
+      "endpoint_prefix": "autoscaling-plans",
+      "service_id": "Auto Scaling Plans",
+      "api_version": "2018-01-06",
+      "protocol": "json",
+      "signing_name": "autoscaling-plans",
+      "operation_count": 6
+    },
+    {
+      "service": "b2bi",
+      "endpoint_prefix": "b2bi",
+      "service_id": "b2bi",
+      "api_version": "2022-06-23",
+      "protocol": "json",
+      "signing_name": "b2bi",
+      "operation_count": 30
+    },
+    {
+      "service": "backup",
+      "endpoint_prefix": "backup",
+      "service_id": "Backup",
+      "api_version": "2018-11-15",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 108
+    },
+    {
+      "service": "backup-gateway",
+      "endpoint_prefix": "backup-gateway",
+      "service_id": "Backup Gateway",
+      "api_version": "2021-01-01",
+      "protocol": "json",
+      "signing_name": "backup-gateway",
+      "operation_count": 25
+    },
+    {
+      "service": "backupsearch",
+      "endpoint_prefix": "backup-search",
+      "service_id": "BackupSearch",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "backup-search",
+      "operation_count": 12
+    },
+    {
+      "service": "batch",
+      "endpoint_prefix": "batch",
+      "service_id": "Batch",
+      "api_version": "2016-08-10",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 45
+    },
+    {
+      "service": "bcm-dashboards",
+      "endpoint_prefix": "bcm-dashboards",
+      "service_id": "BCM Dashboards",
+      "api_version": "2025-08-18",
+      "protocol": "json",
+      "signing_name": "bcm-dashboards",
+      "operation_count": 15
+    },
+    {
+      "service": "bcm-data-exports",
+      "endpoint_prefix": "bcm-data-exports",
+      "service_id": "BCM Data Exports",
+      "api_version": "2023-11-26",
+      "protocol": "json",
+      "signing_name": "bcm-data-exports",
+      "operation_count": 12
+    },
+    {
+      "service": "bcm-pricing-calculator",
+      "endpoint_prefix": "bcm-pricing-calculator",
+      "service_id": "BCM Pricing Calculator",
+      "api_version": "2024-06-19",
+      "protocol": "json",
+      "signing_name": "bcm-pricing-calculator",
+      "operation_count": 36
+    },
+    {
+      "service": "bcm-recommended-actions",
+      "endpoint_prefix": "bcm-recommended-actions",
+      "service_id": "BCM Recommended Actions",
+      "api_version": "2024-11-14",
+      "protocol": "json",
+      "signing_name": "bcm-recommended-actions",
+      "operation_count": 1
+    },
+    {
+      "service": "bedrock",
+      "endpoint_prefix": "bedrock",
+      "service_id": "Bedrock",
+      "api_version": "2023-04-20",
+      "protocol": "rest-json",
+      "signing_name": "bedrock",
+      "operation_count": 106
+    },
+    {
+      "service": "bedrock-agent",
+      "endpoint_prefix": "bedrock-agent",
+      "service_id": "Bedrock Agent",
+      "api_version": "2023-06-05",
+      "protocol": "rest-json",
+      "signing_name": "bedrock",
+      "operation_count": 72
+    },
+    {
+      "service": "bedrock-agent-runtime",
+      "endpoint_prefix": "bedrock-agent-runtime",
+      "service_id": "Bedrock Agent Runtime",
+      "api_version": "2023-07-26",
+      "protocol": "rest-json",
+      "signing_name": "bedrock",
+      "operation_count": 31
+    },
+    {
+      "service": "bedrock-agentcore",
+      "endpoint_prefix": "bedrock-agentcore",
+      "service_id": "Bedrock AgentCore",
+      "api_version": "2024-02-28",
+      "protocol": "rest-json",
+      "signing_name": "bedrock-agentcore",
+      "operation_count": 65
+    },
+    {
+      "service": "bedrock-agentcore-control",
+      "endpoint_prefix": "bedrock-agentcore-control",
+      "service_id": "Bedrock AgentCore Control",
+      "api_version": "2023-06-05",
+      "protocol": "rest-json",
+      "signing_name": "bedrock-agentcore",
+      "operation_count": 147
+    },
+    {
+      "service": "bedrock-data-automation",
+      "endpoint_prefix": "bedrock-data-automation",
+      "service_id": "Bedrock Data Automation",
+      "api_version": "2023-07-26",
+      "protocol": "rest-json",
+      "signing_name": "bedrock",
+      "operation_count": 27
+    },
+    {
+      "service": "bedrock-data-automation-runtime",
+      "endpoint_prefix": "bedrock-data-automation-runtime",
+      "service_id": "Bedrock Data Automation Runtime",
+      "api_version": "2024-06-13",
+      "protocol": "json",
+      "signing_name": "bedrock",
+      "operation_count": 6
+    },
+    {
+      "service": "bedrock-runtime",
+      "endpoint_prefix": "bedrock-runtime",
+      "service_id": "Bedrock Runtime",
+      "api_version": "2023-09-30",
+      "protocol": "rest-json",
+      "signing_name": "bedrock",
+      "operation_count": 10
+    },
+    {
+      "service": "billing",
+      "endpoint_prefix": "billing",
+      "service_id": "Billing",
+      "api_version": "2023-09-07",
+      "protocol": "json",
+      "signing_name": "billing",
+      "operation_count": 12
+    },
+    {
+      "service": "billingconductor",
+      "endpoint_prefix": "billingconductor",
+      "service_id": "billingconductor",
+      "api_version": "2021-07-30",
+      "protocol": "rest-json",
+      "signing_name": "billingconductor",
+      "operation_count": 32
+    },
+    {
+      "service": "braket",
+      "endpoint_prefix": "braket",
+      "service_id": "Braket",
+      "api_version": "2019-09-01",
+      "protocol": "rest-json",
+      "signing_name": "braket",
+      "operation_count": 17
+    },
+    {
+      "service": "budgets",
+      "endpoint_prefix": "budgets",
+      "service_id": "Budgets",
+      "api_version": "2016-10-20",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 26
+    },
+    {
+      "service": "ce",
+      "endpoint_prefix": "ce",
+      "service_id": "Cost Explorer",
+      "api_version": "2017-10-25",
+      "protocol": "json",
+      "signing_name": "ce",
+      "operation_count": 47
+    },
+    {
+      "service": "chatbot",
+      "endpoint_prefix": "chatbot",
+      "service_id": "chatbot",
+      "api_version": "2017-10-11",
+      "protocol": "rest-json",
+      "signing_name": "chatbot",
+      "operation_count": 34
+    },
+    {
+      "service": "chime",
+      "endpoint_prefix": "chime",
+      "service_id": "Chime",
+      "api_version": "2018-05-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 62
+    },
+    {
+      "service": "chime-sdk-identity",
+      "endpoint_prefix": "identity-chime",
+      "service_id": "Chime SDK Identity",
+      "api_version": "2021-04-20",
+      "protocol": "rest-json",
+      "signing_name": "chime",
+      "operation_count": 30
+    },
+    {
+      "service": "chime-sdk-media-pipelines",
+      "endpoint_prefix": "media-pipelines-chime",
+      "service_id": "Chime SDK Media Pipelines",
+      "api_version": "2021-07-15",
+      "protocol": "rest-json",
+      "signing_name": "chime",
+      "operation_count": 31
+    },
+    {
+      "service": "chime-sdk-meetings",
+      "endpoint_prefix": "meetings-chime",
+      "service_id": "Chime SDK Meetings",
+      "api_version": "2021-07-15",
+      "protocol": "rest-json",
+      "signing_name": "chime",
+      "operation_count": 16
+    },
+    {
+      "service": "chime-sdk-messaging",
+      "endpoint_prefix": "messaging-chime",
+      "service_id": "Chime SDK Messaging",
+      "api_version": "2021-05-15",
+      "protocol": "rest-json",
+      "signing_name": "chime",
+      "operation_count": 51
+    },
+    {
+      "service": "chime-sdk-voice",
+      "endpoint_prefix": "voice-chime",
+      "service_id": "Chime SDK Voice",
+      "api_version": "2022-08-03",
+      "protocol": "rest-json",
+      "signing_name": "chime",
+      "operation_count": 96
+    },
+    {
+      "service": "cleanrooms",
+      "endpoint_prefix": "cleanrooms",
+      "service_id": "CleanRooms",
+      "api_version": "2022-02-17",
+      "protocol": "rest-json",
+      "signing_name": "cleanrooms",
+      "operation_count": 88
+    },
+    {
+      "service": "cleanroomsml",
+      "endpoint_prefix": "cleanrooms-ml",
+      "service_id": "CleanRoomsML",
+      "api_version": "2023-09-06",
+      "protocol": "rest-json",
+      "signing_name": "cleanrooms-ml",
+      "operation_count": 59
+    },
+    {
+      "service": "cloud9",
+      "endpoint_prefix": "cloud9",
+      "service_id": "Cloud9",
+      "api_version": "2017-09-23",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 13
+    },
+    {
+      "service": "cloudcontrol",
+      "endpoint_prefix": "cloudcontrolapi",
+      "service_id": "CloudControl",
+      "api_version": "2021-09-30",
+      "protocol": "json",
+      "signing_name": "cloudcontrolapi",
+      "operation_count": 8
+    },
+    {
+      "service": "clouddirectory",
+      "endpoint_prefix": "clouddirectory",
+      "service_id": "CloudDirectory",
+      "api_version": "2017-01-11",
+      "protocol": "rest-json",
+      "signing_name": "clouddirectory",
+      "operation_count": 66
+    },
+    {
+      "service": "cloudformation",
+      "endpoint_prefix": "cloudformation",
+      "service_id": "CloudFormation",
+      "api_version": "2010-05-15",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 90
+    },
+    {
+      "service": "cloudfront",
+      "endpoint_prefix": "cloudfront",
+      "service_id": "CloudFront",
+      "api_version": "2020-05-31",
+      "protocol": "rest-xml",
+      "signing_name": "cloudfront",
+      "operation_count": 167
+    },
+    {
+      "service": "cloudfront-keyvaluestore",
+      "endpoint_prefix": "cloudfront-keyvaluestore",
+      "service_id": "CloudFront KeyValueStore",
+      "api_version": "2022-07-26",
+      "protocol": "rest-json",
+      "signing_name": "cloudfront-keyvaluestore",
+      "operation_count": 6
+    },
+    {
+      "service": "cloudhsm",
+      "endpoint_prefix": "cloudhsm",
+      "service_id": "CloudHSM",
+      "api_version": "2014-05-30",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 20
+    },
+    {
+      "service": "cloudhsmv2",
+      "endpoint_prefix": "cloudhsmv2",
+      "service_id": "CloudHSM V2",
+      "api_version": "2017-04-28",
+      "protocol": "json",
+      "signing_name": "cloudhsm",
+      "operation_count": 18
+    },
+    {
+      "service": "cloudsearch",
+      "endpoint_prefix": "cloudsearch",
+      "service_id": "CloudSearch",
+      "api_version": "2013-01-01",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 26
+    },
+    {
+      "service": "cloudsearchdomain",
+      "endpoint_prefix": "cloudsearchdomain",
+      "service_id": "CloudSearch Domain",
+      "api_version": "2013-01-01",
+      "protocol": "rest-json",
+      "signing_name": "cloudsearch",
+      "operation_count": 3
+    },
+    {
+      "service": "cloudtrail",
+      "endpoint_prefix": "cloudtrail",
+      "service_id": "CloudTrail",
+      "api_version": "2013-11-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 60
+    },
+    {
+      "service": "cloudtrail-data",
+      "endpoint_prefix": "cloudtrail-data",
+      "service_id": "CloudTrail Data",
+      "api_version": "2021-08-11",
+      "protocol": "rest-json",
+      "signing_name": "cloudtrail-data",
+      "operation_count": 1
+    },
+    {
+      "service": "cloudwatch",
+      "endpoint_prefix": "monitoring",
+      "service_id": "CloudWatch",
+      "api_version": "2010-08-01",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": null,
+      "operation_count": 46
+    },
+    {
+      "service": "codeartifact",
+      "endpoint_prefix": "codeartifact",
+      "service_id": "codeartifact",
+      "api_version": "2018-09-22",
+      "protocol": "rest-json",
+      "signing_name": "codeartifact",
+      "operation_count": 48
+    },
+    {
+      "service": "codebuild",
+      "endpoint_prefix": "codebuild",
+      "service_id": "CodeBuild",
+      "api_version": "2016-10-06",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 59
+    },
+    {
+      "service": "codecatalyst",
+      "endpoint_prefix": "codecatalyst",
+      "service_id": "CodeCatalyst",
+      "api_version": "2022-09-28",
+      "protocol": "rest-json",
+      "signing_name": "codecatalyst",
+      "operation_count": 38
+    },
+    {
+      "service": "codecommit",
+      "endpoint_prefix": "codecommit",
+      "service_id": "CodeCommit",
+      "api_version": "2015-04-13",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 79
+    },
+    {
+      "service": "codeconnections",
+      "endpoint_prefix": "codeconnections",
+      "service_id": "CodeConnections",
+      "api_version": "2023-12-01",
+      "protocol": "json",
+      "signing_name": "codeconnections",
+      "operation_count": 27
+    },
+    {
+      "service": "codedeploy",
+      "endpoint_prefix": "codedeploy",
+      "service_id": "CodeDeploy",
+      "api_version": "2014-10-06",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 47
+    },
+    {
+      "service": "codeguru-reviewer",
+      "endpoint_prefix": "codeguru-reviewer",
+      "service_id": "CodeGuru Reviewer",
+      "api_version": "2019-09-19",
+      "protocol": "rest-json",
+      "signing_name": "codeguru-reviewer",
+      "operation_count": 14
+    },
+    {
+      "service": "codeguru-security",
+      "endpoint_prefix": "codeguru-security",
+      "service_id": "CodeGuru Security",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "codeguru-security",
+      "operation_count": 13
+    },
+    {
+      "service": "codeguruprofiler",
+      "endpoint_prefix": "codeguru-profiler",
+      "service_id": "CodeGuruProfiler",
+      "api_version": "2019-07-18",
+      "protocol": "rest-json",
+      "signing_name": "codeguru-profiler",
+      "operation_count": 23
+    },
+    {
+      "service": "codepipeline",
+      "endpoint_prefix": "codepipeline",
+      "service_id": "CodePipeline",
+      "api_version": "2015-07-09",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 44
+    },
+    {
+      "service": "codestar-connections",
+      "endpoint_prefix": "codestar-connections",
+      "service_id": "CodeStar connections",
+      "api_version": "2019-12-01",
+      "protocol": "json",
+      "signing_name": "codestar-connections",
+      "operation_count": 27
+    },
+    {
+      "service": "codestar-notifications",
+      "endpoint_prefix": "codestar-notifications",
+      "service_id": "codestar notifications",
+      "api_version": "2019-10-15",
+      "protocol": "rest-json",
+      "signing_name": "codestar-notifications",
+      "operation_count": 13
+    },
+    {
+      "service": "cognito-identity",
+      "endpoint_prefix": "cognito-identity",
+      "service_id": "Cognito Identity",
+      "api_version": "2014-06-30",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 23
+    },
+    {
+      "service": "cognito-idp",
+      "endpoint_prefix": "cognito-idp",
+      "service_id": "Cognito Identity Provider",
+      "api_version": "2016-04-18",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 122
+    },
+    {
+      "service": "cognito-sync",
+      "endpoint_prefix": "cognito-sync",
+      "service_id": "Cognito Sync",
+      "api_version": "2014-06-30",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 17
+    },
+    {
+      "service": "comprehend",
+      "endpoint_prefix": "comprehend",
+      "service_id": "Comprehend",
+      "api_version": "2017-11-27",
+      "protocol": "json",
+      "signing_name": "comprehend",
+      "operation_count": 85
+    },
+    {
+      "service": "comprehendmedical",
+      "endpoint_prefix": "comprehendmedical",
+      "service_id": "ComprehendMedical",
+      "api_version": "2018-10-30",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": "comprehendmedical",
+      "operation_count": 26
+    },
+    {
+      "service": "compute-optimizer",
+      "endpoint_prefix": "compute-optimizer",
+      "service_id": "Compute Optimizer",
+      "api_version": "2019-11-01",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": "compute-optimizer",
+      "operation_count": 28
+    },
+    {
+      "service": "compute-optimizer-automation",
+      "endpoint_prefix": "aco-automation",
+      "service_id": "Compute Optimizer Automation",
+      "api_version": "2025-09-22",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": "aco-automation",
+      "operation_count": 23
+    },
+    {
+      "service": "config",
+      "endpoint_prefix": "config",
+      "service_id": "Config Service",
+      "api_version": "2014-11-12",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 97
+    },
+    {
+      "service": "connect",
+      "endpoint_prefix": "connect",
+      "service_id": "Connect",
+      "api_version": "2017-08-08",
+      "protocol": "rest-json",
+      "signing_name": "connect",
+      "operation_count": 370
+    },
+    {
+      "service": "connect-contact-lens",
+      "endpoint_prefix": "contact-lens",
+      "service_id": "Connect Contact Lens",
+      "api_version": "2020-08-21",
+      "protocol": "rest-json",
+      "signing_name": "connect",
+      "operation_count": 1
+    },
+    {
+      "service": "connectcampaigns",
+      "endpoint_prefix": "connect-campaigns",
+      "service_id": "ConnectCampaigns",
+      "api_version": "2021-01-30",
+      "protocol": "rest-json",
+      "signing_name": "connect-campaigns",
+      "operation_count": 22
+    },
+    {
+      "service": "connectcampaignsv2",
+      "endpoint_prefix": "connect-campaigns",
+      "service_id": "ConnectCampaignsV2",
+      "api_version": "2024-04-23",
+      "protocol": "rest-json",
+      "signing_name": "connect-campaigns",
+      "operation_count": 37
+    },
+    {
+      "service": "connectcases",
+      "endpoint_prefix": "cases",
+      "service_id": "ConnectCases",
+      "api_version": "2022-10-03",
+      "protocol": "rest-json",
+      "signing_name": "cases",
+      "operation_count": 43
+    },
+    {
+      "service": "connecthealth",
+      "endpoint_prefix": "health-agent",
+      "service_id": "ConnectHealth",
+      "api_version": "2025-01-29",
+      "protocol": "rest-json",
+      "signing_name": "health-agent",
+      "operation_count": 16
+    },
+    {
+      "service": "connectparticipant",
+      "endpoint_prefix": "participant.connect",
+      "service_id": "ConnectParticipant",
+      "api_version": "2018-09-07",
+      "protocol": "rest-json",
+      "signing_name": "execute-api",
+      "operation_count": 11
+    },
+    {
+      "service": "controlcatalog",
+      "endpoint_prefix": "controlcatalog",
+      "service_id": "ControlCatalog",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "controlcatalog",
+      "operation_count": 6
+    },
+    {
+      "service": "controltower",
+      "endpoint_prefix": "controltower",
+      "service_id": "ControlTower",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "controltower",
+      "operation_count": 28
+    },
+    {
+      "service": "cost-optimization-hub",
+      "endpoint_prefix": "cost-optimization-hub",
+      "service_id": "Cost Optimization Hub",
+      "api_version": "2022-07-26",
+      "protocol": "json",
+      "signing_name": "cost-optimization-hub",
+      "operation_count": 8
+    },
+    {
+      "service": "cur",
+      "endpoint_prefix": "cur",
+      "service_id": "Cost and Usage Report Service",
+      "api_version": "2017-01-06",
+      "protocol": "json",
+      "signing_name": "cur",
+      "operation_count": 7
+    },
+    {
+      "service": "customer-profiles",
+      "endpoint_prefix": "profile",
+      "service_id": "Customer Profiles",
+      "api_version": "2020-08-15",
+      "protocol": "rest-json",
+      "signing_name": "profile",
+      "operation_count": 106
+    },
+    {
+      "service": "databrew",
+      "endpoint_prefix": "databrew",
+      "service_id": "DataBrew",
+      "api_version": "2017-07-25",
+      "protocol": "rest-json",
+      "signing_name": "databrew",
+      "operation_count": 44
+    },
+    {
+      "service": "dataexchange",
+      "endpoint_prefix": "dataexchange",
+      "service_id": "DataExchange",
+      "api_version": "2017-07-25",
+      "protocol": "rest-json",
+      "signing_name": "dataexchange",
+      "operation_count": 37
+    },
+    {
+      "service": "datapipeline",
+      "endpoint_prefix": "datapipeline",
+      "service_id": "Data Pipeline",
+      "api_version": "2012-10-29",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 19
+    },
+    {
+      "service": "datasync",
+      "endpoint_prefix": "datasync",
+      "service_id": "DataSync",
+      "api_version": "2018-11-09",
+      "protocol": "json",
+      "signing_name": "datasync",
+      "operation_count": 53
+    },
+    {
+      "service": "datazone",
+      "endpoint_prefix": "datazone",
+      "service_id": "DataZone",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "datazone",
+      "operation_count": 188
+    },
+    {
+      "service": "dax",
+      "endpoint_prefix": "dax",
+      "service_id": "DAX",
+      "api_version": "2017-04-19",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 21
+    },
+    {
+      "service": "deadline",
+      "endpoint_prefix": "deadline",
+      "service_id": "deadline",
+      "api_version": "2023-10-12",
+      "protocol": "rest-json",
+      "signing_name": "deadline",
+      "operation_count": 123
+    },
+    {
+      "service": "detective",
+      "endpoint_prefix": "api.detective",
+      "service_id": "Detective",
+      "api_version": "2018-10-26",
+      "protocol": "rest-json",
+      "signing_name": "detective",
+      "operation_count": 29
+    },
+    {
+      "service": "devicefarm",
+      "endpoint_prefix": "devicefarm",
+      "service_id": "Device Farm",
+      "api_version": "2015-06-23",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 77
+    },
+    {
+      "service": "devops-agent",
+      "endpoint_prefix": "aidevops",
+      "service_id": "DevOps Agent",
+      "api_version": "2026-01-01",
+      "protocol": "rest-json",
+      "signing_name": "aidevops",
+      "operation_count": 44
+    },
+    {
+      "service": "devops-guru",
+      "endpoint_prefix": "devops-guru",
+      "service_id": "DevOps Guru",
+      "api_version": "2020-12-01",
+      "protocol": "rest-json",
+      "signing_name": "devops-guru",
+      "operation_count": 31
+    },
+    {
+      "service": "directconnect",
+      "endpoint_prefix": "directconnect",
+      "service_id": "Direct Connect",
+      "api_version": "2012-10-25",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 63
+    },
+    {
+      "service": "discovery",
+      "endpoint_prefix": "discovery",
+      "service_id": "Application Discovery Service",
+      "api_version": "2015-11-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 28
+    },
+    {
+      "service": "dlm",
+      "endpoint_prefix": "dlm",
+      "service_id": "DLM",
+      "api_version": "2018-01-12",
+      "protocol": "rest-json",
+      "signing_name": "dlm",
+      "operation_count": 8
+    },
+    {
+      "service": "dms",
+      "endpoint_prefix": "dms",
+      "service_id": "Database Migration Service",
+      "api_version": "2016-01-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 119
+    },
+    {
+      "service": "docdb",
+      "endpoint_prefix": "rds",
+      "service_id": "DocDB",
+      "api_version": "2014-10-31",
+      "protocol": "query",
+      "signing_name": "rds",
+      "operation_count": 55
+    },
+    {
+      "service": "docdb-elastic",
+      "endpoint_prefix": "docdb-elastic",
+      "service_id": "DocDB Elastic",
+      "api_version": "2022-11-28",
+      "protocol": "rest-json",
+      "signing_name": "docdb-elastic",
+      "operation_count": 19
+    },
+    {
+      "service": "drs",
+      "endpoint_prefix": "drs",
+      "service_id": "drs",
+      "api_version": "2020-02-26",
+      "protocol": "rest-json",
+      "signing_name": "drs",
+      "operation_count": 50
+    },
+    {
+      "service": "ds",
+      "endpoint_prefix": "ds",
+      "service_id": "Directory Service",
+      "api_version": "2015-04-16",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 80
+    },
+    {
+      "service": "ds-data",
+      "endpoint_prefix": "ds-data",
+      "service_id": "Directory Service Data",
+      "api_version": "2023-05-31",
+      "protocol": "rest-json",
+      "signing_name": "ds-data",
+      "operation_count": 17
+    },
+    {
+      "service": "dsql",
+      "endpoint_prefix": "dsql",
+      "service_id": "DSQL",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "dsql",
+      "operation_count": 16
+    },
+    {
+      "service": "dynamodb",
+      "endpoint_prefix": "dynamodb",
+      "service_id": "DynamoDB",
+      "api_version": "2012-08-10",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 57
+    },
+    {
+      "service": "dynamodbstreams",
+      "endpoint_prefix": "streams.dynamodb",
+      "service_id": "DynamoDB Streams",
+      "api_version": "2012-08-10",
+      "protocol": "json",
+      "signing_name": "dynamodb",
+      "operation_count": 4
+    },
+    {
+      "service": "ebs",
+      "endpoint_prefix": "ebs",
+      "service_id": "EBS",
+      "api_version": "2019-11-02",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 6
+    },
+    {
+      "service": "ec2",
+      "endpoint_prefix": "ec2",
+      "service_id": "EC2",
+      "api_version": "2016-11-15",
+      "protocol": "ec2",
+      "signing_name": null,
+      "operation_count": 765
+    },
+    {
+      "service": "ec2-instance-connect",
+      "endpoint_prefix": "ec2-instance-connect",
+      "service_id": "EC2 Instance Connect",
+      "api_version": "2018-04-02",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 2
+    },
+    {
+      "service": "ecr",
+      "endpoint_prefix": "api.ecr",
+      "service_id": "ECR",
+      "api_version": "2015-09-21",
+      "protocol": "json",
+      "signing_name": "ecr",
+      "operation_count": 58
+    },
+    {
+      "service": "ecr-public",
+      "endpoint_prefix": "api.ecr-public",
+      "service_id": "ECR PUBLIC",
+      "api_version": "2020-10-30",
+      "protocol": "json",
+      "signing_name": "ecr-public",
+      "operation_count": 23
+    },
+    {
+      "service": "ecs",
+      "endpoint_prefix": "ecs",
+      "service_id": "ECS",
+      "api_version": "2014-11-13",
+      "protocol": "json",
+      "signing_name": "ecs",
+      "operation_count": 77
+    },
+    {
+      "service": "efs",
+      "endpoint_prefix": "elasticfilesystem",
+      "service_id": "EFS",
+      "api_version": "2015-02-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 31
+    },
+    {
+      "service": "eks",
+      "endpoint_prefix": "eks",
+      "service_id": "EKS",
+      "api_version": "2017-11-01",
+      "protocol": "rest-json",
+      "signing_name": "eks",
+      "operation_count": 64
+    },
+    {
+      "service": "eks-auth",
+      "endpoint_prefix": "eks-auth",
+      "service_id": "EKS Auth",
+      "api_version": "2023-11-26",
+      "protocol": "rest-json",
+      "signing_name": "eks-auth",
+      "operation_count": 1
+    },
+    {
+      "service": "elasticache",
+      "endpoint_prefix": "elasticache",
+      "service_id": "ElastiCache",
+      "api_version": "2015-02-02",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 75
+    },
+    {
+      "service": "elasticbeanstalk",
+      "endpoint_prefix": "elasticbeanstalk",
+      "service_id": "Elastic Beanstalk",
+      "api_version": "2010-12-01",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 47
+    },
+    {
+      "service": "elb",
+      "endpoint_prefix": "elasticloadbalancing",
+      "service_id": "Elastic Load Balancing",
+      "api_version": "2012-06-01",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 29
+    },
+    {
+      "service": "elbv2",
+      "endpoint_prefix": "elasticloadbalancing",
+      "service_id": "Elastic Load Balancing v2",
+      "api_version": "2015-12-01",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 51
+    },
+    {
+      "service": "elementalinference",
+      "endpoint_prefix": "elemental-inference",
+      "service_id": "ElementalInference",
+      "api_version": "2018-11-14",
+      "protocol": "rest-json",
+      "signing_name": "elemental-inference",
+      "operation_count": 10
+    },
+    {
+      "service": "emr",
+      "endpoint_prefix": "elasticmapreduce",
+      "service_id": "EMR",
+      "api_version": "2009-03-31",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 60
+    },
+    {
+      "service": "emr-containers",
+      "endpoint_prefix": "emr-containers",
+      "service_id": "EMR containers",
+      "api_version": "2020-10-01",
+      "protocol": "rest-json",
+      "signing_name": "emr-containers",
+      "operation_count": 23
+    },
+    {
+      "service": "emr-serverless",
+      "endpoint_prefix": "emr-serverless",
+      "service_id": "EMR Serverless",
+      "api_version": "2021-07-13",
+      "protocol": "rest-json",
+      "signing_name": "emr-serverless",
+      "operation_count": 22
+    },
+    {
+      "service": "entityresolution",
+      "endpoint_prefix": "entityresolution",
+      "service_id": "EntityResolution",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "entityresolution",
+      "operation_count": 38
+    },
+    {
+      "service": "es",
+      "endpoint_prefix": "es",
+      "service_id": "Elasticsearch Service",
+      "api_version": "2015-01-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 51
+    },
+    {
+      "service": "events",
+      "endpoint_prefix": "events",
+      "service_id": "EventBridge",
+      "api_version": "2015-10-07",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 57
+    },
+    {
+      "service": "evs",
+      "endpoint_prefix": "evs",
+      "service_id": "evs",
+      "api_version": "2023-07-27",
+      "protocol": "json",
+      "signing_name": "evs",
+      "operation_count": 22
+    },
+    {
+      "service": "finspace",
+      "endpoint_prefix": "finspace",
+      "service_id": "finspace",
+      "api_version": "2021-03-12",
+      "protocol": "rest-json",
+      "signing_name": "finspace",
+      "operation_count": 50
+    },
+    {
+      "service": "finspace-data",
+      "endpoint_prefix": "finspace-api",
+      "service_id": "finspace data",
+      "api_version": "2020-07-13",
+      "protocol": "rest-json",
+      "signing_name": "finspace-api",
+      "operation_count": 31
+    },
+    {
+      "service": "firehose",
+      "endpoint_prefix": "firehose",
+      "service_id": "Firehose",
+      "api_version": "2015-08-04",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 12
+    },
+    {
+      "service": "fis",
+      "endpoint_prefix": "fis",
+      "service_id": "fis",
+      "api_version": "2020-12-01",
+      "protocol": "rest-json",
+      "signing_name": "fis",
+      "operation_count": 26
+    },
+    {
+      "service": "fms",
+      "endpoint_prefix": "fms",
+      "service_id": "FMS",
+      "api_version": "2018-01-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 42
+    },
+    {
+      "service": "forecast",
+      "endpoint_prefix": "forecast",
+      "service_id": "forecast",
+      "api_version": "2018-06-26",
+      "protocol": "json",
+      "signing_name": "forecast",
+      "operation_count": 63
+    },
+    {
+      "service": "forecastquery",
+      "endpoint_prefix": "forecastquery",
+      "service_id": "forecastquery",
+      "api_version": "2018-06-26",
+      "protocol": "json",
+      "signing_name": "forecast",
+      "operation_count": 2
+    },
+    {
+      "service": "frauddetector",
+      "endpoint_prefix": "frauddetector",
+      "service_id": "FraudDetector",
+      "api_version": "2019-11-15",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 73
+    },
+    {
+      "service": "freetier",
+      "endpoint_prefix": "freetier",
+      "service_id": "FreeTier",
+      "api_version": "2023-09-07",
+      "protocol": "json",
+      "signing_name": "freetier",
+      "operation_count": 5
+    },
+    {
+      "service": "fsx",
+      "endpoint_prefix": "fsx",
+      "service_id": "FSx",
+      "api_version": "2018-03-01",
+      "protocol": "json",
+      "signing_name": "fsx",
+      "operation_count": 48
+    },
+    {
+      "service": "gamelift",
+      "endpoint_prefix": "gamelift",
+      "service_id": "GameLift",
+      "api_version": "2015-10-01",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": null,
+      "operation_count": 120
+    },
+    {
+      "service": "gameliftstreams",
+      "endpoint_prefix": "gameliftstreams",
+      "service_id": "GameLiftStreams",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "gameliftstreams",
+      "operation_count": 24
+    },
+    {
+      "service": "geo-maps",
+      "endpoint_prefix": "geo-maps",
+      "service_id": "Geo Maps",
+      "api_version": "2020-11-19",
+      "protocol": "rest-json",
+      "signing_name": "geo-maps",
+      "operation_count": 5
+    },
+    {
+      "service": "geo-places",
+      "endpoint_prefix": "geo-places",
+      "service_id": "Geo Places",
+      "api_version": "2020-11-19",
+      "protocol": "rest-json",
+      "signing_name": "geo-places",
+      "operation_count": 7
+    },
+    {
+      "service": "geo-routes",
+      "endpoint_prefix": "geo-routes",
+      "service_id": "Geo Routes",
+      "api_version": "2020-11-19",
+      "protocol": "rest-json",
+      "signing_name": "geo-routes",
+      "operation_count": 5
+    },
+    {
+      "service": "glacier",
+      "endpoint_prefix": "glacier",
+      "service_id": "Glacier",
+      "api_version": "2012-06-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 33
+    },
+    {
+      "service": "globalaccelerator",
+      "endpoint_prefix": "globalaccelerator",
+      "service_id": "Global Accelerator",
+      "api_version": "2018-08-08",
+      "protocol": "json",
+      "signing_name": "globalaccelerator",
+      "operation_count": 56
+    },
+    {
+      "service": "glue",
+      "endpoint_prefix": "glue",
+      "service_id": "Glue",
+      "api_version": "2017-03-31",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 265
+    },
+    {
+      "service": "grafana",
+      "endpoint_prefix": "grafana",
+      "service_id": "grafana",
+      "api_version": "2020-08-18",
+      "protocol": "rest-json",
+      "signing_name": "grafana",
+      "operation_count": 25
+    },
+    {
+      "service": "greengrass",
+      "endpoint_prefix": "greengrass",
+      "service_id": "Greengrass",
+      "api_version": "2017-06-07",
+      "protocol": "rest-json",
+      "signing_name": "greengrass",
+      "operation_count": 92
+    },
+    {
+      "service": "greengrassv2",
+      "endpoint_prefix": "greengrass",
+      "service_id": "GreengrassV2",
+      "api_version": "2020-11-30",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 29
+    },
+    {
+      "service": "groundstation",
+      "endpoint_prefix": "groundstation",
+      "service_id": "GroundStation",
+      "api_version": "2019-05-23",
+      "protocol": "rest-json",
+      "signing_name": "groundstation",
+      "operation_count": 40
+    },
+    {
+      "service": "guardduty",
+      "endpoint_prefix": "guardduty",
+      "service_id": "GuardDuty",
+      "api_version": "2017-11-28",
+      "protocol": "rest-json",
+      "signing_name": "guardduty",
+      "operation_count": 87
+    },
+    {
+      "service": "health",
+      "endpoint_prefix": "health",
+      "service_id": "Health",
+      "api_version": "2016-08-04",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 14
+    },
+    {
+      "service": "healthlake",
+      "endpoint_prefix": "healthlake",
+      "service_id": "HealthLake",
+      "api_version": "2017-07-01",
+      "protocol": "json",
+      "signing_name": "healthlake",
+      "operation_count": 13
+    },
+    {
+      "service": "iam",
+      "endpoint_prefix": "iam",
+      "service_id": "IAM",
+      "api_version": "2010-05-08",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 176
+    },
+    {
+      "service": "identitystore",
+      "endpoint_prefix": "identitystore",
+      "service_id": "identitystore",
+      "api_version": "2020-06-15",
+      "protocol": "json",
+      "signing_name": "identitystore",
+      "operation_count": 19
+    },
+    {
+      "service": "imagebuilder",
+      "endpoint_prefix": "imagebuilder",
+      "service_id": "imagebuilder",
+      "api_version": "2019-12-02",
+      "protocol": "rest-json",
+      "signing_name": "imagebuilder",
+      "operation_count": 77
+    },
+    {
+      "service": "importexport",
+      "endpoint_prefix": "importexport",
+      "service_id": "ImportExport",
+      "api_version": "2010-06-01",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 6
+    },
+    {
+      "service": "inspector",
+      "endpoint_prefix": "inspector",
+      "service_id": "Inspector",
+      "api_version": "2016-02-16",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 37
+    },
+    {
+      "service": "inspector-scan",
+      "endpoint_prefix": "inspector-scan",
+      "service_id": "Inspector Scan",
+      "api_version": "2023-08-08",
+      "protocol": "rest-json",
+      "signing_name": "inspector-scan",
+      "operation_count": 1
+    },
+    {
+      "service": "inspector2",
+      "endpoint_prefix": "inspector2",
+      "service_id": "Inspector2",
+      "api_version": "2020-06-08",
+      "protocol": "rest-json",
+      "signing_name": "inspector2",
+      "operation_count": 75
+    },
+    {
+      "service": "interconnect",
+      "endpoint_prefix": "interconnect",
+      "service_id": "Interconnect",
+      "api_version": "2022-07-26",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": "interconnect",
+      "operation_count": 13
+    },
+    {
+      "service": "internetmonitor",
+      "endpoint_prefix": "internetmonitor",
+      "service_id": "InternetMonitor",
+      "api_version": "2021-06-03",
+      "protocol": "rest-json",
+      "signing_name": "internetmonitor",
+      "operation_count": 16
+    },
+    {
+      "service": "invoicing",
+      "endpoint_prefix": "invoicing",
+      "service_id": "Invoicing",
+      "api_version": "2024-12-01",
+      "protocol": "json",
+      "signing_name": "invoicing",
+      "operation_count": 17
+    },
+    {
+      "service": "iot",
+      "endpoint_prefix": "iot",
+      "service_id": "IoT",
+      "api_version": "2015-05-28",
+      "protocol": "rest-json",
+      "signing_name": "iot",
+      "operation_count": 272
+    },
+    {
+      "service": "iot-data",
+      "endpoint_prefix": "data-ats.iot",
+      "service_id": "IoT Data Plane",
+      "api_version": "2015-05-28",
+      "protocol": "rest-json",
+      "signing_name": "iotdata",
+      "operation_count": 8
+    },
+    {
+      "service": "iot-jobs-data",
+      "endpoint_prefix": "data.jobs.iot",
+      "service_id": "IoT Jobs Data Plane",
+      "api_version": "2017-09-29",
+      "protocol": "rest-json",
+      "signing_name": "iot-jobs-data",
+      "operation_count": 5
+    },
+    {
+      "service": "iot-managed-integrations",
+      "endpoint_prefix": "api.iotmanagedintegrations",
+      "service_id": "IoT Managed Integrations",
+      "api_version": "2025-03-03",
+      "protocol": "rest-json",
+      "signing_name": "iotmanagedintegrations",
+      "operation_count": 83
+    },
+    {
+      "service": "iotdeviceadvisor",
+      "endpoint_prefix": "api.iotdeviceadvisor",
+      "service_id": "IotDeviceAdvisor",
+      "api_version": "2020-09-18",
+      "protocol": "rest-json",
+      "signing_name": "iotdeviceadvisor",
+      "operation_count": 14
+    },
+    {
+      "service": "iotevents",
+      "endpoint_prefix": "iotevents",
+      "service_id": "IoT Events",
+      "api_version": "2018-07-27",
+      "protocol": "rest-json",
+      "signing_name": "iotevents",
+      "operation_count": 26
+    },
+    {
+      "service": "iotevents-data",
+      "endpoint_prefix": "data.iotevents",
+      "service_id": "IoT Events Data",
+      "api_version": "2018-10-23",
+      "protocol": "rest-json",
+      "signing_name": "ioteventsdata",
+      "operation_count": 12
+    },
+    {
+      "service": "iotfleetwise",
+      "endpoint_prefix": "iotfleetwise",
+      "service_id": "IoTFleetWise",
+      "api_version": "2021-06-17",
+      "protocol": "json",
+      "signing_name": "iotfleetwise",
+      "operation_count": 57
+    },
+    {
+      "service": "iotsecuretunneling",
+      "endpoint_prefix": "api.tunneling.iot",
+      "service_id": "IoTSecureTunneling",
+      "api_version": "2018-10-05",
+      "protocol": "json",
+      "signing_name": "IoTSecuredTunneling",
+      "operation_count": 8
+    },
+    {
+      "service": "iotsitewise",
+      "endpoint_prefix": "iotsitewise",
+      "service_id": "IoTSiteWise",
+      "api_version": "2019-12-02",
+      "protocol": "rest-json",
+      "signing_name": "iotsitewise",
+      "operation_count": 104
+    },
+    {
+      "service": "iotthingsgraph",
+      "endpoint_prefix": "iotthingsgraph",
+      "service_id": "IoTThingsGraph",
+      "api_version": "2018-09-06",
+      "protocol": "json",
+      "signing_name": "iotthingsgraph",
+      "operation_count": 35
+    },
+    {
+      "service": "iottwinmaker",
+      "endpoint_prefix": "iottwinmaker",
+      "service_id": "IoTTwinMaker",
+      "api_version": "2021-11-29",
+      "protocol": "rest-json",
+      "signing_name": "iottwinmaker",
+      "operation_count": 40
+    },
+    {
+      "service": "iotwireless",
+      "endpoint_prefix": "api.iotwireless",
+      "service_id": "IoT Wireless",
+      "api_version": "2020-11-22",
+      "protocol": "rest-json",
+      "signing_name": "iotwireless",
+      "operation_count": 112
+    },
+    {
+      "service": "ivs",
+      "endpoint_prefix": "ivs",
+      "service_id": "ivs",
+      "api_version": "2020-07-14",
+      "protocol": "rest-json",
+      "signing_name": "ivs",
+      "operation_count": 40
+    },
+    {
+      "service": "ivs-realtime",
+      "endpoint_prefix": "ivsrealtime",
+      "service_id": "IVS RealTime",
+      "api_version": "2020-07-14",
+      "protocol": "rest-json",
+      "signing_name": "ivs",
+      "operation_count": 39
+    },
+    {
+      "service": "ivschat",
+      "endpoint_prefix": "ivschat",
+      "service_id": "ivschat",
+      "api_version": "2020-07-14",
+      "protocol": "rest-json",
+      "signing_name": "ivschat",
+      "operation_count": 17
+    },
+    {
+      "service": "kafka",
+      "endpoint_prefix": "kafka",
+      "service_id": "Kafka",
+      "api_version": "2018-11-14",
+      "protocol": "rest-json",
+      "signing_name": "kafka",
+      "operation_count": 59
+    },
+    {
+      "service": "kafkaconnect",
+      "endpoint_prefix": "kafkaconnect",
+      "service_id": "KafkaConnect",
+      "api_version": "2021-09-14",
+      "protocol": "rest-json",
+      "signing_name": "kafkaconnect",
+      "operation_count": 18
+    },
+    {
+      "service": "kendra",
+      "endpoint_prefix": "kendra",
+      "service_id": "kendra",
+      "api_version": "2019-02-03",
+      "protocol": "json",
+      "signing_name": "kendra",
+      "operation_count": 66
+    },
+    {
+      "service": "kendra-ranking",
+      "endpoint_prefix": "kendra-ranking",
+      "service_id": "Kendra Ranking",
+      "api_version": "2022-10-19",
+      "protocol": "json",
+      "signing_name": "kendra-ranking",
+      "operation_count": 9
+    },
+    {
+      "service": "keyspaces",
+      "endpoint_prefix": "cassandra",
+      "service_id": "Keyspaces",
+      "api_version": "2022-02-10",
+      "protocol": "json",
+      "signing_name": "cassandra",
+      "operation_count": 19
+    },
+    {
+      "service": "keyspacesstreams",
+      "endpoint_prefix": "cassandra-streams",
+      "service_id": "KeyspacesStreams",
+      "api_version": "2024-09-09",
+      "protocol": "json",
+      "signing_name": "cassandra",
+      "operation_count": 4
+    },
+    {
+      "service": "kinesis",
+      "endpoint_prefix": "kinesis",
+      "service_id": "Kinesis",
+      "api_version": "2013-12-02",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 39
+    },
+    {
+      "service": "kinesis-video-archived-media",
+      "endpoint_prefix": "kinesisvideo",
+      "service_id": "Kinesis Video Archived Media",
+      "api_version": "2017-09-30",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 6
+    },
+    {
+      "service": "kinesis-video-media",
+      "endpoint_prefix": "kinesisvideo",
+      "service_id": "Kinesis Video Media",
+      "api_version": "2017-09-30",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 1
+    },
+    {
+      "service": "kinesis-video-signaling",
+      "endpoint_prefix": "kinesisvideo",
+      "service_id": "Kinesis Video Signaling",
+      "api_version": "2019-12-04",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 2
+    },
+    {
+      "service": "kinesis-video-webrtc-storage",
+      "endpoint_prefix": "kinesisvideo",
+      "service_id": "Kinesis Video WebRTC Storage",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "kinesisvideo",
+      "operation_count": 2
+    },
+    {
+      "service": "kinesisanalytics",
+      "endpoint_prefix": "kinesisanalytics",
+      "service_id": "Kinesis Analytics",
+      "api_version": "2015-08-14",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 20
+    },
+    {
+      "service": "kinesisanalyticsv2",
+      "endpoint_prefix": "kinesisanalytics",
+      "service_id": "Kinesis Analytics V2",
+      "api_version": "2018-05-23",
+      "protocol": "json",
+      "signing_name": "kinesisanalytics",
+      "operation_count": 33
+    },
+    {
+      "service": "kinesisvideo",
+      "endpoint_prefix": "kinesisvideo",
+      "service_id": "Kinesis Video",
+      "api_version": "2017-09-30",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 32
+    },
+    {
+      "service": "kms",
+      "endpoint_prefix": "kms",
+      "service_id": "KMS",
+      "api_version": "2014-11-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 54
+    },
+    {
+      "service": "lakeformation",
+      "endpoint_prefix": "lakeformation",
+      "service_id": "LakeFormation",
+      "api_version": "2017-03-31",
+      "protocol": "rest-json",
+      "signing_name": "lakeformation",
+      "operation_count": 61
+    },
+    {
+      "service": "lambda",
+      "endpoint_prefix": "lambda",
+      "service_id": "Lambda",
+      "api_version": "2015-03-31",
+      "protocol": "rest-json",
+      "signing_name": "lambda",
+      "operation_count": 85
+    },
+    {
+      "service": "launch-wizard",
+      "endpoint_prefix": "launchwizard",
+      "service_id": "Launch Wizard",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "launchwizard",
+      "operation_count": 15
+    },
+    {
+      "service": "lex-models",
+      "endpoint_prefix": "models.lex",
+      "service_id": "Lex Model Building Service",
+      "api_version": "2017-04-19",
+      "protocol": "rest-json",
+      "signing_name": "lex",
+      "operation_count": 42
+    },
+    {
+      "service": "lex-runtime",
+      "endpoint_prefix": "runtime.lex",
+      "service_id": "Lex Runtime Service",
+      "api_version": "2016-11-28",
+      "protocol": "rest-json",
+      "signing_name": "lex",
+      "operation_count": 5
+    },
+    {
+      "service": "lexv2-models",
+      "endpoint_prefix": "models-v2-lex",
+      "service_id": "Lex Models V2",
+      "api_version": "2020-08-07",
+      "protocol": "rest-json",
+      "signing_name": "lex",
+      "operation_count": 107
+    },
+    {
+      "service": "lexv2-runtime",
+      "endpoint_prefix": "runtime-v2-lex",
+      "service_id": "Lex Runtime V2",
+      "api_version": "2020-08-07",
+      "protocol": "rest-json",
+      "signing_name": "lex",
+      "operation_count": 6
+    },
+    {
+      "service": "license-manager",
+      "endpoint_prefix": "license-manager",
+      "service_id": "License Manager",
+      "api_version": "2018-08-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 62
+    },
+    {
+      "service": "license-manager-linux-subscriptions",
+      "endpoint_prefix": "license-manager-linux-subscriptions",
+      "service_id": "License Manager Linux Subscriptions",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "license-manager-linux-subscriptions",
+      "operation_count": 11
+    },
+    {
+      "service": "license-manager-user-subscriptions",
+      "endpoint_prefix": "license-manager-user-subscriptions",
+      "service_id": "License Manager User Subscriptions",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "license-manager-user-subscriptions",
+      "operation_count": 17
+    },
+    {
+      "service": "lightsail",
+      "endpoint_prefix": "lightsail",
+      "service_id": "Lightsail",
+      "api_version": "2016-11-28",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 161
+    },
+    {
+      "service": "location",
+      "endpoint_prefix": "geo",
+      "service_id": "Location",
+      "api_version": "2020-11-19",
+      "protocol": "rest-json",
+      "signing_name": "geo",
+      "operation_count": 64
+    },
+    {
+      "service": "logs",
+      "endpoint_prefix": "logs",
+      "service_id": "CloudWatch Logs",
+      "api_version": "2014-03-28",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 113
+    },
+    {
+      "service": "lookoutequipment",
+      "endpoint_prefix": "lookoutequipment",
+      "service_id": "LookoutEquipment",
+      "api_version": "2020-12-15",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 49
+    },
+    {
+      "service": "m2",
+      "endpoint_prefix": "m2",
+      "service_id": "m2",
+      "api_version": "2021-04-28",
+      "protocol": "rest-json",
+      "signing_name": "m2",
+      "operation_count": 37
+    },
+    {
+      "service": "machinelearning",
+      "endpoint_prefix": "machinelearning",
+      "service_id": "Machine Learning",
+      "api_version": "2014-12-12",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 28
+    },
+    {
+      "service": "macie2",
+      "endpoint_prefix": "macie2",
+      "service_id": "Macie2",
+      "api_version": "2020-01-01",
+      "protocol": "rest-json",
+      "signing_name": "macie2",
+      "operation_count": 81
+    },
+    {
+      "service": "mailmanager",
+      "endpoint_prefix": "mail-manager",
+      "service_id": "MailManager",
+      "api_version": "2023-10-17",
+      "protocol": "json",
+      "signing_name": "ses",
+      "operation_count": 60
+    },
+    {
+      "service": "managedblockchain",
+      "endpoint_prefix": "managedblockchain",
+      "service_id": "ManagedBlockchain",
+      "api_version": "2018-09-24",
+      "protocol": "rest-json",
+      "signing_name": "managedblockchain",
+      "operation_count": 27
+    },
+    {
+      "service": "managedblockchain-query",
+      "endpoint_prefix": "managedblockchain-query",
+      "service_id": "ManagedBlockchain Query",
+      "api_version": "2023-05-04",
+      "protocol": "rest-json",
+      "signing_name": "managedblockchain-query",
+      "operation_count": 9
+    },
+    {
+      "service": "marketplace-agreement",
+      "endpoint_prefix": "agreement-marketplace",
+      "service_id": "Marketplace Agreement",
+      "api_version": "2020-03-01",
+      "protocol": "json",
+      "signing_name": "aws-marketplace",
+      "operation_count": 25
+    },
+    {
+      "service": "marketplace-catalog",
+      "endpoint_prefix": "catalog.marketplace",
+      "service_id": "Marketplace Catalog",
+      "api_version": "2018-09-17",
+      "protocol": "rest-json",
+      "signing_name": "aws-marketplace",
+      "operation_count": 13
+    },
+    {
+      "service": "marketplace-deployment",
+      "endpoint_prefix": "deployment-marketplace",
+      "service_id": "Marketplace Deployment",
+      "api_version": "2023-01-25",
+      "protocol": "rest-json",
+      "signing_name": "aws-marketplace",
+      "operation_count": 4
+    },
+    {
+      "service": "marketplace-discovery",
+      "endpoint_prefix": "discovery-marketplace",
+      "service_id": "Marketplace Discovery",
+      "api_version": "2026-02-05",
+      "protocol": "rest-json",
+      "signing_name": "aws-marketplace",
+      "operation_count": 9
+    },
+    {
+      "service": "marketplace-entitlement",
+      "endpoint_prefix": "entitlement.marketplace",
+      "service_id": "Marketplace Entitlement Service",
+      "api_version": "2017-01-11",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": "aws-marketplace",
+      "operation_count": 1
+    },
+    {
+      "service": "marketplace-reporting",
+      "endpoint_prefix": "reporting-marketplace",
+      "service_id": "Marketplace Reporting",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "aws-marketplace",
+      "operation_count": 1
+    },
+    {
+      "service": "marketplacecommerceanalytics",
+      "endpoint_prefix": "marketplacecommerceanalytics",
+      "service_id": "Marketplace Commerce Analytics",
+      "api_version": "2015-07-01",
+      "protocol": "json",
+      "signing_name": "marketplacecommerceanalytics",
+      "operation_count": 2
+    },
+    {
+      "service": "mediaconnect",
+      "endpoint_prefix": "mediaconnect",
+      "service_id": "MediaConnect",
+      "api_version": "2018-11-14",
+      "protocol": "rest-json",
+      "signing_name": "mediaconnect",
+      "operation_count": 82
+    },
+    {
+      "service": "mediaconvert",
+      "endpoint_prefix": "mediaconvert",
+      "service_id": "MediaConvert",
+      "api_version": "2017-08-29",
+      "protocol": "rest-json",
+      "signing_name": "mediaconvert",
+      "operation_count": 34
+    },
+    {
+      "service": "medialive",
+      "endpoint_prefix": "medialive",
+      "service_id": "MediaLive",
+      "api_version": "2017-10-14",
+      "protocol": "rest-json",
+      "signing_name": "medialive",
+      "operation_count": 123
+    },
+    {
+      "service": "mediapackage",
+      "endpoint_prefix": "mediapackage",
+      "service_id": "MediaPackage",
+      "api_version": "2017-10-12",
+      "protocol": "rest-json",
+      "signing_name": "mediapackage",
+      "operation_count": 19
+    },
+    {
+      "service": "mediapackage-vod",
+      "endpoint_prefix": "mediapackage-vod",
+      "service_id": "MediaPackage Vod",
+      "api_version": "2018-11-07",
+      "protocol": "rest-json",
+      "signing_name": "mediapackage-vod",
+      "operation_count": 17
+    },
+    {
+      "service": "mediapackagev2",
+      "endpoint_prefix": "mediapackagev2",
+      "service_id": "MediaPackageV2",
+      "api_version": "2022-12-25",
+      "protocol": "rest-json",
+      "signing_name": "mediapackagev2",
+      "operation_count": 30
+    },
+    {
+      "service": "mediastore",
+      "endpoint_prefix": "mediastore",
+      "service_id": "MediaStore",
+      "api_version": "2017-09-01",
+      "protocol": "json",
+      "signing_name": "mediastore",
+      "operation_count": 21
+    },
+    {
+      "service": "mediastore-data",
+      "endpoint_prefix": "data.mediastore",
+      "service_id": "MediaStore Data",
+      "api_version": "2017-09-01",
+      "protocol": "rest-json",
+      "signing_name": "mediastore",
+      "operation_count": 5
+    },
+    {
+      "service": "mediatailor",
+      "endpoint_prefix": "api.mediatailor",
+      "service_id": "MediaTailor",
+      "api_version": "2018-04-23",
+      "protocol": "rest-json",
+      "signing_name": "mediatailor",
+      "operation_count": 48
+    },
+    {
+      "service": "medical-imaging",
+      "endpoint_prefix": "medical-imaging",
+      "service_id": "Medical Imaging",
+      "api_version": "2023-07-19",
+      "protocol": "rest-json",
+      "signing_name": "medical-imaging",
+      "operation_count": 18
+    },
+    {
+      "service": "memorydb",
+      "endpoint_prefix": "memory-db",
+      "service_id": "MemoryDB",
+      "api_version": "2021-01-01",
+      "protocol": "json",
+      "signing_name": "memorydb",
+      "operation_count": 45
+    },
+    {
+      "service": "meteringmarketplace",
+      "endpoint_prefix": "metering.marketplace",
+      "service_id": "Marketplace Metering",
+      "api_version": "2016-01-14",
+      "protocol": "json",
+      "signing_name": "aws-marketplace",
+      "operation_count": 4
+    },
+    {
+      "service": "mgh",
+      "endpoint_prefix": "mgh",
+      "service_id": "Migration Hub",
+      "api_version": "2017-05-31",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 21
+    },
+    {
+      "service": "mgn",
+      "endpoint_prefix": "mgn",
+      "service_id": "mgn",
+      "api_version": "2020-02-26",
+      "protocol": "rest-json",
+      "signing_name": "mgn",
+      "operation_count": 95
+    },
+    {
+      "service": "migration-hub-refactor-spaces",
+      "endpoint_prefix": "refactor-spaces",
+      "service_id": "Migration Hub Refactor Spaces",
+      "api_version": "2021-10-26",
+      "protocol": "rest-json",
+      "signing_name": "refactor-spaces",
+      "operation_count": 24
+    },
+    {
+      "service": "migrationhub-config",
+      "endpoint_prefix": "migrationhub-config",
+      "service_id": "MigrationHub Config",
+      "api_version": "2019-06-30",
+      "protocol": "json",
+      "signing_name": "mgh",
+      "operation_count": 4
+    },
+    {
+      "service": "migrationhuborchestrator",
+      "endpoint_prefix": "migrationhub-orchestrator",
+      "service_id": "MigrationHubOrchestrator",
+      "api_version": "2021-08-28",
+      "protocol": "rest-json",
+      "signing_name": "migrationhub-orchestrator",
+      "operation_count": 31
+    },
+    {
+      "service": "migrationhubstrategy",
+      "endpoint_prefix": "migrationhub-strategy",
+      "service_id": "MigrationHubStrategy",
+      "api_version": "2020-02-19",
+      "protocol": "rest-json",
+      "signing_name": "migrationhub-strategy",
+      "operation_count": 22
+    },
+    {
+      "service": "mpa",
+      "endpoint_prefix": "mpa",
+      "service_id": "MPA",
+      "api_version": "2022-07-26",
+      "protocol": "rest-json",
+      "signing_name": "mpa",
+      "operation_count": 22
+    },
+    {
+      "service": "mq",
+      "endpoint_prefix": "mq",
+      "service_id": "mq",
+      "api_version": "2017-11-27",
+      "protocol": "rest-json",
+      "signing_name": "mq",
+      "operation_count": 24
+    },
+    {
+      "service": "mturk",
+      "endpoint_prefix": "mturk-requester",
+      "service_id": "MTurk",
+      "api_version": "2017-01-17",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 39
+    },
+    {
+      "service": "mwaa",
+      "endpoint_prefix": "airflow",
+      "service_id": "MWAA",
+      "api_version": "2020-07-01",
+      "protocol": "rest-json",
+      "signing_name": "airflow",
+      "operation_count": 12
+    },
+    {
+      "service": "mwaa-serverless",
+      "endpoint_prefix": "airflow-serverless",
+      "service_id": "MWAA Serverless",
+      "api_version": "2024-07-26",
+      "protocol": "json",
+      "signing_name": "airflow-serverless",
+      "operation_count": 15
+    },
+    {
+      "service": "neptune",
+      "endpoint_prefix": "rds",
+      "service_id": "Neptune",
+      "api_version": "2014-10-31",
+      "protocol": "query",
+      "signing_name": "rds",
+      "operation_count": 70
+    },
+    {
+      "service": "neptune-graph",
+      "endpoint_prefix": "neptune-graph",
+      "service_id": "Neptune Graph",
+      "api_version": "2023-11-29",
+      "protocol": "rest-json",
+      "signing_name": "neptune-graph",
+      "operation_count": 34
+    },
+    {
+      "service": "neptunedata",
+      "endpoint_prefix": "neptune-db",
+      "service_id": "neptunedata",
+      "api_version": "2023-08-01",
+      "protocol": "rest-json",
+      "signing_name": "neptune-db",
+      "operation_count": 43
+    },
+    {
+      "service": "network-firewall",
+      "endpoint_prefix": "network-firewall",
+      "service_id": "Network Firewall",
+      "api_version": "2020-11-12",
+      "protocol": "json",
+      "signing_name": "network-firewall",
+      "operation_count": 79
+    },
+    {
+      "service": "networkflowmonitor",
+      "endpoint_prefix": "networkflowmonitor",
+      "service_id": "NetworkFlowMonitor",
+      "api_version": "2023-04-19",
+      "protocol": "rest-json",
+      "signing_name": "networkflowmonitor",
+      "operation_count": 25
+    },
+    {
+      "service": "networkmanager",
+      "endpoint_prefix": "networkmanager",
+      "service_id": "NetworkManager",
+      "api_version": "2019-07-05",
+      "protocol": "rest-json",
+      "signing_name": "networkmanager",
+      "operation_count": 95
+    },
+    {
+      "service": "networkmonitor",
+      "endpoint_prefix": "networkmonitor",
+      "service_id": "NetworkMonitor",
+      "api_version": "2023-08-01",
+      "protocol": "rest-json",
+      "signing_name": "networkmonitor",
+      "operation_count": 12
+    },
+    {
+      "service": "notifications",
+      "endpoint_prefix": "notifications",
+      "service_id": "Notifications",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "notifications",
+      "operation_count": 39
+    },
+    {
+      "service": "notificationscontacts",
+      "endpoint_prefix": "notifications-contacts",
+      "service_id": "NotificationsContacts",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "notifications-contacts",
+      "operation_count": 9
+    },
+    {
+      "service": "nova-act",
+      "endpoint_prefix": "nova-act",
+      "service_id": "Nova Act",
+      "api_version": "2025-08-22",
+      "protocol": "rest-json",
+      "signing_name": "nova-act",
+      "operation_count": 16
+    },
+    {
+      "service": "oam",
+      "endpoint_prefix": "oam",
+      "service_id": "OAM",
+      "api_version": "2022-06-10",
+      "protocol": "rest-json",
+      "signing_name": "oam",
+      "operation_count": 15
+    },
+    {
+      "service": "observabilityadmin",
+      "endpoint_prefix": "observabilityadmin",
+      "service_id": "ObservabilityAdmin",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "observabilityadmin",
+      "operation_count": 40
+    },
+    {
+      "service": "odb",
+      "endpoint_prefix": "odb",
+      "service_id": "odb",
+      "api_version": "2024-08-20",
+      "protocol": "json",
+      "signing_name": "odb",
+      "operation_count": 43
+    },
+    {
+      "service": "omics",
+      "endpoint_prefix": "omics",
+      "service_id": "Omics",
+      "api_version": "2022-11-28",
+      "protocol": "rest-json",
+      "signing_name": "omics",
+      "operation_count": 107
+    },
+    {
+      "service": "opensearch",
+      "endpoint_prefix": "es",
+      "service_id": "OpenSearch",
+      "api_version": "2021-01-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 88
+    },
+    {
+      "service": "opensearchserverless",
+      "endpoint_prefix": "aoss",
+      "service_id": "OpenSearchServerless",
+      "api_version": "2021-11-01",
+      "protocol": "json",
+      "signing_name": "aoss",
+      "operation_count": 46
+    },
+    {
+      "service": "organizations",
+      "endpoint_prefix": "organizations",
+      "service_id": "Organizations",
+      "api_version": "2016-11-28",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 63
+    },
+    {
+      "service": "osis",
+      "endpoint_prefix": "osis",
+      "service_id": "OSIS",
+      "api_version": "2022-01-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 22
+    },
+    {
+      "service": "outposts",
+      "endpoint_prefix": "outposts",
+      "service_id": "Outposts",
+      "api_version": "2019-12-03",
+      "protocol": "rest-json",
+      "signing_name": "outposts",
+      "operation_count": 37
+    },
+    {
+      "service": "panorama",
+      "endpoint_prefix": "panorama",
+      "service_id": "Panorama",
+      "api_version": "2019-07-24",
+      "protocol": "rest-json",
+      "signing_name": "panorama",
+      "operation_count": 34
+    },
+    {
+      "service": "partnercentral-account",
+      "endpoint_prefix": "partnercentral-account",
+      "service_id": "PartnerCentral Account",
+      "api_version": "2025-04-04",
+      "protocol": "json",
+      "signing_name": "partnercentral-account",
+      "operation_count": 29
+    },
+    {
+      "service": "partnercentral-benefits",
+      "endpoint_prefix": "partnercentral-benefits",
+      "service_id": "PartnerCentral Benefits",
+      "api_version": "2018-05-10",
+      "protocol": "json",
+      "signing_name": "partnercentral-benefits",
+      "operation_count": 17
+    },
+    {
+      "service": "partnercentral-channel",
+      "endpoint_prefix": "partnercentral-channel",
+      "service_id": "PartnerCentral Channel",
+      "api_version": "2024-03-18",
+      "protocol": "json",
+      "signing_name": "partnercentral-channel",
+      "operation_count": 17
+    },
+    {
+      "service": "partnercentral-selling",
+      "endpoint_prefix": "partnercentral-selling",
+      "service_id": "PartnerCentral Selling",
+      "api_version": "2022-07-26",
+      "protocol": "json",
+      "signing_name": "partnercentral-selling",
+      "operation_count": 42
+    },
+    {
+      "service": "payment-cryptography",
+      "endpoint_prefix": "controlplane.payment-cryptography",
+      "service_id": "Payment Cryptography",
+      "api_version": "2021-09-14",
+      "protocol": "json",
+      "signing_name": "payment-cryptography",
+      "operation_count": 32
+    },
+    {
+      "service": "payment-cryptography-data",
+      "endpoint_prefix": "dataplane.payment-cryptography",
+      "service_id": "Payment Cryptography Data",
+      "api_version": "2022-02-03",
+      "protocol": "rest-json",
+      "signing_name": "payment-cryptography",
+      "operation_count": 15
+    },
+    {
+      "service": "pca-connector-ad",
+      "endpoint_prefix": "pca-connector-ad",
+      "service_id": "Pca Connector Ad",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "pca-connector-ad",
+      "operation_count": 25
+    },
+    {
+      "service": "pca-connector-scep",
+      "endpoint_prefix": "pca-connector-scep",
+      "service_id": "Pca Connector Scep",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "pca-connector-scep",
+      "operation_count": 12
+    },
+    {
+      "service": "pcs",
+      "endpoint_prefix": "pcs",
+      "service_id": "PCS",
+      "api_version": "2023-02-10",
+      "protocol": "json",
+      "signing_name": "pcs",
+      "operation_count": 19
+    },
+    {
+      "service": "personalize",
+      "endpoint_prefix": "personalize",
+      "service_id": "Personalize",
+      "api_version": "2018-05-22",
+      "protocol": "json",
+      "signing_name": "personalize",
+      "operation_count": 71
+    },
+    {
+      "service": "personalize-events",
+      "endpoint_prefix": "personalize-events",
+      "service_id": "Personalize Events",
+      "api_version": "2018-03-22",
+      "protocol": "rest-json",
+      "signing_name": "personalize",
+      "operation_count": 5
+    },
+    {
+      "service": "personalize-runtime",
+      "endpoint_prefix": "personalize-runtime",
+      "service_id": "Personalize Runtime",
+      "api_version": "2018-05-22",
+      "protocol": "rest-json",
+      "signing_name": "personalize",
+      "operation_count": 3
+    },
+    {
+      "service": "pi",
+      "endpoint_prefix": "pi",
+      "service_id": "PI",
+      "api_version": "2018-02-27",
+      "protocol": "json",
+      "signing_name": "pi",
+      "operation_count": 13
+    },
+    {
+      "service": "pinpoint",
+      "endpoint_prefix": "pinpoint",
+      "service_id": "Pinpoint",
+      "api_version": "2016-12-01",
+      "protocol": "rest-json",
+      "signing_name": "mobiletargeting",
+      "operation_count": 122
+    },
+    {
+      "service": "pinpoint-email",
+      "endpoint_prefix": "email",
+      "service_id": "Pinpoint Email",
+      "api_version": "2018-07-26",
+      "protocol": "rest-json",
+      "signing_name": "ses",
+      "operation_count": 42
+    },
+    {
+      "service": "pinpoint-sms-voice",
+      "endpoint_prefix": "sms-voice.pinpoint",
+      "service_id": "Pinpoint SMS Voice",
+      "api_version": "2018-09-05",
+      "protocol": "rest-json",
+      "signing_name": "sms-voice",
+      "operation_count": 8
+    },
+    {
+      "service": "pinpoint-sms-voice-v2",
+      "endpoint_prefix": "sms-voice",
+      "service_id": "Pinpoint SMS Voice V2",
+      "api_version": "2022-03-31",
+      "protocol": "json",
+      "signing_name": "sms-voice",
+      "operation_count": 106
+    },
+    {
+      "service": "pipes",
+      "endpoint_prefix": "pipes",
+      "service_id": "Pipes",
+      "api_version": "2015-10-07",
+      "protocol": "rest-json",
+      "signing_name": "pipes",
+      "operation_count": 10
+    },
+    {
+      "service": "polly",
+      "endpoint_prefix": "polly",
+      "service_id": "Polly",
+      "api_version": "2016-06-10",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 10
+    },
+    {
+      "service": "pricing",
+      "endpoint_prefix": "api.pricing",
+      "service_id": "Pricing",
+      "api_version": "2017-10-15",
+      "protocol": "json",
+      "signing_name": "pricing",
+      "operation_count": 5
+    },
+    {
+      "service": "proton",
+      "endpoint_prefix": "proton",
+      "service_id": "Proton",
+      "api_version": "2020-07-20",
+      "protocol": "json",
+      "signing_name": "proton",
+      "operation_count": 87
+    },
+    {
+      "service": "qapps",
+      "endpoint_prefix": "data.qapps",
+      "service_id": "QApps",
+      "api_version": "2023-11-27",
+      "protocol": "rest-json",
+      "signing_name": "qapps",
+      "operation_count": 35
+    },
+    {
+      "service": "qbusiness",
+      "endpoint_prefix": "qbusiness",
+      "service_id": "QBusiness",
+      "api_version": "2023-11-27",
+      "protocol": "rest-json",
+      "signing_name": "qbusiness",
+      "operation_count": 83
+    },
+    {
+      "service": "qconnect",
+      "endpoint_prefix": "wisdom",
+      "service_id": "QConnect",
+      "api_version": "2020-10-19",
+      "protocol": "rest-json",
+      "signing_name": "wisdom",
+      "operation_count": 94
+    },
+    {
+      "service": "quicksight",
+      "endpoint_prefix": "quicksight",
+      "service_id": "QuickSight",
+      "api_version": "2018-04-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 232
+    },
+    {
+      "service": "ram",
+      "endpoint_prefix": "ram",
+      "service_id": "RAM",
+      "api_version": "2018-01-04",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 35
+    },
+    {
+      "service": "rbin",
+      "endpoint_prefix": "rbin",
+      "service_id": "rbin",
+      "api_version": "2021-06-15",
+      "protocol": "rest-json",
+      "signing_name": "rbin",
+      "operation_count": 10
+    },
+    {
+      "service": "rds",
+      "endpoint_prefix": "rds",
+      "service_id": "RDS",
+      "api_version": "2014-10-31",
+      "protocol": "query",
+      "signing_name": "rds",
+      "operation_count": 164
+    },
+    {
+      "service": "rds-data",
+      "endpoint_prefix": "rds-data",
+      "service_id": "RDS Data",
+      "api_version": "2018-08-01",
+      "protocol": "rest-json",
+      "signing_name": "rds-data",
+      "operation_count": 6
+    },
+    {
+      "service": "redshift",
+      "endpoint_prefix": "redshift",
+      "service_id": "Redshift",
+      "api_version": "2012-12-01",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 141
+    },
+    {
+      "service": "redshift-data",
+      "endpoint_prefix": "redshift-data",
+      "service_id": "Redshift Data",
+      "api_version": "2019-12-20",
+      "protocol": "json",
+      "signing_name": "redshift-data",
+      "operation_count": 11
+    },
+    {
+      "service": "redshift-serverless",
+      "endpoint_prefix": "redshift-serverless",
+      "service_id": "Redshift Serverless",
+      "api_version": "2021-04-21",
+      "protocol": "json",
+      "signing_name": "redshift-serverless",
+      "operation_count": 65
+    },
+    {
+      "service": "rekognition",
+      "endpoint_prefix": "rekognition",
+      "service_id": "Rekognition",
+      "api_version": "2016-06-27",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 75
+    },
+    {
+      "service": "repostspace",
+      "endpoint_prefix": "repostspace",
+      "service_id": "repostspace",
+      "api_version": "2022-05-13",
+      "protocol": "rest-json",
+      "signing_name": "repostspace",
+      "operation_count": 19
+    },
+    {
+      "service": "resiliencehub",
+      "endpoint_prefix": "resiliencehub",
+      "service_id": "resiliencehub",
+      "api_version": "2020-04-30",
+      "protocol": "rest-json",
+      "signing_name": "resiliencehub",
+      "operation_count": 63
+    },
+    {
+      "service": "resource-explorer-2",
+      "endpoint_prefix": "resource-explorer-2",
+      "service_id": "Resource Explorer 2",
+      "api_version": "2022-07-28",
+      "protocol": "rest-json",
+      "signing_name": "resource-explorer-2",
+      "operation_count": 32
+    },
+    {
+      "service": "resource-groups",
+      "endpoint_prefix": "resource-groups",
+      "service_id": "Resource Groups",
+      "api_version": "2017-11-27",
+      "protocol": "rest-json",
+      "signing_name": "resource-groups",
+      "operation_count": 23
+    },
+    {
+      "service": "resourcegroupstaggingapi",
+      "endpoint_prefix": "tagging",
+      "service_id": "Resource Groups Tagging API",
+      "api_version": "2017-01-26",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 9
+    },
+    {
+      "service": "rolesanywhere",
+      "endpoint_prefix": "rolesanywhere",
+      "service_id": "RolesAnywhere",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "rolesanywhere",
+      "operation_count": 30
+    },
+    {
+      "service": "route53",
+      "endpoint_prefix": "route53",
+      "service_id": "Route 53",
+      "api_version": "2013-04-01",
+      "protocol": "rest-xml",
+      "signing_name": null,
+      "operation_count": 71
+    },
+    {
+      "service": "route53-recovery-cluster",
+      "endpoint_prefix": "route53-recovery-cluster",
+      "service_id": "Route53 Recovery Cluster",
+      "api_version": "2019-12-02",
+      "protocol": "json",
+      "signing_name": "route53-recovery-cluster",
+      "operation_count": 4
+    },
+    {
+      "service": "route53-recovery-control-config",
+      "endpoint_prefix": "route53-recovery-control-config",
+      "service_id": "Route53 Recovery Control Config",
+      "api_version": "2020-11-02",
+      "protocol": "rest-json",
+      "signing_name": "route53-recovery-control-config",
+      "operation_count": 25
+    },
+    {
+      "service": "route53-recovery-readiness",
+      "endpoint_prefix": "route53-recovery-readiness",
+      "service_id": "Route53 Recovery Readiness",
+      "api_version": "2019-12-02",
+      "protocol": "rest-json",
+      "signing_name": "route53-recovery-readiness",
+      "operation_count": 32
+    },
+    {
+      "service": "route53domains",
+      "endpoint_prefix": "route53domains",
+      "service_id": "Route 53 Domains",
+      "api_version": "2014-05-15",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 34
+    },
+    {
+      "service": "route53globalresolver",
+      "endpoint_prefix": "route53globalresolver",
+      "service_id": "Route53GlobalResolver",
+      "api_version": "2022-09-27",
+      "protocol": "rest-json",
+      "signing_name": "route53globalresolver",
+      "operation_count": 47
+    },
+    {
+      "service": "route53profiles",
+      "endpoint_prefix": "route53profiles",
+      "service_id": "Route53Profiles",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "route53profiles",
+      "operation_count": 16
+    },
+    {
+      "service": "route53resolver",
+      "endpoint_prefix": "route53resolver",
+      "service_id": "Route53Resolver",
+      "api_version": "2018-04-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 68
+    },
+    {
+      "service": "rtbfabric",
+      "endpoint_prefix": "rtbfabric",
+      "service_id": "RTBFabric",
+      "api_version": "2023-05-15",
+      "protocol": "rest-json",
+      "signing_name": "rtbfabric",
+      "operation_count": 36
+    },
+    {
+      "service": "rum",
+      "endpoint_prefix": "rum",
+      "service_id": "RUM",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "rum",
+      "operation_count": 20
+    },
+    {
+      "service": "s3",
+      "endpoint_prefix": "s3",
+      "service_id": "S3",
+      "api_version": "2006-03-01",
+      "protocol": "rest-xml",
+      "signing_name": null,
+      "operation_count": 111
+    },
+    {
+      "service": "s3control",
+      "endpoint_prefix": "s3-control",
+      "service_id": "S3 Control",
+      "api_version": "2018-08-20",
+      "protocol": "rest-xml",
+      "signing_name": "s3",
+      "operation_count": 97
+    },
+    {
+      "service": "s3files",
+      "endpoint_prefix": "s3files",
+      "service_id": "S3Files",
+      "api_version": "2025-05-05",
+      "protocol": "rest-json",
+      "signing_name": "s3files",
+      "operation_count": 21
+    },
+    {
+      "service": "s3outposts",
+      "endpoint_prefix": "s3-outposts",
+      "service_id": "S3Outposts",
+      "api_version": "2017-07-25",
+      "protocol": "rest-json",
+      "signing_name": "s3-outposts",
+      "operation_count": 5
+    },
+    {
+      "service": "s3tables",
+      "endpoint_prefix": "s3tables",
+      "service_id": "S3Tables",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "s3tables",
+      "operation_count": 49
+    },
+    {
+      "service": "s3vectors",
+      "endpoint_prefix": "s3vectors",
+      "service_id": "S3Vectors",
+      "api_version": "2025-07-15",
+      "protocol": "rest-json",
+      "signing_name": "s3vectors",
+      "operation_count": 19
+    },
+    {
+      "service": "sagemaker",
+      "endpoint_prefix": "api.sagemaker",
+      "service_id": "SageMaker",
+      "api_version": "2017-07-24",
+      "protocol": "json",
+      "signing_name": "sagemaker",
+      "operation_count": 396
+    },
+    {
+      "service": "sagemaker-a2i-runtime",
+      "endpoint_prefix": "a2i-runtime.sagemaker",
+      "service_id": "SageMaker A2I Runtime",
+      "api_version": "2019-11-07",
+      "protocol": "rest-json",
+      "signing_name": "sagemaker",
+      "operation_count": 5
+    },
+    {
+      "service": "sagemaker-edge",
+      "endpoint_prefix": "edge.sagemaker",
+      "service_id": "Sagemaker Edge",
+      "api_version": "2020-09-23",
+      "protocol": "rest-json",
+      "signing_name": "sagemaker",
+      "operation_count": 3
+    },
+    {
+      "service": "sagemaker-featurestore-runtime",
+      "endpoint_prefix": "featurestore-runtime.sagemaker",
+      "service_id": "SageMaker FeatureStore Runtime",
+      "api_version": "2020-07-01",
+      "protocol": "rest-json",
+      "signing_name": "sagemaker",
+      "operation_count": 4
+    },
+    {
+      "service": "sagemaker-geospatial",
+      "endpoint_prefix": "sagemaker-geospatial",
+      "service_id": "SageMaker Geospatial",
+      "api_version": "2020-05-27",
+      "protocol": "rest-json",
+      "signing_name": "sagemaker-geospatial",
+      "operation_count": 19
+    },
+    {
+      "service": "sagemaker-metrics",
+      "endpoint_prefix": "metrics.sagemaker",
+      "service_id": "SageMaker Metrics",
+      "api_version": "2022-09-30",
+      "protocol": "rest-json",
+      "signing_name": "sagemaker",
+      "operation_count": 2
+    },
+    {
+      "service": "sagemaker-runtime",
+      "endpoint_prefix": "runtime.sagemaker",
+      "service_id": "SageMaker Runtime",
+      "api_version": "2017-05-13",
+      "protocol": "rest-json",
+      "signing_name": "sagemaker",
+      "operation_count": 3
+    },
+    {
+      "service": "savingsplans",
+      "endpoint_prefix": "savingsplans",
+      "service_id": "savingsplans",
+      "api_version": "2019-06-28",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 10
+    },
+    {
+      "service": "scheduler",
+      "endpoint_prefix": "scheduler",
+      "service_id": "Scheduler",
+      "api_version": "2021-06-30",
+      "protocol": "rest-json",
+      "signing_name": "scheduler",
+      "operation_count": 12
+    },
+    {
+      "service": "schemas",
+      "endpoint_prefix": "schemas",
+      "service_id": "schemas",
+      "api_version": "2019-12-02",
+      "protocol": "rest-json",
+      "signing_name": "schemas",
+      "operation_count": 31
+    },
+    {
+      "service": "sdb",
+      "endpoint_prefix": "sdb",
+      "service_id": "SimpleDB",
+      "api_version": "2009-04-15",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 10
+    },
+    {
+      "service": "secretsmanager",
+      "endpoint_prefix": "secretsmanager",
+      "service_id": "Secrets Manager",
+      "api_version": "2017-10-17",
+      "protocol": "json",
+      "signing_name": "secretsmanager",
+      "operation_count": 23
+    },
+    {
+      "service": "security-ir",
+      "endpoint_prefix": "security-ir",
+      "service_id": "Security IR",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "security-ir",
+      "operation_count": 24
+    },
+    {
+      "service": "securityagent",
+      "endpoint_prefix": "securityagent",
+      "service_id": "SecurityAgent",
+      "api_version": "2025-09-06",
+      "protocol": "rest-json",
+      "signing_name": "securityagent",
+      "operation_count": 61
+    },
+    {
+      "service": "securityhub",
+      "endpoint_prefix": "securityhub",
+      "service_id": "SecurityHub",
+      "api_version": "2018-10-26",
+      "protocol": "rest-json",
+      "signing_name": "securityhub",
+      "operation_count": 109
+    },
+    {
+      "service": "securitylake",
+      "endpoint_prefix": "securitylake",
+      "service_id": "SecurityLake",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "securitylake",
+      "operation_count": 31
+    },
+    {
+      "service": "serverlessrepo",
+      "endpoint_prefix": "serverlessrepo",
+      "service_id": "ServerlessApplicationRepository",
+      "api_version": "2017-09-08",
+      "protocol": "rest-json",
+      "signing_name": "serverlessrepo",
+      "operation_count": 14
+    },
+    {
+      "service": "service-quotas",
+      "endpoint_prefix": "servicequotas",
+      "service_id": "Service Quotas",
+      "api_version": "2019-06-24",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 26
+    },
+    {
+      "service": "servicecatalog",
+      "endpoint_prefix": "servicecatalog",
+      "service_id": "Service Catalog",
+      "api_version": "2015-12-10",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 90
+    },
+    {
+      "service": "servicecatalog-appregistry",
+      "endpoint_prefix": "servicecatalog-appregistry",
+      "service_id": "Service Catalog AppRegistry",
+      "api_version": "2020-06-24",
+      "protocol": "rest-json",
+      "signing_name": "servicecatalog",
+      "operation_count": 24
+    },
+    {
+      "service": "servicediscovery",
+      "endpoint_prefix": "servicediscovery",
+      "service_id": "ServiceDiscovery",
+      "api_version": "2017-03-14",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 30
+    },
+    {
+      "service": "ses",
+      "endpoint_prefix": "email",
+      "service_id": "SES",
+      "api_version": "2010-12-01",
+      "protocol": "query",
+      "signing_name": "ses",
+      "operation_count": 71
+    },
+    {
+      "service": "sesv2",
+      "endpoint_prefix": "email",
+      "service_id": "SESv2",
+      "api_version": "2019-09-27",
+      "protocol": "rest-json",
+      "signing_name": "ses",
+      "operation_count": 110
+    },
+    {
+      "service": "shield",
+      "endpoint_prefix": "shield",
+      "service_id": "Shield",
+      "api_version": "2016-06-02",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 36
+    },
+    {
+      "service": "signer",
+      "endpoint_prefix": "signer",
+      "service_id": "signer",
+      "api_version": "2017-08-25",
+      "protocol": "rest-json",
+      "signing_name": "signer",
+      "operation_count": 19
+    },
+    {
+      "service": "signer-data",
+      "endpoint_prefix": "data-signer",
+      "service_id": "Signer Data",
+      "api_version": "2017-08-25",
+      "protocol": "rest-json",
+      "signing_name": "signer",
+      "operation_count": 1
+    },
+    {
+      "service": "signin",
+      "endpoint_prefix": "signin",
+      "service_id": "Signin",
+      "api_version": "2023-01-01",
+      "protocol": "rest-json",
+      "signing_name": "signin",
+      "operation_count": 1
+    },
+    {
+      "service": "simpledbv2",
+      "endpoint_prefix": "sdb",
+      "service_id": "SimpleDBv2",
+      "api_version": "2025-09-26",
+      "protocol": "rest-json",
+      "signing_name": "sdb",
+      "operation_count": 3
+    },
+    {
+      "service": "simspaceweaver",
+      "endpoint_prefix": "simspaceweaver",
+      "service_id": "SimSpaceWeaver",
+      "api_version": "2022-10-28",
+      "protocol": "rest-json",
+      "signing_name": "simspaceweaver",
+      "operation_count": 16
+    },
+    {
+      "service": "sms-voice",
+      "endpoint_prefix": "sms-voice.pinpoint",
+      "service_id": "Pinpoint SMS Voice",
+      "api_version": "2018-09-05",
+      "protocol": "rest-json",
+      "signing_name": "sms-voice",
+      "operation_count": 8
+    },
+    {
+      "service": "snow-device-management",
+      "endpoint_prefix": "snow-device-management",
+      "service_id": "Snow Device Management",
+      "api_version": "2021-08-04",
+      "protocol": "rest-json",
+      "signing_name": "snow-device-management",
+      "operation_count": 13
+    },
+    {
+      "service": "snowball",
+      "endpoint_prefix": "snowball",
+      "service_id": "Snowball",
+      "api_version": "2016-06-30",
+      "protocol": "smithy-rpc-v2-cbor",
+      "signing_name": null,
+      "operation_count": 27
+    },
+    {
+      "service": "sns",
+      "endpoint_prefix": "sns",
+      "service_id": "SNS",
+      "api_version": "2010-03-31",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 42
+    },
+    {
+      "service": "socialmessaging",
+      "endpoint_prefix": "social-messaging",
+      "service_id": "SocialMessaging",
+      "api_version": "2024-01-01",
+      "protocol": "rest-json",
+      "signing_name": "social-messaging",
+      "operation_count": 21
+    },
+    {
+      "service": "sqs",
+      "endpoint_prefix": "sqs",
+      "service_id": "SQS",
+      "api_version": "2012-11-05",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 23
+    },
+    {
+      "service": "ssm",
+      "endpoint_prefix": "ssm",
+      "service_id": "SSM",
+      "api_version": "2014-11-06",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 146
+    },
+    {
+      "service": "ssm-contacts",
+      "endpoint_prefix": "ssm-contacts",
+      "service_id": "SSM Contacts",
+      "api_version": "2021-05-03",
+      "protocol": "json",
+      "signing_name": "ssm-contacts",
+      "operation_count": 39
+    },
+    {
+      "service": "ssm-guiconnect",
+      "endpoint_prefix": "ssm-guiconnect",
+      "service_id": "SSM GuiConnect",
+      "api_version": "2021-05-01",
+      "protocol": "rest-json",
+      "signing_name": "ssm-guiconnect",
+      "operation_count": 3
+    },
+    {
+      "service": "ssm-incidents",
+      "endpoint_prefix": "ssm-incidents",
+      "service_id": "SSM Incidents",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "ssm-incidents",
+      "operation_count": 31
+    },
+    {
+      "service": "ssm-quicksetup",
+      "endpoint_prefix": "ssm-quicksetup",
+      "service_id": "SSM QuickSetup",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "ssm-quicksetup",
+      "operation_count": 14
+    },
+    {
+      "service": "ssm-sap",
+      "endpoint_prefix": "ssm-sap",
+      "service_id": "Ssm Sap",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "ssm-sap",
+      "operation_count": 27
+    },
+    {
+      "service": "sso",
+      "endpoint_prefix": "portal.sso",
+      "service_id": "SSO",
+      "api_version": "2019-06-10",
+      "protocol": "rest-json",
+      "signing_name": "awsssoportal",
+      "operation_count": 4
+    },
+    {
+      "service": "sso-admin",
+      "endpoint_prefix": "sso",
+      "service_id": "SSO Admin",
+      "api_version": "2020-07-20",
+      "protocol": "json",
+      "signing_name": "sso",
+      "operation_count": 79
+    },
+    {
+      "service": "sso-oidc",
+      "endpoint_prefix": "oidc",
+      "service_id": "SSO OIDC",
+      "api_version": "2019-06-10",
+      "protocol": "rest-json",
+      "signing_name": "sso-oauth",
+      "operation_count": 4
+    },
+    {
+      "service": "stepfunctions",
+      "endpoint_prefix": "states",
+      "service_id": "SFN",
+      "api_version": "2016-11-23",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 37
+    },
+    {
+      "service": "storagegateway",
+      "endpoint_prefix": "storagegateway",
+      "service_id": "Storage Gateway",
+      "api_version": "2013-06-30",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 96
+    },
+    {
+      "service": "sts",
+      "endpoint_prefix": "sts",
+      "service_id": "STS",
+      "api_version": "2011-06-15",
+      "protocol": "query",
+      "signing_name": null,
+      "operation_count": 11
+    },
+    {
+      "service": "supplychain",
+      "endpoint_prefix": "scn",
+      "service_id": "SupplyChain",
+      "api_version": "2024-01-01",
+      "protocol": "rest-json",
+      "signing_name": "scn",
+      "operation_count": 30
+    },
+    {
+      "service": "support",
+      "endpoint_prefix": "support",
+      "service_id": "Support",
+      "api_version": "2013-04-15",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 16
+    },
+    {
+      "service": "support-app",
+      "endpoint_prefix": "supportapp",
+      "service_id": "Support App",
+      "api_version": "2021-08-20",
+      "protocol": "rest-json",
+      "signing_name": "supportapp",
+      "operation_count": 10
+    },
+    {
+      "service": "sustainability",
+      "endpoint_prefix": "sustainability",
+      "service_id": "Sustainability",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "sustainability",
+      "operation_count": 2
+    },
+    {
+      "service": "swf",
+      "endpoint_prefix": "swf",
+      "service_id": "SWF",
+      "api_version": "2012-01-25",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 39
+    },
+    {
+      "service": "synthetics",
+      "endpoint_prefix": "synthetics",
+      "service_id": "synthetics",
+      "api_version": "2017-10-11",
+      "protocol": "rest-json",
+      "signing_name": "synthetics",
+      "operation_count": 22
+    },
+    {
+      "service": "taxsettings",
+      "endpoint_prefix": "tax",
+      "service_id": "TaxSettings",
+      "api_version": "2018-05-10",
+      "protocol": "rest-json",
+      "signing_name": "tax",
+      "operation_count": 16
+    },
+    {
+      "service": "textract",
+      "endpoint_prefix": "textract",
+      "service_id": "Textract",
+      "api_version": "2018-06-27",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 25
+    },
+    {
+      "service": "timestream-influxdb",
+      "endpoint_prefix": "timestream-influxdb",
+      "service_id": "Timestream InfluxDB",
+      "api_version": "2023-01-27",
+      "protocol": "json",
+      "signing_name": "timestream-influxdb",
+      "operation_count": 19
+    },
+    {
+      "service": "timestream-query",
+      "endpoint_prefix": "query.timestream",
+      "service_id": "Timestream Query",
+      "api_version": "2018-11-01",
+      "protocol": "json",
+      "signing_name": "timestream",
+      "operation_count": 15
+    },
+    {
+      "service": "timestream-write",
+      "endpoint_prefix": "ingest.timestream",
+      "service_id": "Timestream Write",
+      "api_version": "2018-11-01",
+      "protocol": "json",
+      "signing_name": "timestream",
+      "operation_count": 19
+    },
+    {
+      "service": "tnb",
+      "endpoint_prefix": "tnb",
+      "service_id": "tnb",
+      "api_version": "2008-10-21",
+      "protocol": "rest-json",
+      "signing_name": "tnb",
+      "operation_count": 33
+    },
+    {
+      "service": "transcribe",
+      "endpoint_prefix": "transcribe",
+      "service_id": "Transcribe",
+      "api_version": "2017-10-26",
+      "protocol": "json",
+      "signing_name": "transcribe",
+      "operation_count": 43
+    },
+    {
+      "service": "transfer",
+      "endpoint_prefix": "transfer",
+      "service_id": "Transfer",
+      "api_version": "2018-11-05",
+      "protocol": "json",
+      "signing_name": "transfer",
+      "operation_count": 71
+    },
+    {
+      "service": "translate",
+      "endpoint_prefix": "translate",
+      "service_id": "Translate",
+      "api_version": "2017-07-01",
+      "protocol": "json",
+      "signing_name": "translate",
+      "operation_count": 19
+    },
+    {
+      "service": "trustedadvisor",
+      "endpoint_prefix": "trustedadvisor",
+      "service_id": "TrustedAdvisor",
+      "api_version": "2022-09-15",
+      "protocol": "rest-json",
+      "signing_name": "trustedadvisor",
+      "operation_count": 11
+    },
+    {
+      "service": "uxc",
+      "endpoint_prefix": "uxc",
+      "service_id": "uxc",
+      "api_version": "2024-07-01",
+      "protocol": "rest-json",
+      "signing_name": "uxc",
+      "operation_count": 3
+    },
+    {
+      "service": "verifiedpermissions",
+      "endpoint_prefix": "verifiedpermissions",
+      "service_id": "VerifiedPermissions",
+      "api_version": "2021-12-01",
+      "protocol": "json",
+      "signing_name": "verifiedpermissions",
+      "operation_count": 34
+    },
+    {
+      "service": "voice-id",
+      "endpoint_prefix": "voiceid",
+      "service_id": "Voice ID",
+      "api_version": "2021-09-27",
+      "protocol": "json",
+      "signing_name": "voiceid",
+      "operation_count": 29
+    },
+    {
+      "service": "vpc-lattice",
+      "endpoint_prefix": "vpc-lattice",
+      "service_id": "VPC Lattice",
+      "api_version": "2022-11-30",
+      "protocol": "rest-json",
+      "signing_name": "vpc-lattice",
+      "operation_count": 73
+    },
+    {
+      "service": "waf",
+      "endpoint_prefix": "waf",
+      "service_id": "WAF",
+      "api_version": "2015-08-24",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 77
+    },
+    {
+      "service": "waf-regional",
+      "endpoint_prefix": "waf-regional",
+      "service_id": "WAF Regional",
+      "api_version": "2016-11-28",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 81
+    },
+    {
+      "service": "wafv2",
+      "endpoint_prefix": "wafv2",
+      "service_id": "WAFV2",
+      "api_version": "2019-07-29",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 55
+    },
+    {
+      "service": "wellarchitected",
+      "endpoint_prefix": "wellarchitected",
+      "service_id": "WellArchitected",
+      "api_version": "2020-03-31",
+      "protocol": "rest-json",
+      "signing_name": "wellarchitected",
+      "operation_count": 72
+    },
+    {
+      "service": "wickr",
+      "endpoint_prefix": "admin.wickr",
+      "service_id": "Wickr",
+      "api_version": "2024-02-01",
+      "protocol": "rest-json",
+      "signing_name": "wickr",
+      "operation_count": 44
+    },
+    {
+      "service": "wisdom",
+      "endpoint_prefix": "wisdom",
+      "service_id": "Wisdom",
+      "api_version": "2020-10-19",
+      "protocol": "rest-json",
+      "signing_name": "wisdom",
+      "operation_count": 41
+    },
+    {
+      "service": "workdocs",
+      "endpoint_prefix": "workdocs",
+      "service_id": "WorkDocs",
+      "api_version": "2016-05-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 44
+    },
+    {
+      "service": "workmail",
+      "endpoint_prefix": "workmail",
+      "service_id": "WorkMail",
+      "api_version": "2017-10-01",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 92
+    },
+    {
+      "service": "workmailmessageflow",
+      "endpoint_prefix": "workmailmessageflow",
+      "service_id": "WorkMailMessageFlow",
+      "api_version": "2019-05-01",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 2
+    },
+    {
+      "service": "workspaces",
+      "endpoint_prefix": "workspaces",
+      "service_id": "WorkSpaces",
+      "api_version": "2015-04-08",
+      "protocol": "json",
+      "signing_name": null,
+      "operation_count": 91
+    },
+    {
+      "service": "workspaces-instances",
+      "endpoint_prefix": "workspaces-instances",
+      "service_id": "Workspaces Instances",
+      "api_version": "2022-07-26",
+      "protocol": "json",
+      "signing_name": "workspaces-instances",
+      "operation_count": 13
+    },
+    {
+      "service": "workspaces-thin-client",
+      "endpoint_prefix": "thinclient",
+      "service_id": "WorkSpaces Thin Client",
+      "api_version": "2023-08-22",
+      "protocol": "rest-json",
+      "signing_name": "thinclient",
+      "operation_count": 16
+    },
+    {
+      "service": "workspaces-web",
+      "endpoint_prefix": "workspaces-web",
+      "service_id": "WorkSpaces Web",
+      "api_version": "2020-07-08",
+      "protocol": "rest-json",
+      "signing_name": "workspaces-web",
+      "operation_count": 75
+    },
+    {
+      "service": "xray",
+      "endpoint_prefix": "xray",
+      "service_id": "XRay",
+      "api_version": "2016-04-12",
+      "protocol": "rest-json",
+      "signing_name": null,
+      "operation_count": 38
+    }
+  ]
+}

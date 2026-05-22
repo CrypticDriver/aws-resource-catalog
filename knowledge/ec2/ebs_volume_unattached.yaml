@@ -1,0 +1,72 @@
+schema_version: v1
+service: ec2
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: ebs_volume_unattached
+  human_name: Unattached EBS Volume
+  human_name_zh: 未挂载的 EBS 卷
+  cfn: AWS::EC2::Volume
+  config: AWS::EC2::Volume
+  resource_explorer: AWS::EC2::Volume
+  cli_list: aws ec2 describe-volumes --filters "Name=status,Values=available"
+  boto3:
+    client: ec2
+    list_method: describe_volumes
+  arn_pattern: arn:aws:ec2:{region}:{account}:volume/{volume-id}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    EBS volumes are billed per GB-month (volume type dependent: gp3
+    ~$0.08, io2 higher) regardless of whether they are attached.
+    A 100 GB gp3 unattached volume is roughly $8/month silent loss.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*EBS:VolumeUsage*"
+    - "*EBS:VolumeIOUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ebs/pricing/
+
+lifecycle:
+  parent_resource: ec2_instance
+  parent_link: |
+    Attachments[].InstanceId. When an instance terminates with
+    DeleteOnTermination=false on a volume, the volume survives.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: null
+  retention_caveats:
+    - Default behavior for the root volume is DeleteOnTermination=true; for additional volumes it is often false.
+    - Volume status "available" means definitively unattached.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-deleting-volume.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    Any volume in state=available for more than N days (suggested 14)
+    is an orphan; before deletion confirm that no snapshot-based
+    restore is pending.
+  rule_pseudocode: |
+    for vol in describe_volumes(state="available"):
+        if (now - vol.CreateTime).days > 14:
+            yield Orphan(vol)
+  cleanup_command: aws ec2 delete-volume --volume-id {volume-id}
+  cleanup_safety: needs_review
+  iam_required:
+    - ec2:DescribeVolumes
+    - ec2:DeleteVolume
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - quick_win
+
+verification:
+  last_verified: "2026-05-22"
+  source_doc_version: ec2-userguide-2024
+  contributor: brad@aws
