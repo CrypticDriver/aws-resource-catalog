@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: s3vectors
+service_code_arn_namespace: s3vectors
+
+resource_type:
+  name: vectorbucket
+  human_name: AWS::S3Vectors::VectorBucket
+  cfn: AWS::S3Vectors::VectorBucket
+  config: AWS::S3Vectors::VectorBucket
+  resource_explorer: AWS::S3Vectors::VectorBucket
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-s3vectors-vectorbucket.html

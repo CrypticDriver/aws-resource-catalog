@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: s3tables
+service_code_arn_namespace: s3tables
+
+resource_type:
+  name: tablepolicy
+  human_name: AWS::S3Tables::TablePolicy
+  cfn: AWS::S3Tables::TablePolicy
+  config: AWS::S3Tables::TablePolicy
+  resource_explorer: AWS::S3Tables::TablePolicy
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-s3tables-tablepolicy.html

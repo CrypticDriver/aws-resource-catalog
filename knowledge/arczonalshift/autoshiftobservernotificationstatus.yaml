@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: arczonalshift
+service_code_arn_namespace: arczonalshift
+
+resource_type:
+  name: autoshiftobservernotificationstatus
+  human_name: AWS::ARCZonalShift::AutoshiftObserverNotificationStatus
+  cfn: AWS::ARCZonalShift::AutoshiftObserverNotificationStatus
+  config: AWS::ARCZonalShift::AutoshiftObserverNotificationStatus
+  resource_explorer: AWS::ARCZonalShift::AutoshiftObserverNotificationStatus
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-arczonalshift-autoshiftobservernotificationstatus.html

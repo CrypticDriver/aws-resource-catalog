@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: bedrock
+service_code_arn_namespace: bedrock
+
+resource_type:
+  name: prompt
+  human_name: AWS::Bedrock::Prompt
+  cfn: AWS::Bedrock::Prompt
+  config: AWS::Bedrock::Prompt
+  resource_explorer: AWS::Bedrock::Prompt
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-bedrock-prompt.html

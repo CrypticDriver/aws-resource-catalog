@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: cognito
+service_code_arn_namespace: cognito
+
+resource_type:
+  name: logdeliveryconfiguration
+  human_name: AWS::Cognito::LogDeliveryConfiguration
+  cfn: AWS::Cognito::LogDeliveryConfiguration
+  config: AWS::Cognito::LogDeliveryConfiguration
+  resource_explorer: AWS::Cognito::LogDeliveryConfiguration
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-logdeliveryconfiguration.html

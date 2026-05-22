@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: iotsitewise
+service_code_arn_namespace: iotsitewise
+
+resource_type:
+  name: assetmodel
+  human_name: AWS::IoTSiteWise::AssetModel
+  cfn: AWS::IoTSiteWise::AssetModel
+  config: AWS::IoTSiteWise::AssetModel
+  resource_explorer: AWS::IoTSiteWise::AssetModel
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iotsitewise-assetmodel.html

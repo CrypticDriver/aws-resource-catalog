@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: appconfig
+service_code_arn_namespace: appconfig
+
+resource_type:
+  name: hostedconfigurationversion
+  human_name: AWS::AppConfig::HostedConfigurationVersion
+  cfn: AWS::AppConfig::HostedConfigurationVersion
+  config: AWS::AppConfig::HostedConfigurationVersion
+  resource_explorer: AWS::AppConfig::HostedConfigurationVersion
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appconfig-hostedconfigurationversion.html

@@ -10,6 +10,11 @@
       "type": "string",
       "const": "v1"
     },
+    "status": {
+      "type": "string",
+      "enum": ["stub", "in_review", "verified"],
+      "description": "Curation status. 'stub' = auto-generated scaffold, fields TODO. 'in_review' = partially curated. 'verified' = doc-cited and reviewed."
+    },
     "service": {
       "type": "string",
       "description": "Short service name, e.g. emr / ec2 / sagemaker. Lowercase."

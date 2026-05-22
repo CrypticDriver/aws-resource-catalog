@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: mediatailor
+service_code_arn_namespace: mediatailor
+
+resource_type:
+  name: livesource
+  human_name: AWS::MediaTailor::LiveSource
+  cfn: AWS::MediaTailor::LiveSource
+  config: AWS::MediaTailor::LiveSource
+  resource_explorer: AWS::MediaTailor::LiveSource
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-mediatailor-livesource.html

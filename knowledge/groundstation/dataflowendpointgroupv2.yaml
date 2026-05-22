@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: groundstation
+service_code_arn_namespace: groundstation
+
+resource_type:
+  name: dataflowendpointgroupv2
+  human_name: AWS::GroundStation::DataflowEndpointGroupV2
+  cfn: AWS::GroundStation::DataflowEndpointGroupV2
+  config: AWS::GroundStation::DataflowEndpointGroupV2
+  resource_explorer: AWS::GroundStation::DataflowEndpointGroupV2
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-groundstation-dataflowendpointgroupv2.html

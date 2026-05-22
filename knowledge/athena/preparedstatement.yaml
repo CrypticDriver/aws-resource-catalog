@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: athena
+service_code_arn_namespace: athena
+
+resource_type:
+  name: preparedstatement
+  human_name: AWS::Athena::PreparedStatement
+  cfn: AWS::Athena::PreparedStatement
+  config: AWS::Athena::PreparedStatement
+  resource_explorer: AWS::Athena::PreparedStatement
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-athena-preparedstatement.html

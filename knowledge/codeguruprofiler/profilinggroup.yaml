@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: codeguruprofiler
+service_code_arn_namespace: codeguruprofiler
+
+resource_type:
+  name: profilinggroup
+  human_name: AWS::CodeGuruProfiler::ProfilingGroup
+  cfn: AWS::CodeGuruProfiler::ProfilingGroup
+  config: AWS::CodeGuruProfiler::ProfilingGroup
+  resource_explorer: AWS::CodeGuruProfiler::ProfilingGroup
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codeguruprofiler-profilinggroup.html

@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: securityagent
+service_code_arn_namespace: securityagent
+
+resource_type:
+  name: targetdomain
+  human_name: AWS::SecurityAgent::TargetDomain
+  cfn: AWS::SecurityAgent::TargetDomain
+  config: AWS::SecurityAgent::TargetDomain
+  resource_explorer: AWS::SecurityAgent::TargetDomain
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-securityagent-targetdomain.html

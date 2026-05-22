@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: lambda
+service_code_arn_namespace: lambda
+
+resource_type:
+  name: codesigningconfig
+  human_name: AWS::Lambda::CodeSigningConfig
+  cfn: AWS::Lambda::CodeSigningConfig
+  config: AWS::Lambda::CodeSigningConfig
+  resource_explorer: AWS::Lambda::CodeSigningConfig
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-codesigningconfig.html

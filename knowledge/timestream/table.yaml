@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: timestream
+service_code_arn_namespace: timestream
+
+resource_type:
+  name: table
+  human_name: AWS::Timestream::Table
+  cfn: AWS::Timestream::Table
+  config: AWS::Timestream::Table
+  resource_explorer: AWS::Timestream::Table
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-timestream-table.html

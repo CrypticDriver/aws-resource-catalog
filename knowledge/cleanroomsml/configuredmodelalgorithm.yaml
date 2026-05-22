@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: cleanroomsml
+service_code_arn_namespace: cleanroomsml
+
+resource_type:
+  name: configuredmodelalgorithm
+  human_name: AWS::CleanRoomsML::ConfiguredModelAlgorithm
+  cfn: AWS::CleanRoomsML::ConfiguredModelAlgorithm
+  config: AWS::CleanRoomsML::ConfiguredModelAlgorithm
+  resource_explorer: AWS::CleanRoomsML::ConfiguredModelAlgorithm
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cleanroomsml-configuredmodelalgorithm.html

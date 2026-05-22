@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: servicecatalogappregistry
+service_code_arn_namespace: servicecatalogappregistry
+
+resource_type:
+  name: attributegroup
+  human_name: AWS::ServiceCatalogAppRegistry::AttributeGroup
+  cfn: AWS::ServiceCatalogAppRegistry::AttributeGroup
+  config: AWS::ServiceCatalogAppRegistry::AttributeGroup
+  resource_explorer: AWS::ServiceCatalogAppRegistry::AttributeGroup
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalogappregistry-attributegroup.html

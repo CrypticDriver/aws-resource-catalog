@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: networkfirewall
+service_code_arn_namespace: networkfirewall
+
+resource_type:
+  name: rulegroup
+  human_name: AWS::NetworkFirewall::RuleGroup
+  cfn: AWS::NetworkFirewall::RuleGroup
+  config: AWS::NetworkFirewall::RuleGroup
+  resource_explorer: AWS::NetworkFirewall::RuleGroup
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-networkfirewall-rulegroup.html

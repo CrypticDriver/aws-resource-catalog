@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: redshift
+service_code_arn_namespace: redshift
+
+resource_type:
+  name: clustersecuritygroupingress
+  human_name: AWS::Redshift::ClusterSecurityGroupIngress
+  cfn: AWS::Redshift::ClusterSecurityGroupIngress
+  config: AWS::Redshift::ClusterSecurityGroupIngress
+  resource_explorer: AWS::Redshift::ClusterSecurityGroupIngress
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-redshift-clustersecuritygroupingress.html

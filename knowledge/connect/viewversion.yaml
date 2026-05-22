@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: connect
+service_code_arn_namespace: connect
+
+resource_type:
+  name: viewversion
+  human_name: AWS::Connect::ViewVersion
+  cfn: AWS::Connect::ViewVersion
+  config: AWS::Connect::ViewVersion
+  resource_explorer: AWS::Connect::ViewVersion
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-connect-viewversion.html

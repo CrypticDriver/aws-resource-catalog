@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: wafregional
+service_code_arn_namespace: wafregional
+
+resource_type:
+  name: ipset
+  human_name: AWS::WAFRegional::IPSet
+  cfn: AWS::WAFRegional::IPSet
+  config: AWS::WAFRegional::IPSet
+  resource_explorer: AWS::WAFRegional::IPSet
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-wafregional-ipset.html

@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: ssmcontacts
+service_code_arn_namespace: ssmcontacts
+
+resource_type:
+  name: contactchannel
+  human_name: AWS::SSMContacts::ContactChannel
+  cfn: AWS::SSMContacts::ContactChannel
+  config: AWS::SSMContacts::ContactChannel
+  resource_explorer: AWS::SSMContacts::ContactChannel
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssmcontacts-contactchannel.html

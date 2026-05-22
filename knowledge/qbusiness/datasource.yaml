@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: qbusiness
+service_code_arn_namespace: qbusiness
+
+resource_type:
+  name: datasource
+  human_name: AWS::QBusiness::DataSource
+  cfn: AWS::QBusiness::DataSource
+  config: AWS::QBusiness::DataSource
+  resource_explorer: AWS::QBusiness::DataSource
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-qbusiness-datasource.html

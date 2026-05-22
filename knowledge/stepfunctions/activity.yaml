@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: stepfunctions
+service_code_arn_namespace: stepfunctions
+
+resource_type:
+  name: activity
+  human_name: AWS::StepFunctions::Activity
+  cfn: AWS::StepFunctions::Activity
+  config: AWS::StepFunctions::Activity
+  resource_explorer: AWS::StepFunctions::Activity
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-stepfunctions-activity.html

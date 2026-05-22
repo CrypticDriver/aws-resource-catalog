@@ -1,0 +1,31 @@
+schema_version: v1
+status: stub
+service: acmpca
+service_code_arn_namespace: acmpca
+
+resource_type:
+  name: certificate
+  human_name: AWS::ACMPCA::Certificate
+  cfn: AWS::ACMPCA::Certificate
+  config: AWS::ACMPCA::Certificate
+  resource_explorer: AWS::ACMPCA::Certificate
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    TODO — verify pricing model and CUR usage type from official docs.
+  free_tier: false
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+
+orphan_detection:
+  orphan_prone: false
+
+tags: [stub]
+
+verification:
+  contributor: auto-generated
+  doc_url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-acmpca-certificate.html
