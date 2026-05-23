@@ -82,17 +82,16 @@ scan:
   list:
     custom_module: shared.scanner_modules.emrwal:list_workspaces
     id_field: WorkspaceName
-    name_field: RootDir
+    name_field: Arn
   orphan_check:
     type: custom
     custom_module: shared.scanner_modules.emrwal:is_orphan
   cost_estimate:
-    # Authoritative billing dimension is EMR-WAL-WALHours, $0.0018/WAL/h
-    # (us-east-1 on-demand). One WAL per HBase Region; the engine attaches
-    # MetricResourceCount via CloudWatch EMRWALCount when available.
-    monthly_usd_per_unit: 1.296   # = 0.0018 * 24 * 30
-    unit_field: MetricResourceCount
-    fallback_monthly_usd: 50      # used when MetricResourceCount is unknown
+    # EMR-WAL-WALHours = $0.0018/WAL/h (us-east-1 on-demand)
+    # 1 WAL × 24h × 30d = $1.296/month/WAL
+    monthly_usd_per_unit: 1.296
+    unit_field: WalCount
+    fallback_monthly_usd: 0    # If no WAL count yet, no cost estimate
   cleanup:
     cli_command: emrwal deleteWorkspace -w {WorkspaceName}
     safety: needs_review
