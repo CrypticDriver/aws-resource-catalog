@@ -1,0 +1,109 @@
+schema_version: v1
+status: verified
+service: logs
+service_code_pricing: AmazonCloudWatch
+service_code_arn_namespace: logs
+
+resource_type:
+  name: never_expiring_loggroup
+  human_name: CloudWatch Log Group Without Retention
+  human_name_zh: 无保留期设置的 CloudWatch 日志组(永久保留持续膨胀)
+  cfn: AWS::Logs::LogGroup
+  config: AWS::Logs::LogGroup
+  resource_explorer: AWS::Logs::LogGroup
+  cli_list: aws logs describe-log-groups
+  boto3:
+    client: logs
+    list_method: describe_log_groups
+  arn_pattern: arn:aws:logs:{region}:{account}:log-group:{name}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    CloudWatch Logs storage is ~$0.03/GB-month (Standard) and is
+    charged forever for any log group whose retentionInDays is null
+    (the default!). A small chatty Lambda can grow this to hundreds of
+    GB over a couple of years.
+  cur_product_codes:
+    - AmazonCloudWatch
+  cur_usage_type_patterns:
+    - "*TimedStorage-ByteHrs*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/cloudwatch/pricing/
+
+lifecycle:
+  parent_resource: null
+  parent_link: |
+    A log group is created automatically by services like Lambda, ECS,
+    API Gateway, etc. and outlives them.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: indefinite
+  retention_caveats:
+    - Setting retentionInDays does not retroactively delete events but stops them being kept past the new horizon.
+    - Some compliance regimes (HIPAA, PCI) need explicit retention. Operator must confirm.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A log group is wasting money when (a) retentionInDays is null
+    (= keep forever) AND (b) storedBytes > 1 GiB AND (c) creationTime
+    is at least 90 days old (give new log groups time to find an
+    owner). Cleanup recommendation is NOT delete — it is
+    'put-retention-policy 30/90/365', because deleting log groups can
+    break Lambda / API Gateway integrations.
+  rule_pseudocode: |
+    for lg in describe_log_groups():
+        if lg.retentionInDays is None and lg.storedBytes > 1*1024**3 and age(lg) > 90d:
+            yield Orphan(lg)
+  cleanup_command: aws logs put-retention-policy --log-group-name {LogGroupName} --retention-in-days 30
+  cleanup_safety: safe   # set retention is reversible
+  iam_required:
+    - logs:DescribeLogGroups
+    - logs:PutRetentionPolicy
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    logs:DescribeLogGroups returns every log group with retentionInDays
+    and storedBytes inline. No metric or CUR dependency — the SDK
+    response itself contains everything we need.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - observability
+
+scan:
+  list:
+    boto3_client: logs
+    method: describe_log_groups
+    response_path: logGroups
+    id_field: logGroupName
+    name_field: logGroupName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.never_expiring_loggroup:is_orphan
+  cost_estimate:
+    monthly_usd_per_gb: 0.03
+    size_field: storedBytes_gb        # populated by custom list, see scanner module
+  cleanup:
+    boto3_method: put_retention_policy
+    args_template:
+      logGroupName: "{logGroupName}"
+      retentionInDays: 30
+    cli_command: aws logs put-retention-policy --log-group-name {logGroupName} --retention-in-days 30
+    safety: safe
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: cloudwatch-logs-userguide-2025
+  contributor: goudan@auto

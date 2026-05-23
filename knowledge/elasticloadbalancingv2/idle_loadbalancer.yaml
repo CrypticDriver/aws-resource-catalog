@@ -1,0 +1,116 @@
+schema_version: v1
+status: verified
+service: elasticloadbalancingv2
+service_code_pricing: AWSELB
+service_code_arn_namespace: elasticloadbalancingv2
+
+resource_type:
+  name: idle_loadbalancer
+  human_name: Idle Application/Network Load Balancer
+  human_name_zh: 空闲负载均衡器(ALB/NLB)
+  cfn: AWS::ElasticLoadBalancingV2::LoadBalancer
+  config: AWS::ElasticLoadBalancingV2::LoadBalancer
+  resource_explorer: AWS::ElasticLoadBalancingV2::LoadBalancer
+  cli_list: aws elbv2 describe-load-balancers
+  boto3:
+    client: elbv2
+    list_method: describe_load_balancers
+  arn_pattern: arn:aws:elasticloadbalancingv2:{region}:{account}:loadbalancer/{type}/{name}/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    ALB billed per LB-hour (~$0.0225/h ≈ $16.43/month) plus Load
+    Balancer Capacity Units (LCU). NLB ~$0.0225/h plus NLCU. A load
+    balancer with no traffic still incurs the per-hour charge — that's
+    the bulk of the waste here.
+  cur_product_codes:
+    - AWSELB
+  cur_usage_type_patterns:
+    - "*LoadBalancerUsage*"
+    - "*LCUUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/elasticloadbalancing/pricing/
+
+lifecycle:
+  parent_resource: null
+  parent_link: |
+    A load balancer is a top-level resource. It can outlive its target
+    groups; deleting all target groups does NOT delete the LB.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: null
+  retention_caveats:
+    - Listeners / target groups are deleted with the load balancer; ensure CloudFormation / Terraform are aware before manual deletion.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-delete.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A load balancer is idle when (a) it has no traffic for 30 days
+    (RequestCount sum = 0 for ALB / ActiveFlowCount avg = 0 for NLB)
+    AND (b) it has no healthy targets in any of its target groups.
+    Default threshold catches "forgotten dev/staging LBs" without
+    flagging hot-standby production LBs.
+  rule_pseudocode: |
+    for lb in describe_load_balancers():
+        rc = cloudwatch.get_metric(
+            Namespace="AWS/ApplicationELB" if lb.Type=="application" else "AWS/NetworkELB",
+            MetricName="RequestCount" or "ActiveFlowCount",
+            Dimensions={LoadBalancer: lb.short_arn},
+            lookback=30 days,
+        )
+        if sum(rc) == 0:
+            yield Orphan(lb)
+  cleanup_command: aws elbv2 delete-load-balancer --load-balancer-arn {LoadBalancerArn}
+  cleanup_safety: needs_review
+  iam_required:
+    - elasticloadbalancing:DescribeLoadBalancers
+    - elasticloadbalancing:DescribeTargetHealth
+    - cloudwatch:GetMetricStatistics
+    - elasticloadbalancing:DeleteLoadBalancer
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    elbv2:DescribeLoadBalancers returns every ALB/NLB in the region.
+    Idle judgment uses CloudWatch metrics that are populated even for
+    fully-deployed but unused load balancers (each LB always emits the
+    metrics, just with value 0).
+  blind_spots:
+    - "Classic Load Balancers (elb v1) are out of scope for this catalog entry; covered separately if needed."
+
+tags:
+  - billable
+  - orphan_prone
+  - network
+  - compute
+
+scan:
+  list:
+    boto3_client: elbv2
+    method: describe_load_balancers
+    response_path: LoadBalancers
+    id_field: LoadBalancerArn
+    name_field: LoadBalancerName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_loadbalancer:is_orphan
+  cost_estimate:
+    monthly_usd: 16.43      # ~ $0.0225/h × 730h, LCU fluctuates and is intentionally not estimated
+  cleanup:
+    boto3_method: delete_load_balancer
+    args_template:
+      LoadBalancerArn: "{LoadBalancerArn}"
+    cli_command: aws elbv2 delete-load-balancer --load-balancer-arn {LoadBalancerArn}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: elb-userguide-2025
+  contributor: goudan@auto

@@ -1,0 +1,118 @@
+schema_version: v1
+status: verified
+service: rds
+service_code_pricing: AmazonRDS
+service_code_arn_namespace: rds
+
+resource_type:
+  name: orphan_db_snapshot
+  human_name: Orphan RDS Manual Snapshot
+  human_name_zh: 孤儿 RDS 手动快照
+  cfn: AWS::RDS::DBSnapshot
+  config: AWS::RDS::DBSnapshot
+  resource_explorer: AWS::RDS::DBSnapshot
+  cli_list: aws rds describe-db-snapshots --snapshot-type manual
+  boto3:
+    client: rds
+    list_method: describe_db_snapshots
+  arn_pattern: arn:aws:rds:{region}:{account}:snapshot:{snapshot-id}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    RDS manual snapshots are billed per GB-month of allocated storage
+    (~$0.095/GB-month standard). They survive DB instance deletion and
+    are NOT auto-cleaned. Common 'I deleted the DB but forgot the
+    snapshot' leak.
+  cur_product_codes:
+    - AmazonRDS
+  cur_usage_type_patterns:
+    - "*RDS:ChargedBackupUsage*"
+    - "*RDS:SnapshotUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/rds/pricing/
+
+lifecycle:
+  parent_resource: db_instance_or_cluster
+  parent_link: |
+    DBInstanceIdentifier (for instance snapshots) or DBClusterIdentifier
+    (for cluster snapshots, a separate API). Manual snapshots persist
+    after the source DB is deleted; automated snapshots are cleaned up
+    with the DB instance per its retention period.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: indefinite
+  retention_caveats:
+    - "Only 'manual' snapshots persist forever — 'automated' snapshots follow the DB instance's BackupRetentionPeriod and are out of scope."
+    - "A manual snapshot may still be referenced by a Restore operation in flight; defer deletion if SnapshotCreateTime is < 24h old."
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DeleteSnapshot.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A manual snapshot is an orphan when (a) SnapshotType == 'manual'
+    AND (b) the source DBInstanceIdentifier no longer exists AND (c)
+    the snapshot is at least 30 days old. Recent snapshots may still
+    be referenced by an in-flight restore; the 30-day floor is a
+    safety margin.
+  rule_pseudocode: |
+    live_dbs = {db.id for db in describe_db_instances()}
+    for snap in describe_db_snapshots(SnapshotType='manual'):
+        if snap.DBInstanceIdentifier not in live_dbs and age(snap) > 30d:
+            yield Orphan(snap)
+  cleanup_command: aws rds delete-db-snapshot --db-snapshot-identifier {DBSnapshotIdentifier}
+  cleanup_safety: needs_review
+  iam_required:
+    - rds:DescribeDBSnapshots
+    - rds:DescribeDBInstances
+    - rds:DeleteDBSnapshot
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    rds:DescribeDBSnapshots filtered to SnapshotType=manual returns
+    every customer-created snapshot. Standard SDK call, no extra
+    customer setup.
+  blind_spots:
+    - "Cluster snapshots (Aurora) live under describe_db_cluster_snapshots — a separate catalog entry (out of scope here)."
+    - "Snapshots shared via aws rds modify-db-snapshot-attribute --attribute-name restore are excluded from delete; this scanner does not check restore-attribute, so cleanup_safety stays needs_review."
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - database
+
+scan:
+  list:
+    boto3_client: rds
+    method: describe_db_snapshots
+    args:
+      SnapshotType: manual
+    response_path: DBSnapshots
+    id_field: DBSnapshotIdentifier
+    name_field: DBSnapshotIdentifier
+    paginated: true
+  orphan_check:
+    type: cross_reference
+    field: DBInstanceIdentifier
+    reference_resource: rds/db_instance
+    min_age_days: 30
+  cost_estimate:
+    monthly_usd_per_gb: 0.095
+    size_field: AllocatedStorage
+  cleanup:
+    boto3_method: delete_db_snapshot
+    args_template:
+      DBSnapshotIdentifier: "{DBSnapshotIdentifier}"
+    cli_command: aws rds delete-db-snapshot --db-snapshot-identifier {DBSnapshotIdentifier}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: rds-userguide-2025
+  contributor: goudan@auto
