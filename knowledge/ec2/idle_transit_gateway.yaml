@@ -1,0 +1,117 @@
+schema_version: v1
+status: verified
+service: ec2
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: idle_transit_gateway
+  human_name: Transit Gateway (idle, no attachments)
+  human_name_zh: 空闲 Transit Gateway(无 attachment 或全空闲)
+  cfn: AWS::EC2::TransitGateway
+  config: AWS::EC2::TransitGateway
+  resource_explorer: AWS::EC2::TransitGateway
+  cli_list: aws ec2 describe-transit-gateways
+  boto3:
+    client: ec2
+    list_method: describe_transit_gateways
+  arn_pattern: arn:aws:ec2:{region}:{account}:transit-gateway/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    A Transit Gateway bills per attachment-hour (~$0.05/h ≈
+    $36.50/month per attachment) PLUS per-GB data processed
+    (~$0.02/GB). A TGW with 4 attachments idles at ~$146/month with
+    zero traffic. A TGW with zero attachments costs ~$0 itself but
+    is still abandoned infrastructure worth deleting.
+  cur_product_codes:
+    - AmazonVPC
+  cur_usage_type_patterns:
+    - "*TransitGateway-Hours*"
+    - "*TransitGateway-Bytes*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/transit-gateway/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - All attachments must be deleted first (VPC, VPN, Direct Connect, peering).
+    - Deleting a shared TGW affects all account principals using RAM share.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/vpc/latest/tgw/tgw-delete.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A TGW is idle when (a) State == 'available' AND (b) age > 30 days
+    AND (c) ANY of:
+      i.  zero attachments (describe_transit_gateway_attachments returns []), OR
+      ii. AWS/TransitGateway.BytesIn sum == 0 over 30 days.
+  rule_pseudocode: |
+    for tgw in describe_transit_gateways():
+        if tgw.State != 'available': continue
+        if age(tgw.CreationTime) < 30d: continue
+        atts = describe_transit_gateway_attachments(filter=tgw.id)
+        if not atts:
+            yield Orphan(tgw, reason='no attachments')
+            continue
+        b = cw.metric('AWS/TransitGateway','BytesIn',
+                      {'TransitGateway':tgw.TransitGatewayId},30d,Sum)
+        if b == 0:
+            yield Orphan(tgw, reason='zero traffic 30d')
+  cleanup_command: aws ec2 delete-transit-gateway --transit-gateway-id {TransitGatewayId}
+  cleanup_safety: destructive
+  iam_required:
+    - ec2:DescribeTransitGateways
+    - ec2:DescribeTransitGatewayAttachments
+    - cloudwatch:GetMetricStatistics
+    - ec2:DeleteTransitGateway
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    ec2:DescribeTransitGateways + DescribeTransitGatewayAttachments
+    are realtime, no metric dependency for the 'no attachments' path.
+    AWS/TransitGateway.BytesIn confirms idle TGWs that do have
+    attachments.
+  blind_spots:
+    - "Cross-account TGW shared via RAM: charges show on the owner; we list TGWs from the caller's account only."
+
+tags:
+  - billable
+  - orphan_prone
+  - network
+  - high_value
+
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_transit_gateways
+    response_path: TransitGateways
+    id_field: TransitGatewayId
+    name_field: TransitGatewayId
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_transit_gateway:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 36.50
+    unit_field: AttachmentCount
+    fallback_monthly_usd: 36.50
+  cleanup:
+    boto3_method: delete_transit_gateway
+    args_template:
+      TransitGatewayId: "{TransitGatewayId}"
+    cli_command: aws ec2 delete-transit-gateway --transit-gateway-id {TransitGatewayId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: tgw-userguide-2025
+  contributor: goudan@auto

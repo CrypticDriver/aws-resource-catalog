@@ -1,0 +1,110 @@
+schema_version: v1
+status: verified
+service: cloudfront
+service_code_pricing: AmazonCloudFront
+service_code_arn_namespace: cloudfront
+
+resource_type:
+  name: disabled_distribution
+  human_name: CloudFront Distribution (disabled / no traffic)
+  human_name_zh: 禁用或无流量的 CloudFront 分发
+  cfn: AWS::CloudFront::Distribution
+  config: AWS::CloudFront::Distribution
+  resource_explorer: AWS::CloudFront::Distribution
+  cli_list: aws cloudfront list-distributions
+  boto3:
+    client: cloudfront
+    list_method: list_distributions
+  arn_pattern: arn:aws:cloudfront::{account}:distribution/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    CloudFront itself bills per-request and per-GB transferred (~free
+    when idle). However, a DISABLED distribution that's been sitting
+    'just in case' for over 30 days is dead weight: it ties up a
+    custom domain CNAME, holds a TLS certificate slot, and routinely
+    triggers AWS Health 'distribution stale' notifications. Worth
+    purging.
+    A long-lived ENABLED distribution with zero requests is a similar
+    abandoned-stack signal.
+  cur_product_codes:
+    - AmazonCloudFront
+  cur_usage_type_patterns:
+    - "*CloudFront-Requests*"
+    - "*CloudFront-Out-Bytes*"
+  free_tier: true   # 1 TB/mo egress for first 12 months
+  doc_pricing_page: https://aws.amazon.com/cloudfront/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Must be Disabled and have InProgress=false before delete.
+    - ACM certificates referenced are NOT deleted (good).
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HowToDeleteDistribution.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A distribution is orphan when (a) Status == 'Deployed' AND (b)
+    LastModifiedTime > 30 days ago AND (c) ANY of:
+      i. Enabled == false (disabled distros are dead weight), OR
+      ii. AWS/CloudFront.Requests sum == 0 over the last 30 days
+          (with Region='Global' dimension).
+  rule_pseudocode: |
+    for d in list_distributions():
+        if d.Status != 'Deployed': continue
+        if age(d.LastModifiedTime) < 30d: continue
+        if not d.Enabled:
+            yield Orphan(d, reason='disabled > 30d')
+            continue
+        reqs = cw.metric('AWS/CloudFront','Requests',
+                         {'DistributionId':d.Id,'Region':'Global'},
+                         30d, Sum)
+        if reqs == 0: yield Orphan(d, reason='zero requests 30d')
+  cleanup_command: aws cloudfront delete-distribution --id {Id} --if-match $(aws cloudfront get-distribution --id {Id} --query 'ETag' --output text)
+  cleanup_safety: destructive
+  iam_required:
+    - cloudfront:ListDistributions
+    - cloudfront:GetDistribution
+    - cloudwatch:GetMetricStatistics
+    - cloudfront:UpdateDistribution
+    - cloudfront:DeleteDistribution
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    cloudfront:ListDistributions returns every distribution in the
+    account (CloudFront is a global service; us-east-1 endpoint).
+    Idle judgment uses AWS/CloudFront metrics with Region=Global.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - cdn
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_cloudfront_distribution:list_distributions
+    id_field: Id
+    name_field: DomainName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_cloudfront_distribution:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0   # idle distribution mostly costs nothing; flagged for cleanup hygiene
+  cleanup:
+    cli_command: aws cloudfront delete-distribution --id {Id} --if-match {ETag}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: cloudfront-developerguide-2025
+  contributor: goudan@auto

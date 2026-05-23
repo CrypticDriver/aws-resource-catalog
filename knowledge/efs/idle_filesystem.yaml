@@ -1,0 +1,110 @@
+schema_version: v1
+status: verified
+service: efs
+service_code_pricing: AmazonEFS
+service_code_arn_namespace: elasticfilesystem
+
+resource_type:
+  name: idle_filesystem
+  human_name: Idle EFS File System
+  human_name_zh: 空闲 EFS 文件系统
+  cfn: AWS::EFS::FileSystem
+  config: AWS::EFS::FileSystem
+  resource_explorer: AWS::EFS::FileSystem
+  cli_list: aws efs describe-file-systems
+  boto3:
+    client: efs
+    list_method: describe_file_systems
+  arn_pattern: arn:aws:elasticfilesystem:{region}:{account}:file-system/{id}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    EFS Standard storage ≈ $0.30/GB-month, IA tier ≈ $0.025/GB-month.
+    A 100 GB file system in Standard with no activity bills $30/month.
+    Charges continue regardless of read/write activity. ZFS-style
+    'we put a few backups here years ago' is a frequent leak.
+  cur_product_codes:
+    - AmazonEFS
+  cur_usage_type_patterns:
+    - "*EFS-TimedStorage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/efs/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - All mount targets must be deleted before the file system can be deleted.
+    - Backup recovery points referencing the FS continue to bill on the AWS Backup side.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/efs/latest/ug/manage-fs-lifecycle.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A file system is idle when (a) LifeCycleState == 'available' AND
+    (b) age > 30 days AND (c) AWS/EFS.TotalIOBytes sum == 0 over the
+    last 30 days. SizeInBytes > 0 is required so we don't flag a
+    truly-empty FS that may be a placeholder for a CloudFormation
+    stack pending deployment.
+  rule_pseudocode: |
+    for fs in describe_file_systems():
+        if fs.LifeCycleState != 'available': continue
+        if age(fs.CreationTime) < 30d: continue
+        if fs.SizeInBytes.Value == 0: continue
+        io = cw.metric('AWS/EFS','TotalIOBytes',
+                       {'FileSystemId':fs.FileSystemId},
+                       30d, Sum)
+        if io == 0: yield Orphan(fs)
+  cleanup_command: aws efs delete-file-system --file-system-id {FileSystemId}
+  cleanup_safety: destructive
+  iam_required:
+    - elasticfilesystem:DescribeFileSystems
+    - elasticfilesystem:DescribeMountTargets
+    - cloudwatch:GetMetricStatistics
+    - elasticfilesystem:DeleteMountTarget
+    - elasticfilesystem:DeleteFileSystem
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    elasticfilesystem:DescribeFileSystems returns every FS with
+    SizeInBytes inline. AWS/EFS.TotalIOBytes is a permanent metric
+    (zero datapoints, not absent, when idle).
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+
+scan:
+  list:
+    boto3_client: efs
+    method: describe_file_systems
+    response_path: FileSystems
+    id_field: FileSystemId
+    name_field: Name
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_efs_filesystem:is_orphan
+  cost_estimate:
+    monthly_usd_per_gb: 0.30
+    size_field: SizeInBytes_GB
+  cleanup:
+    boto3_method: delete_file_system
+    args_template:
+      FileSystemId: "{FileSystemId}"
+    cli_command: aws efs delete-file-system --file-system-id {FileSystemId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: efs-userguide-2025
+  contributor: goudan@auto

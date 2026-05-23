@@ -1,0 +1,111 @@
+schema_version: v1
+status: verified
+service: globalaccelerator
+service_code_pricing: AWSGlobalAccelerator
+service_code_arn_namespace: globalaccelerator
+
+resource_type:
+  name: idle_global_accelerator
+  human_name: AWS Global Accelerator (idle)
+  human_name_zh: 空闲 Global Accelerator
+  cfn: AWS::GlobalAccelerator::Accelerator
+  config: AWS::GlobalAccelerator::Accelerator
+  resource_explorer: AWS::GlobalAccelerator::Accelerator
+  cli_list: aws globalaccelerator list-accelerators
+  boto3:
+    client: globalaccelerator
+    list_method: list_accelerators
+  arn_pattern: arn:aws:globalaccelerator::{account}:accelerator/{id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    Global Accelerator bills $0.025/hour ≈ $18/month for the fixed
+    accelerator fee, regardless of traffic, plus a Premium Data
+    Transfer surcharge per GB. An accelerator created during a
+    'low latency POC' that nobody uses bills $216/year forever.
+  cur_product_codes:
+    - AWSGlobalAccelerator
+  cur_usage_type_patterns:
+    - "*GlobalAccelerator-Hours*"
+    - "*GlobalAccelerator-DT-Premium*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/global-accelerator/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Accelerator must be DISABLED for at least one minute before delete.
+    - Custom Routing Accelerators have a separate API (list_custom_routing_accelerators) and pricing.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/global-accelerator/latest/dg/about-accelerators.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    An accelerator is idle when (a) Status == 'DEPLOYED' AND (b)
+    Enabled == true AND (c) age > 30 days AND (d) it has zero listeners
+    OR all listeners have zero endpoint groups OR
+    AWS/GlobalAccelerator.NewFlowCount sum == 0 in last 30 days.
+  rule_pseudocode: |
+    for acc in list_accelerators():
+        if acc.Status != 'DEPLOYED': continue
+        if not acc.Enabled: continue
+        if age(acc.CreatedTime) < 30d: continue
+        listeners = list_listeners(acc.AcceleratorArn)
+        no_targets = not listeners or all(not list_endpoint_groups(l.ListenerArn) for l in listeners)
+        if no_targets:
+            yield Orphan(acc, reason='no listeners/endpoint groups')
+            continue
+        flows = cw.metric('AWS/GlobalAccelerator','NewFlowCount',
+                          {'Accelerator':acc.id}, 30d, Sum)
+        if flows == 0:
+            yield Orphan(acc, reason='no traffic 30d')
+  cleanup_command: aws globalaccelerator update-accelerator --accelerator-arn {AcceleratorArn} --no-enabled && aws globalaccelerator delete-accelerator --accelerator-arn {AcceleratorArn}
+  cleanup_safety: destructive
+  iam_required:
+    - globalaccelerator:ListAccelerators
+    - globalaccelerator:ListListeners
+    - globalaccelerator:ListEndpointGroups
+    - cloudwatch:GetMetricStatistics
+    - globalaccelerator:UpdateAccelerator
+    - globalaccelerator:DeleteAccelerator
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    Global Accelerator is a global service hosted in us-west-2; its
+    list_accelerators returns all accelerators in the account
+    regardless of which region is queried, but the API client must
+    target us-west-2 specifically. Scanner enforces that.
+  blind_spots:
+    - "Custom Routing Accelerators are excluded — list_custom_routing_accelerators is a separate API."
+
+tags:
+  - billable
+  - orphan_prone
+  - network
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_global_accelerator:list_accelerators
+    id_field: AcceleratorArn
+    name_field: Name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_global_accelerator:is_orphan
+  cost_estimate:
+    monthly_usd: 18.0   # 0.025 × 730
+  cleanup:
+    cli_command: aws globalaccelerator update-accelerator --accelerator-arn {AcceleratorArn} --no-enabled --region us-west-2 && aws globalaccelerator delete-accelerator --accelerator-arn {AcceleratorArn} --region us-west-2
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: global-accelerator-developerguide-2025
+  contributor: goudan@auto

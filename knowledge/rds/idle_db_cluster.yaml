@@ -1,0 +1,121 @@
+schema_version: v1
+status: verified
+service: rds
+service_code_pricing: AmazonRDS
+service_code_arn_namespace: rds
+
+resource_type:
+  name: idle_db_cluster
+  human_name: Aurora DB Cluster (idle)
+  human_name_zh: 空闲 Aurora 集群
+  cfn: AWS::RDS::DBCluster
+  config: AWS::RDS::DBCluster
+  resource_explorer: AWS::RDS::DBCluster
+  cli_list: aws rds describe-db-clusters
+  boto3:
+    client: rds
+    list_method: describe_db_clusters
+  arn_pattern: arn:aws:rds:{region}:{account}:cluster:{name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Aurora provisioned instance bills per-instance-hour
+    (db.r6g.large ≈ $0.29/h ≈ $212/month) plus storage ($0.10/GB-month)
+    plus IO. Aurora Serverless v2 bills per ACU-hour ($0.12 per ACU-h
+    ≈ $87/month per ACU minimum). A 2-instance Aurora cluster sitting
+    idle bills ~$425/mo. Cluster running with zero DatabaseConnections
+    is wasted money.
+  cur_product_codes:
+    - AmazonRDS
+  cur_usage_type_patterns:
+    - "*Aurora:BackupUsage*"
+    - "*Aurora:StorageUsage*"
+    - "*InstanceUsage:db*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/rds/aurora/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - DeletionProtection often enabled by default — must be cleared.
+    - Final snapshot is mandatory unless --skip-final-snapshot.
+    - Member instances must be deleted before the cluster.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_DeleteCluster.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    An Aurora cluster is idle when (a) Status == 'available' AND (b)
+    age > 30 days AND (c) AWS/RDS.DatabaseConnections sum < 1 over
+    the last 30 days for ALL its member instances.
+  rule_pseudocode: |
+    for c in describe_db_clusters():
+        if c.Status != 'available': continue
+        if age(c.ClusterCreateTime) < 30d: continue
+        any_used = False
+        for member in c.DBClusterMembers:
+            conn = cw.metric('AWS/RDS','DatabaseConnections',
+                             {'DBInstanceIdentifier':member.DBInstanceIdentifier},
+                             30d, Sum)
+            if conn > 0:
+                any_used = True; break
+        if not any_used: yield Orphan(c)
+  cleanup_command: aws rds delete-db-cluster --db-cluster-identifier {DBClusterIdentifier} --skip-final-snapshot
+  cleanup_safety: destructive
+  iam_required:
+    - rds:DescribeDBClusters
+    - rds:DescribeDBInstances
+    - cloudwatch:GetMetricStatistics
+    - rds:ModifyDBCluster
+    - rds:DeleteDBInstance
+    - rds:DeleteDBCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    rds:DescribeDBClusters returns Aurora clusters with
+    DBClusterMembers attached. AWS/RDS.DatabaseConnections is the
+    canonical 'is anyone using this' metric, emitted continuously.
+  blind_spots:
+    - "Aurora Serverless v1 paused state is intentionally not flagged — paused already bills near-zero."
+
+tags:
+  - billable
+  - orphan_prone
+  - database
+  - high_value
+
+scan:
+  list:
+    boto3_client: rds
+    method: describe_db_clusters
+    response_path: DBClusters
+    id_field: DBClusterIdentifier
+    name_field: DBClusterIdentifier
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_db_cluster:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 211.70   # db.r6g.large baseline
+    unit_field: MemberCount
+    fallback_monthly_usd: 211.70
+  cleanup:
+    boto3_method: delete_db_cluster
+    args_template:
+      DBClusterIdentifier: "{DBClusterIdentifier}"
+      SkipFinalSnapshot: false
+    cli_command: aws rds delete-db-cluster --db-cluster-identifier {DBClusterIdentifier} --skip-final-snapshot
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: rds-userguide-2025
+  contributor: goudan@auto

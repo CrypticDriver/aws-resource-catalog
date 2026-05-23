@@ -1,0 +1,112 @@
+schema_version: v1
+status: verified
+service: apigateway
+service_code_pricing: AmazonApiGateway
+service_code_arn_namespace: apigateway
+
+resource_type:
+  name: idle_rest_api
+  human_name: API Gateway REST API (idle)
+  human_name_zh: 空闲 API Gateway REST API
+  cfn: AWS::ApiGateway::RestApi
+  config: AWS::ApiGateway::RestApi
+  resource_explorer: AWS::ApiGateway::RestApi
+  cli_list: aws apigateway get-rest-apis
+  boto3:
+    client: apigateway
+    list_method: get_rest_apis
+  arn_pattern: arn:aws:apigateway:{region}::/restapis/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    REST APIs themselves cost $0 to host — billing is per request
+    ($3.50/million). HOWEVER, idle REST APIs frequently come bundled
+    with: a custom domain (per-hour fee), a VPC link (per-hour fee),
+    a usage plan with API key tier, and CloudWatch Logs (per-GB).
+    Even more important: an idle REST API is often the canary for an
+    abandoned Lambda + idle endpoint stack costing dozens/month.
+    Recommend deletion when zero traffic for 30+ days.
+  cur_product_codes:
+    - AmazonApiGateway
+  cur_usage_type_patterns:
+    - "*ApiGateway-Requests*"
+  free_tier: true   # 1M requests/mo for first 12 months
+  doc_pricing_page: https://aws.amazon.com/api-gateway/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Custom domain mappings must be cleaned up to fully stop charges.
+    - Stages keep CloudWatch Logs running; consider deleting the log group too.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-delete-api.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A REST API is idle when (a) age > 30 days AND (b)
+    AWS/ApiGateway.Count sum == 0 over the last 30 days for every
+    stage. Cleanup safety is needs_review because the operator may
+    keep the API as a stable contract even with no recent traffic.
+  rule_pseudocode: |
+    for api in get_rest_apis():
+        if age(api.createdDate) < 30d: continue
+        stages = get_stages(api.id)
+        total = 0
+        for stage in stages:
+            total += cw.metric('AWS/ApiGateway','Count',
+                       {'ApiName':api.name,'Stage':stage.stageName},
+                       30d, Sum)
+        if total == 0: yield Orphan(api)
+  cleanup_command: aws apigateway delete-rest-api --rest-api-id {id}
+  cleanup_safety: needs_review
+  iam_required:
+    - apigateway:GET
+    - cloudwatch:GetMetricStatistics
+    - apigateway:DELETE
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    apigateway:GET on /restapis enumerates all REST APIs. Stages are
+    a sub-resource. AWS/ApiGateway.Count is per (ApiName, Stage) and
+    is always emitted while the stage exists.
+  blind_spots:
+    - "HTTP APIs (apigatewayv2) are listed via a separate client; not covered by this entry."
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - low_value
+
+scan:
+  list:
+    boto3_client: apigateway
+    method: get_rest_apis
+    response_path: items
+    id_field: id
+    name_field: name
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_apigw_rest:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_rest_api
+    args_template:
+      restApiId: "{id}"
+    cli_command: aws apigateway delete-rest-api --rest-api-id {id}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: apigateway-developerguide-2025
+  contributor: goudan@auto

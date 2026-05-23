@@ -1,0 +1,111 @@
+schema_version: v1
+status: verified
+service: kinesis
+service_code_pricing: AmazonKinesis
+service_code_arn_namespace: kinesis
+
+resource_type:
+  name: idle_provisioned_stream
+  human_name: Kinesis Data Stream (PROVISIONED, idle)
+  human_name_zh: 空闲 Kinesis Data Stream(预置容量)
+  cfn: AWS::Kinesis::Stream
+  config: AWS::Kinesis::Stream
+  resource_explorer: AWS::Kinesis::Stream
+  cli_list: aws kinesis list-streams
+  boto3:
+    client: kinesis
+    list_method: list_streams
+  arn_pattern: arn:aws:kinesis:{region}:{account}:stream/{name}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    PROVISIONED Kinesis bills per shard-hour (~$0.015/h ≈ $11/shard/
+    month) plus PUT/GET payload units. A 10-shard pipeline left
+    running idle bills ~$110/month with zero records flowing.
+    ON_DEMAND streams bill per-throughput-unit and are out of scope
+    for the 'forgotten dev cluster' shape.
+  cur_product_codes:
+    - AmazonKinesis
+  cur_usage_type_patterns:
+    - "*Kinesis-Streams-ShardHour*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/kinesis/data-streams/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Active consumers (Lambda triggers, Firehose) hold references; deleting an active stream breaks them.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/streams/latest/dev/managing-stream-deletion.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A PROVISIONED stream is idle when (a) StreamMode == 'PROVISIONED'
+    AND (b) StreamStatus == 'ACTIVE' AND (c) age > 30 days AND (d)
+    AWS/Kinesis.IncomingRecords sum == 0 AND
+    AWS/Kinesis.GetRecords.Records sum == 0 over the last 30 days.
+  rule_pseudocode: |
+    for name in list_streams():
+        info = describe_stream_summary(name)
+        mode = info.StreamModeDetails.StreamMode
+        if mode != 'PROVISIONED': continue
+        if info.StreamStatus != 'ACTIVE': continue
+        if age(info.StreamCreationTimestamp) < 30d: continue
+        inc = cw.metric('AWS/Kinesis','IncomingRecords',
+                        {'StreamName':name}, 30d, Sum)
+        rd = cw.metric('AWS/Kinesis','GetRecords.Records',
+                       {'StreamName':name}, 30d, Sum)
+        if inc == 0 and rd == 0: yield Orphan(info)
+  cleanup_command: aws kinesis delete-stream --stream-name {StreamName} --enforce-consumer-deletion
+  cleanup_safety: destructive
+  iam_required:
+    - kinesis:ListStreams
+    - kinesis:DescribeStreamSummary
+    - cloudwatch:GetMetricStatistics
+    - kinesis:DeleteStream
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    kinesis:ListStreams + DescribeStreamSummary returns StreamMode +
+    OpenShardCount inline. AWS/Kinesis metrics emit even for idle
+    streams (zero, not absent).
+  blind_spots:
+    - "ON_DEMAND streams are excluded by yaml — different pricing model, no idle waste."
+
+tags:
+  - billable
+  - orphan_prone
+  - streaming
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_kinesis_stream:list_streams
+    id_field: StreamName
+    name_field: StreamName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_kinesis_stream:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 10.95   # 0.015/h × 730h × 1 shard
+    unit_field: OpenShardCount
+    fallback_monthly_usd: 10.95
+  cleanup:
+    boto3_method: delete_stream
+    args_template:
+      StreamName: "{StreamName}"
+      EnforceConsumerDeletion: true
+    cli_command: aws kinesis delete-stream --stream-name {StreamName} --enforce-consumer-deletion
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: kinesis-developerguide-2025
+  contributor: goudan@auto
