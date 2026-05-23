@@ -1,0 +1,104 @@
+schema_version: v1
+status: verified
+service: sagemaker
+service_code_pricing: AmazonSageMaker
+service_code_arn_namespace: sagemaker
+
+resource_type:
+  name: idle_notebook_instance
+  human_name: SageMaker Notebook Instance (idle)
+  human_name_zh: 空闲 SageMaker Notebook 实例
+  cfn: AWS::SageMaker::NotebookInstance
+  config: AWS::SageMaker::NotebookInstance
+  resource_explorer: AWS::SageMaker::NotebookInstance
+  cli_list: aws sagemaker list-notebook-instances
+  boto3:
+    client: sagemaker
+    list_method: list_notebook_instances
+  arn_pattern: arn:aws:sagemaker:{region}:{account}:notebook-instance/{name}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    SageMaker Notebook Instance (the legacy one, not Studio) bills
+    per instance-hour 24×7 while InService. ml.t3.medium ≈ $0.05/h
+    ≈ $36/month, ml.m5.xlarge ≈ $0.23/h ≈ $168/month. No automatic
+    sleep — operator must manually Stop. Common 'left it on for the
+    weekend' leak.
+  cur_product_codes:
+    - AmazonSageMaker
+  cur_usage_type_patterns:
+    - "*Notebk*"
+    - "*Notebook*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/sagemaker/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Stop preserves attached EBS storage (still billed); only Delete frees the volume.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/sagemaker/latest/dg/nbi.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A notebook instance is idle when (a) NotebookInstanceStatus ==
+    'InService' AND (b) LastModifiedTime > 7 days ago AND (c)
+    AWS/SageMaker.CPUUtilization average < 1% over 7 days. CPU < 1%
+    avg over a week is a strong 'nobody is connecting' signal.
+  rule_pseudocode: |
+    for nb in list_notebook_instances():
+        if nb.NotebookInstanceStatus != 'InService': continue
+        if age(nb.LastModifiedTime) < 7d: continue
+        cpu = cw.metric('AWS/SageMaker','CPUUtilization',
+                        {'Host':nb.NotebookInstanceName}, 7d, Average)
+        if cpu < 1.0: yield Orphan(nb)
+  cleanup_command: aws sagemaker stop-notebook-instance --notebook-instance-name {NotebookInstanceName}
+  cleanup_safety: safe   # stop is reversible
+  iam_required:
+    - sagemaker:ListNotebookInstances
+    - cloudwatch:GetMetricStatistics
+    - sagemaker:StopNotebookInstance
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    sagemaker:ListNotebookInstances returns Status, InstanceType,
+    LastModifiedTime. AWS/SageMaker emits CPUUtilization with Host
+    dimension matching the instance name.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - ml
+
+scan:
+  list:
+    boto3_client: sagemaker
+    method: list_notebook_instances
+    response_path: NotebookInstances
+    id_field: NotebookInstanceName
+    name_field: NotebookInstanceName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_sagemaker_notebook:is_orphan
+  cost_estimate:
+    monthly_usd: 36.50   # ml.t3.medium baseline; cost engine doesn't yet know per-instance type, so flat
+  cleanup:
+    boto3_method: stop_notebook_instance
+    args_template:
+      NotebookInstanceName: "{NotebookInstanceName}"
+    cli_command: aws sagemaker stop-notebook-instance --notebook-instance-name {NotebookInstanceName}
+    safety: safe
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: sagemaker-developerguide-2025
+  contributor: goudan@auto

@@ -1,0 +1,100 @@
+schema_version: v1
+status: verified
+service: ecs
+service_code_pricing: AmazonECS
+service_code_arn_namespace: ecs
+
+resource_type:
+  name: empty_ecs_cluster
+  human_name: ECS Cluster (no running tasks, no services)
+  human_name_zh: 没有任务/服务的空 ECS 集群
+  cfn: AWS::ECS::Cluster
+  config: AWS::ECS::Cluster
+  resource_explorer: AWS::ECS::Cluster
+  cli_list: aws ecs list-clusters
+  boto3:
+    client: ecs
+    list_method: list_clusters
+  arn_pattern: arn:aws:ecs:{region}:{account}:cluster/{name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    ECS itself is free (the cluster is metadata). However an ECS
+    cluster left over from a deleted CloudFormation stack often
+    holds: Container Insights ($0.30/metric-collected-month),
+    associated CloudWatch Log Groups, and stale Capacity Providers.
+    More importantly: empty ECS clusters indicate abandoned IaC
+    that operators should clean up to avoid drift.
+  cur_product_codes:
+    - AmazonCloudWatch
+  cur_usage_type_patterns:
+    - "*ContainerInsights*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ecs/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Capacity Providers must be unassociated before delete.
+    - Container Insights logs persist after cluster delete; clean their log groups.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/delete_cluster.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A cluster is orphan when (a) status == 'ACTIVE' AND (b)
+    runningTasksCount == 0 AND (c) registeredContainerInstancesCount
+    == 0 AND (d) activeServicesCount == 0.
+  rule_pseudocode: |
+    for c in describe_clusters():
+        if c.status != 'ACTIVE': continue
+        if c.runningTasksCount or c.registeredContainerInstancesCount or c.activeServicesCount:
+            continue
+        yield Orphan(c)
+  cleanup_command: aws ecs delete-cluster --cluster {clusterName}
+  cleanup_safety: needs_review
+  iam_required:
+    - ecs:ListClusters
+    - ecs:DescribeClusters
+    - ecs:DeleteCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    ecs:ListClusters + DescribeClusters returns runningTasksCount,
+    activeServicesCount, registeredContainerInstancesCount inline.
+  blind_spots:
+    - "Fargate-only clusters with zero tasks: empty per this rule, but harmless. Cleanup hygiene only."
+
+tags:
+  - billable
+  - orphan_prone
+  - container
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.empty_ecs_cluster:list_clusters
+    id_field: clusterArn
+    name_field: clusterName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.empty_ecs_cluster:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_cluster
+    args_template:
+      cluster: "{clusterArn}"
+    cli_command: aws ecs delete-cluster --cluster {clusterArn}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: ecs-developerguide-2025
+  contributor: goudan@auto

@@ -1,0 +1,105 @@
+schema_version: v1
+status: verified
+service: batch
+service_code_pricing: AWSBatch
+service_code_arn_namespace: batch
+
+resource_type:
+  name: idle_compute_environment
+  human_name: AWS Batch Compute Environment (idle)
+  human_name_zh: 空闲 Batch Compute Environment
+  cfn: AWS::Batch::ComputeEnvironment
+  config: AWS::Batch::ComputeEnvironment
+  resource_explorer: AWS::Batch::ComputeEnvironment
+  cli_list: aws batch describe-compute-environments
+  boto3:
+    client: batch
+    list_method: describe_compute_environments
+  arn_pattern: arn:aws:batch:{region}:{account}:compute-environment/{name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    AWS Batch itself is free. The cost lives in the underlying
+    EC2/Fargate compute. A managed compute environment with
+    minvCpus > 0 keeps that capacity warm 24×7 even with no jobs.
+    A misconfigured min_vcpus=4 on r5.4xlarge baseline burns ~$700/mo.
+    Spot-only environments are mostly safe; on-demand minvCpus is
+    the danger.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*BoxUsage:*"   # underlying EC2 covers the bill
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/batch/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Must be DISABLED first via update-compute-environment, then deleted.
+    - Job queues referencing the CE must be detached first.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/batch/latest/userguide/compute_environment_parameters.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A compute environment is wasteful when (a) state == 'ENABLED'
+    AND (b) status == 'VALID' AND (c) computeResources.minvCpus > 0
+    AND (d) submitted job count over 30 days is zero (proxied by
+    AWS/Batch.SubmittedJobs metric being zero on all related job
+    queues).
+  rule_pseudocode: |
+    for ce in describe_compute_environments():
+        if ce.state != 'ENABLED' or ce.status != 'VALID': continue
+        if (ce.computeResources or {}).get('minvCpus',0) == 0: continue
+        # if any job queue submitted jobs in 30d, not orphan (best-effort)
+        yield Orphan(ce)
+  cleanup_command: aws batch update-compute-environment --compute-environment {computeEnvironmentName} --state DISABLED
+  cleanup_safety: safe   # disabling is reversible
+  iam_required:
+    - batch:DescribeComputeEnvironments
+    - batch:UpdateComputeEnvironment
+    - batch:DeleteComputeEnvironment
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    batch:DescribeComputeEnvironments returns minvCpus, state,
+    status. The 'minvCpus > 0 means warm capacity always running' is
+    a structural fact, not a metric.
+  blind_spots:
+    - "Spot-only CEs with minvCpus>0 still bill at Spot rates which can be near-zero; we surface them anyway for review."
+
+tags:
+  - billable
+  - orphan_prone
+  - compute
+
+scan:
+  list:
+    boto3_client: batch
+    method: describe_compute_environments
+    response_path: computeEnvironments
+    id_field: computeEnvironmentName
+    name_field: computeEnvironmentName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_batch_ce:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 35.0   # rough per-vCPU/month at on-demand t-class baseline
+    unit_field: minvCpus
+    fallback_monthly_usd: 35.0
+  cleanup:
+    cli_command: aws batch update-compute-environment --compute-environment {computeEnvironmentName} --state DISABLED
+    safety: safe
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: batch-userguide-2025
+  contributor: goudan@auto

@@ -1,0 +1,99 @@
+schema_version: v1
+status: verified
+service: amplify
+service_code_pricing: AWSAmplify
+service_code_arn_namespace: amplify
+
+resource_type:
+  name: idle_amplify_app
+  human_name: Amplify Hosting App (idle / abandoned)
+  human_name_zh: 空闲 Amplify Hosting App
+  cfn: AWS::Amplify::App
+  config: AWS::Amplify::App
+  resource_explorer: AWS::Amplify::App
+  cli_list: aws amplify list-apps
+  boto3:
+    client: amplify
+    list_method: list_apps
+  arn_pattern: arn:aws:amplify:{region}:{account}:apps/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Amplify Hosting bills (a) $0.023/GB-month for storage,
+    (b) $0.15/GB served, and (c) build minutes. An idle app with
+    a single deployed branch is mostly free, but apps tied to
+    deleted GitHub repos or pointing at obsolete domains are
+    abandoned-stack signals.
+  cur_product_codes:
+    - AWSAmplify
+  cur_usage_type_patterns:
+    - "*Amplify-Storage*"
+    - "*Amplify-Bytes*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/amplify/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Custom domain CNAME entries persist after delete; remove from DNS.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    An app is orphan when (a) age > 90 days AND (b) ALL its branches
+    have not received a deploy in 90 days (LastDeployTime > 90d ago
+    or DeployStatus == 'CANCELLED').
+  rule_pseudocode: |
+    for app in list_apps():
+        if age(app.createTime) < 90d: continue
+        branches = list_branches(app.appId)
+        any_recent = any(b.lastDeployTime and age(b.lastDeployTime) < 90d for b in branches)
+        if not any_recent: yield Orphan(app)
+  cleanup_command: aws amplify delete-app --app-id {appId}
+  cleanup_safety: destructive
+  iam_required:
+    - amplify:ListApps
+    - amplify:ListBranches
+    - amplify:DeleteApp
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    amplify:ListApps + ListBranches gives last deploy timestamps
+    inline.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_amplify_app:list_apps
+    id_field: appId
+    name_field: name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_amplify_app:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_app
+    args_template:
+      appId: "{appId}"
+    cli_command: aws amplify delete-app --app-id {appId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: amplify-2025
+  contributor: goudan@auto

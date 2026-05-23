@@ -1,0 +1,96 @@
+schema_version: v1
+status: verified
+service: wafv2
+service_code_pricing: awswaf
+service_code_arn_namespace: wafv2
+
+resource_type:
+  name: idle_web_acl
+  human_name: AWS WAF Web ACL (no associated resources)
+  human_name_zh: 没有关联资源的 WAFv2 Web ACL
+  cfn: AWS::WAFv2::WebACL
+  config: AWS::WAFv2::WebACL
+  resource_explorer: AWS::WAFv2::WebACL
+  cli_list: aws wafv2 list-web-acls
+  boto3:
+    client: wafv2
+    list_method: list_web_acls
+  arn_pattern: arn:aws:wafv2:{region}:{account}:{scope}/webacl/{name}/{id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    AWS WAF Web ACL bills $5.00/month per ACL plus $1.00/month per
+    rule plus $0.60/million requests. A Web ACL with no associated
+    resources (ALB/CloudFront/API Gateway) bills the $5 + per-rule
+    fees forever, no traffic. Common 'we made this for compliance,
+    forgot to attach' artifact.
+  cur_product_codes:
+    - awswaf
+  cur_usage_type_patterns:
+    - "*WAFv2-WebACL*"
+    - "*WAFv2-Rule*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/waf/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Web ACLs detached from all resources can be deleted immediately.
+    - Logging configuration must be removed first.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-deleting.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A Web ACL is orphan when (a) it has zero resources associated
+    via list_resources_for_web_acl. We do this for both REGIONAL
+    and CLOUDFRONT scopes.
+  rule_pseudocode: |
+    for scope in [REGIONAL, CLOUDFRONT]:
+        for acl in list_web_acls(scope):
+            res = list_resources_for_web_acl(acl)
+            if not res: yield Orphan(acl)
+  cleanup_command: aws wafv2 delete-web-acl --name {Name} --id {Id} --scope {Scope} --lock-token <get-from-describe>
+  cleanup_safety: needs_review
+  iam_required:
+    - wafv2:ListWebACLs
+    - wafv2:ListResourcesForWebACL
+    - wafv2:DeleteWebACL
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    wafv2:ListWebACLs + ListResourcesForWebACL return everything
+    inline. Both REGIONAL (ALB/APIGW/AppSync) and CLOUDFRONT scopes
+    are checked.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - security
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_waf_acl:list_acls
+    id_field: ARN
+    name_field: Name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_waf_acl:is_orphan
+  cost_estimate:
+    monthly_usd: 5.0   # base ACL fee; rule fees vary
+  cleanup:
+    cli_command: aws wafv2 delete-web-acl --name {Name} --id {Id} --scope {Scope}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: wafv2-2025
+  contributor: goudan@auto

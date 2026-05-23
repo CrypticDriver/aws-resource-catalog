@@ -1,0 +1,105 @@
+schema_version: v1
+status: verified
+service: apprunner
+service_code_pricing: AWSAppRunner
+service_code_arn_namespace: apprunner
+
+resource_type:
+  name: idle_apprunner_service
+  human_name: App Runner Service (paused / never invoked)
+  human_name_zh: 空闲 App Runner 服务
+  cfn: AWS::AppRunner::Service
+  config: AWS::AppRunner::Service
+  resource_explorer: AWS::AppRunner::Service
+  cli_list: aws apprunner list-services
+  boto3:
+    client: apprunner
+    list_method: list_services
+  arn_pattern: arn:aws:apprunner:{region}:{account}:service/{name}/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    App Runner bills (a) provisioned compute baseline ~$0.007/vCPU-hour
+    even at idle, (b) per-request, and (c) build minutes. A 1 vCPU /
+    2 GB service running 24×7 with zero traffic still bills ~$5-10/mo
+    on the provisioned baseline plus storage. PAUSED services bill
+    near zero but are abandoned — flag for review.
+  cur_product_codes:
+    - AWSAppRunner
+  cur_usage_type_patterns:
+    - "*AppRunner-Provisioned*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/apprunner/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - PAUSED state preserves config but no compute; explicit DeleteService removes it.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/apprunner/latest/dg/manage-pause.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A service is orphan when (a) Status in {RUNNING, PAUSED} AND
+    (b) age > 30 days AND (c) AWS/AppRunner.Requests sum == 0 over
+    30 days. Paused services are also flagged because they're
+    abandoned config (no compute bill, but cleanup hygiene).
+  rule_pseudocode: |
+    for s in list_services():
+        if s.Status not in {'RUNNING','PAUSED'}: continue
+        if age(s.CreatedAt) < 30d: continue
+        if s.Status == 'PAUSED':
+            yield Orphan(s, reason='PAUSED — abandoned')
+            continue
+        r = cw.metric('AWS/AppRunner','Requests',
+                      {'ServiceName':s.ServiceName}, 30d, Sum)
+        if r == 0: yield Orphan(s, reason='RUNNING zero requests 30d')
+  cleanup_command: aws apprunner delete-service --service-arn {ServiceArn}
+  cleanup_safety: destructive
+  iam_required:
+    - apprunner:ListServices
+    - cloudwatch:GetMetricStatistics
+    - apprunner:DeleteService
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    apprunner:ListServices returns Status, CreatedAt, ServiceArn.
+    AWS/AppRunner emits Requests metric while RUNNING.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+
+scan:
+  list:
+    boto3_client: apprunner
+    method: list_services
+    response_path: ServiceSummaryList
+    id_field: ServiceArn
+    name_field: ServiceName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_apprunner:is_orphan
+  cost_estimate:
+    monthly_usd: 5.10   # 1 vCPU baseline ≈ 0.007 × 730
+  cleanup:
+    boto3_method: delete_service
+    args_template:
+      ServiceArn: "{ServiceArn}"
+    cli_command: aws apprunner delete-service --service-arn {ServiceArn}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: apprunner-2025
+  contributor: goudan@auto

@@ -1,0 +1,106 @@
+schema_version: v1
+status: verified
+service: neptune
+service_code_pricing: AmazonNeptune
+service_code_arn_namespace: rds
+
+resource_type:
+  name: idle_neptune_cluster
+  human_name: Neptune Cluster (idle)
+  human_name_zh: 空闲 Neptune 集群
+  cfn: AWS::Neptune::DBCluster
+  config: AWS::RDS::DBCluster
+  resource_explorer: AWS::RDS::DBCluster
+  cli_list: aws neptune describe-db-clusters
+  boto3:
+    client: neptune
+    list_method: describe_db_clusters
+  arn_pattern: arn:aws:rds:{region}:{account}:cluster:{name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Neptune bills per instance-hour. db.r6g.large ≈ $0.348/h ≈
+    $254/month/instance. A 2-instance Neptune cluster idles at
+    ~$508/month with zero connections. POC graph-DB clusters are
+    common 'we explored it for fraud detection' artifacts.
+  cur_product_codes:
+    - AmazonNeptune
+  cur_usage_type_patterns:
+    - "*Neptune:Instance*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/neptune/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - DeletionProtection often enabled; clear before delete.
+    - Final snapshot mandatory unless --skip-final-snapshot.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/neptune/latest/userguide/get-started.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A Neptune cluster is idle when (a) Status == 'available' AND
+    (b) age > 30 days AND (c) AWS/Neptune.MainRequestQueuePendingRequests
+    OR Gremlin/SPARQL request count is zero across all member instances
+    over 30 days. A simpler heuristic uses
+    AWS/Neptune.NumOfClusterEdges as a 'is anyone querying'
+    proxy — but the canonical idle signal is connection count.
+  rule_pseudocode: |
+    for c in describe_db_clusters():
+        if c.Status != 'available': continue
+        if age(c.ClusterCreateTime) < 30d: continue
+        cpu = sum_member_cpu(cw, c)
+        if cpu_avg < 5%: yield Orphan(c)
+  cleanup_command: aws neptune delete-db-cluster --db-cluster-identifier {DBClusterIdentifier} --skip-final-snapshot
+  cleanup_safety: destructive
+  iam_required:
+    - rds:DescribeDBClusters
+    - cloudwatch:GetMetricStatistics
+    - rds:DeleteDBCluster
+    - rds:DeleteDBInstance
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    Neptune shares the rds:DescribeDBClusters API. We filter
+    Engine in {'neptune'} so we don't double-flag Aurora or DocDB.
+    AWS/Neptune.CPUUtilization is the canonical idle metric.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - database
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_neptune_cluster:list_clusters
+    id_field: DBClusterIdentifier
+    name_field: DBClusterIdentifier
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_neptune_cluster:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 254.0
+    unit_field: MemberCount
+    fallback_monthly_usd: 254.0
+  cleanup:
+    boto3_method: delete_db_cluster
+    args_template:
+      DBClusterIdentifier: "{DBClusterIdentifier}"
+      SkipFinalSnapshot: false
+    cli_command: aws neptune delete-db-cluster --db-cluster-identifier {DBClusterIdentifier} --skip-final-snapshot
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: neptune-userguide-2025
+  contributor: goudan@auto
