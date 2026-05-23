@@ -1,0 +1,110 @@
+schema_version: v1
+status: verified
+service: sagemaker
+service_code_pricing: AmazonSageMaker
+service_code_arn_namespace: sagemaker
+
+resource_type:
+  name: idle_sagemaker_endpoint
+  human_name: SageMaker Real-time Endpoint (idle)
+  human_name_zh: 空闲的 SageMaker 实时推理端点
+  cfn: AWS::SageMaker::Endpoint
+  config: AWS::SageMaker::Endpoint
+  resource_explorer: AWS::SageMaker::Endpoint
+  cli_list: aws sagemaker list-endpoints
+  boto3:
+    client: sagemaker
+    list_method: list_endpoints
+  arn_pattern: arn:aws:sagemaker:{region}:{account}:endpoint/{name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    SageMaker real-time endpoints bill per instance-hour for every
+    instance behind the endpoint, 24×7, regardless of invocation
+    rate. ml.m5.large ≈ $0.115/h ≈ $84/month per instance; ml.g5.xlarge
+    ≈ $1.408/h ≈ $1027/month. A POC endpoint forgotten at ml.g5.xlarge
+    burns serious money. Async/Serverless endpoints have different
+    pricing and are out of scope here.
+  cur_product_codes:
+    - AmazonSageMaker
+  cur_usage_type_patterns:
+    - "*Hosting*"
+    - "*Inf-Hosting*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/sagemaker/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Endpoint configurations and models survive endpoint delete and are free; the meter stops with the endpoint.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints-delete-endpoint.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    An endpoint is idle when (a) EndpointStatus == 'InService' AND
+    (b) age > 7 days AND (c) Invocations sum == 0 over the last 7
+    days. We use 7d (not 30d) because real-time endpoints are
+    expensive and you usually know within a week if it's needed.
+  rule_pseudocode: |
+    for ep in list_endpoints():
+        if ep.EndpointStatus != 'InService': continue
+        if age(ep.CreationTime) < 7d: continue
+        invs = cw.metric('AWS/SageMaker/Endpoints','Invocations',
+                          {'EndpointName':ep.EndpointName,
+                           'VariantName':'AllTraffic'}, 7d, Sum)
+        if invs == 0: yield Orphan(ep)
+  cleanup_command: aws sagemaker delete-endpoint --endpoint-name {EndpointName}
+  cleanup_safety: destructive
+  iam_required:
+    - sagemaker:ListEndpoints
+    - sagemaker:DescribeEndpoint
+    - cloudwatch:GetMetricStatistics
+    - sagemaker:DeleteEndpoint
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    sagemaker:ListEndpoints + DescribeEndpoint returns each
+    InService endpoint. AWS/SageMaker/Endpoints emits Invocations
+    metric for every variant — zero is a real datapoint, not a
+    metric absence.
+  blind_spots:
+    - "Async / Serverless / Multi-Model endpoints have different metric semantics and are out of scope here."
+
+tags:
+  - billable
+  - orphan_prone
+  - ml
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_sagemaker_endpoint:list_endpoints
+    id_field: EndpointName
+    name_field: EndpointName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_sagemaker_endpoint:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 84.0   # ml.m5.large baseline; cost engine multiplies by InstanceCount
+    unit_field: InstanceCount
+    fallback_monthly_usd: 84.0
+  cleanup:
+    boto3_method: delete_endpoint
+    args_template:
+      EndpointName: "{EndpointName}"
+    cli_command: aws sagemaker delete-endpoint --endpoint-name {EndpointName}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: sagemaker-developerguide-2025
+  contributor: goudan@auto

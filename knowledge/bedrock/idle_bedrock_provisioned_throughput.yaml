@@ -1,0 +1,118 @@
+schema_version: v1
+status: verified
+service: bedrock
+service_code_pricing: AmazonBedrock
+service_code_arn_namespace: bedrock
+
+resource_type:
+  name: idle_bedrock_provisioned_throughput
+  human_name: Bedrock Provisioned Throughput (low utilization)
+  human_name_zh: 低利用率的 Bedrock Provisioned Throughput
+  cfn: null
+  config: null
+  resource_explorer: null
+  cli_list: aws bedrock list-provisioned-model-throughputs
+  boto3:
+    client: bedrock
+    list_method: list_provisioned_model_throughputs
+  arn_pattern: arn:aws:bedrock:{region}:{account}:provisioned-model/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Bedrock Provisioned Throughput is billed by model-units × commitment
+    period, paid up-front for 1 or 6 month terms. Cost per model-unit
+    runs $39-$84 PER HOUR depending on model (Claude Sonnet ~$45/h ≈
+    $32k/month for 1 MU; Llama-3-70B ~$21/h ≈ $15k/month). A single
+    forgotten 1-month commitment is a 5-figure leak. NoCommitment PT
+    bills hourly until deleted.
+  cur_product_codes:
+    - AmazonBedrock
+  cur_usage_type_patterns:
+    - "*Bedrock-ProvisionedThroughput*"
+    - "*Bedrock-Hours*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/bedrock/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Term commitments (1m/6m) charge for the full term even if deleted early — only NoCommitment PT can be cleaned up immediately to stop the meter.
+    - Custom models attached to PT survive PT deletion and are free, but a new PT is needed to invoke them.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/bedrock/latest/userguide/prov-thru-delete.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    Any active NoCommitment Provisioned Throughput is flagged for
+    review. Term commitments (commitmentDuration in {OneMonth,
+    SixMonth}) are also flagged when InvocationLatency datapoints
+    show the model never produced a response in the last 7 days
+    AND status == InService AND age > 7 days. We surface BOTH so an
+    operator can see the full leak surface.
+  rule_pseudocode: |
+    for pt in list_provisioned_model_throughputs():
+        if pt.status not in ('InService','Updating'): continue
+        if age(pt.creationTime) < 7d: continue
+        if pt.commitmentDuration not in ('OneMonth','SixMonth'):
+            yield Orphan(pt, reason='NoCommitment PT — bills until deleted')
+        else:
+            invocations = cw.metric('AWS/Bedrock','InvocationLatency',
+                {'ProvisionedModelArn': pt.provisionedModelArn},
+                7d, SampleCount)
+            if invocations == 0:
+                yield Orphan(pt, reason='Term commitment with zero invocations 7d')
+  cleanup_command: aws bedrock delete-provisioned-model-throughput --provisioned-model-id {provisionedModelId}
+  cleanup_safety: needs_review   # term commitments still bill the remaining term
+  iam_required:
+    - bedrock:ListProvisionedModelThroughputs
+    - bedrock:GetProvisionedModelThroughput
+    - cloudwatch:GetMetricStatistics
+    - bedrock:DeleteProvisionedModelThroughput
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    bedrock:ListProvisionedModelThroughputs returns every PT in the
+    region with status, commitmentDuration, creationTime, modelUnits.
+    AWS/Bedrock InvocationLatency is emitted per request — absence of
+    samples over a week is a strong idle signal.
+  blind_spots:
+    - "Cross-region inference profiles share underlying PT but are listed only in the region the PT was created in."
+
+tags:
+  - billable
+  - orphan_prone
+  - ml
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_bedrock_pt:list_pts
+    id_field: provisionedModelArn
+    name_field: provisionedModelName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_bedrock_pt:is_orphan
+  cost_estimate:
+    # 1 model-unit baseline (Claude Sonnet hourly) — engine multiplies by ModelUnits.
+    monthly_usd_per_unit: 32850.0   # 45/h × 730h
+    unit_field: ModelUnits
+    fallback_monthly_usd: 32850.0
+  cleanup:
+    boto3_method: delete_provisioned_model_throughput
+    args_template:
+      provisionedModelId: "{provisionedModelId}"
+    cli_command: aws bedrock delete-provisioned-model-throughput --provisioned-model-id {provisionedModelId}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: bedrock-userguide-2025
+  contributor: goudan@auto

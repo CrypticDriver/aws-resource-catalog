@@ -1,0 +1,114 @@
+schema_version: v1
+status: verified
+service: ec2
+service_code_pricing: AmazonVPC
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: idle_vpc_interface_endpoint
+  human_name: VPC Interface Endpoint (idle)
+  human_name_zh: 空闲的 VPC 接口端点
+  cfn: AWS::EC2::VPCEndpoint
+  config: AWS::EC2::VPCEndpoint
+  resource_explorer: AWS::EC2::VPCEndpoint
+  cli_list: aws ec2 describe-vpc-endpoints
+  boto3:
+    client: ec2
+    list_method: describe_vpc_endpoints
+  arn_pattern: arn:aws:ec2:{region}:{account}:vpc-endpoint/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Interface endpoints (PrivateLink) bill per AZ-hour
+    (~$0.01/h ≈ $7.20/month per AZ, often deployed across 2-3 AZs)
+    PLUS data processed (~$0.01/GB). A team that wired up an
+    endpoint to test connectivity then walked away costs ~$15-22/mo
+    forever. Gateway endpoints (S3/DynamoDB) are free and excluded.
+  cur_product_codes:
+    - AmazonVPC
+  cur_usage_type_patterns:
+    - "*VpcEndpoint-Hours*"
+    - "*VpcEndpoint-Bytes*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/privatelink/pricing/
+
+lifecycle:
+  parent_resource: vpc
+  parent_link: |
+    Endpoint is a child of VPC. VPC delete fails until endpoints are
+    removed; lone endpoints in old VPCs are common.
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Interface endpoints often back AWS-internal services (SSM Session Manager etc); confirm with operator before deleting.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/vpc/latest/privatelink/delete-interface-endpoint.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    An Interface endpoint is idle when (a) VpcEndpointType ==
+    'Interface' AND (b) State == 'available' AND (c) age > 30 days
+    AND (d) AWS/PrivateLinkEndpoints.BytesProcessed sum == 0 over
+    30 days. Gateway endpoints (free) and GatewayLoadBalancer
+    endpoints are excluded.
+  rule_pseudocode: |
+    for ep in describe_vpc_endpoints():
+        if ep.VpcEndpointType != 'Interface': continue
+        if ep.State != 'available': continue
+        if age(ep.CreationTimestamp) < 30d: continue
+        bytes = cw.metric('AWS/PrivateLinkEndpoints', 'BytesProcessed',
+                          {'VPC Endpoint Id': ep.VpcEndpointId}, 30d sum)
+        if bytes == 0: yield Orphan(ep)
+  cleanup_command: aws ec2 delete-vpc-endpoints --vpc-endpoint-ids {VpcEndpointId}
+  cleanup_safety: needs_review
+  iam_required:
+    - ec2:DescribeVpcEndpoints
+    - cloudwatch:GetMetricStatistics
+    - ec2:DeleteVpcEndpoints
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    ec2:DescribeVpcEndpoints returns every endpoint regardless of
+    state. AWS/PrivateLinkEndpoints metrics are emitted for any
+    Interface endpoint while available (verified: even idle endpoints
+    emit BytesProcessed=0 datapoints).
+  blind_spots:
+    - "Gateway endpoints (S3/DDB) are free and intentionally excluded by VpcEndpointType filter."
+
+tags:
+  - billable
+  - orphan_prone
+  - network
+
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_vpc_endpoints
+    response_path: VpcEndpoints
+    id_field: VpcEndpointId
+    name_field: VpcEndpointId
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_vpc_interface_endpoint:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 7.30   # one AZ baseline
+    unit_field: AzCount
+    fallback_monthly_usd: 7.30
+  cleanup:
+    boto3_method: delete_vpc_endpoints
+    args_template:
+      VpcEndpointIds: ["{VpcEndpointId}"]
+    cli_command: aws ec2 delete-vpc-endpoints --vpc-endpoint-ids {VpcEndpointId}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: vpc-userguide-2025
+  contributor: goudan@auto

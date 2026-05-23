@@ -1,0 +1,110 @@
+schema_version: v1
+status: verified
+service: opensearch
+service_code_pricing: AmazonES
+service_code_arn_namespace: es
+
+resource_type:
+  name: idle_opensearch_domain
+  human_name: Idle OpenSearch Domain
+  human_name_zh: 空闲 OpenSearch 域
+  cfn: AWS::OpenSearchService::Domain
+  config: AWS::OpenSearchService::Domain
+  resource_explorer: AWS::OpenSearchService::Domain
+  cli_list: aws opensearch list-domain-names
+  boto3:
+    client: opensearch
+    list_method: list_domain_names
+  arn_pattern: arn:aws:es:{region}:{account}:domain/{name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    OpenSearch bills per data-node-hour (m6g.large.search ~$0.083/h
+    ≈ $61/month/node) plus EBS storage (~$0.135/GB-month gp3) plus
+    optional UltraWarm/cold storage. Even a 1-node t3.small.search
+    dev domain idles at ~$25/month while serving zero traffic.
+    Common 'we'll evaluate Elasticsearch' POC artifact.
+  cur_product_codes:
+    - AmazonES
+  cur_usage_type_patterns:
+    - "*ES:InstanceHours*"
+    - "*ES:EBS-Storage*"
+  free_tier: true   # 750 hr/month t2/t3.small.search for the first 12 months
+  doc_pricing_page: https://aws.amazon.com/opensearch-service/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Take a final snapshot first if data matters — domain delete is irreversible.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createupdatedomains.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A domain is idle when (a) the domain is created and processing
+    (created=true / processing=false) AND (b) age > 30 days AND (c)
+    SearchRate sum == 0 over the last 30 days AND (d) IndexingRate
+    sum == 0 over the last 30 days. Both rates being zero is a
+    strong signal — if the domain were used the dashboards would at
+    least poll it.
+  rule_pseudocode: |
+    for name in list_domain_names():
+        info = describe_domain(name)
+        if not info.Created or info.Processing: continue
+        if age(info.Created) < 30d: continue
+        sr = cw.metric('AWS/ES','SearchRate', {'DomainName':name,'ClientId':account}, 30d, Sum)
+        ir = cw.metric('AWS/ES','IndexingRate', {'DomainName':name,'ClientId':account}, 30d, Sum)
+        if sr == 0 and ir == 0: yield Orphan(name)
+  cleanup_command: aws opensearch delete-domain --domain-name {DomainName}
+  cleanup_safety: destructive
+  iam_required:
+    - opensearch:ListDomainNames
+    - opensearch:DescribeDomain
+    - cloudwatch:GetMetricStatistics
+    - opensearch:DeleteDomain
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    opensearch:ListDomainNames + DescribeDomain returns every domain
+    in the region. AWS/ES SearchRate/IndexingRate are always emitted
+    for live domains (zero datapoints when idle).
+  blind_spots:
+    - "Aurora-style multi-AZ failovers can briefly mask a domain as 'Processing' — we skip those rather than risk a false positive."
+
+tags:
+  - billable
+  - orphan_prone
+  - search
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_opensearch_domain:list_domains
+    id_field: DomainName
+    name_field: DomainName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_opensearch_domain:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 60.59   # m6g.large.search ~ $0.083 × 730
+    unit_field: InstanceCount
+    fallback_monthly_usd: 60.59
+  cleanup:
+    boto3_method: delete_domain
+    args_template:
+      DomainName: "{DomainName}"
+    cli_command: aws opensearch delete-domain --domain-name {DomainName}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: opensearch-developerguide-2025
+  contributor: goudan@auto

@@ -1,0 +1,111 @@
+schema_version: v1
+status: verified
+service: eks
+service_code_pricing: AmazonEKS
+service_code_arn_namespace: eks
+
+resource_type:
+  name: empty_eks_cluster
+  human_name: EKS Cluster (no nodegroups, no Fargate profiles)
+  human_name_zh: 没有节点组也没有 Fargate Profile 的 EKS 集群
+  cfn: AWS::EKS::Cluster
+  config: AWS::EKS::Cluster
+  resource_explorer: AWS::EKS::Cluster
+  cli_list: aws eks list-clusters
+  boto3:
+    client: eks
+    list_method: list_clusters
+  arn_pattern: arn:aws:eks:{region}:{account}:cluster/{name}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    EKS bills the control plane at ~$0.10/hour ≈ $73/month per
+    cluster, regardless of whether any nodes/pods are running.
+    Empty (no managed nodegroups, no self-managed nodes, no Fargate
+    profiles) clusters are pure waste. Auto Mode and Hybrid Nodes
+    are also priced; not addressed here.
+  cur_product_codes:
+    - AmazonEKS
+  cur_usage_type_patterns:
+    - "*EKS-Hours*"
+    - "*AmazonEKS-Hours*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/eks/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Cluster delete blocked while nodegroups / Fargate profiles / addons exist; this scanner only flags clusters that have NONE of those, which means delete is unblocked.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/eks/latest/userguide/delete-cluster.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    Cluster has zero managed nodegroups, zero Fargate profiles,
+    cluster status == ACTIVE, and age > 7 days. Self-managed nodes
+    are not detectable from the EKS API (they live in EC2); we add
+    a CloudWatch ContainerInsights cluster_node_count check when
+    Container Insights is enabled, otherwise rely on managed
+    inventories alone (false-negative on accounts using only
+    self-managed nodes — documented blind spot).
+  rule_pseudocode: |
+    for cl in list_clusters():
+        info = describe_cluster(cl)
+        if info.status != 'ACTIVE': continue
+        if age(info.createdAt) < 7d: continue
+        ngs = list_nodegroups(cl)
+        fps = list_fargate_profiles(cl)
+        if not ngs and not fps: yield Orphan(info)
+  cleanup_command: aws eks delete-cluster --name {name}
+  cleanup_safety: destructive
+  iam_required:
+    - eks:ListClusters
+    - eks:DescribeCluster
+    - eks:ListNodegroups
+    - eks:ListFargateProfiles
+    - eks:DeleteCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    eks:ListClusters + ListNodegroups + ListFargateProfiles all
+    return realtime, with no metric dependency. No false-positive
+    cost: an ACTIVE cluster is billed per hour whether or not it
+    has nodes.
+  blind_spots:
+    - "Self-managed worker nodes (EC2-only, not in EKS managed inventory) cannot be enumerated via the EKS API. A cluster running only self-managed nodes will be falsely flagged as empty. Operator must verify before delete."
+
+tags:
+  - billable
+  - orphan_prone
+  - container
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.empty_eks_cluster:list_clusters
+    id_field: name
+    name_field: name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.empty_eks_cluster:is_orphan
+  cost_estimate:
+    monthly_usd: 73.0   # $0.10/h × 730h
+  cleanup:
+    boto3_method: delete_cluster
+    args_template:
+      name: "{name}"
+    cli_command: aws eks delete-cluster --name {name}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: eks-userguide-2025
+  contributor: goudan@auto

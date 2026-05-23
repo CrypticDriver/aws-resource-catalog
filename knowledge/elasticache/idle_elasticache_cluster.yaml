@@ -1,0 +1,111 @@
+schema_version: v1
+status: verified
+service: elasticache
+service_code_pricing: AmazonElastiCache
+service_code_arn_namespace: elasticache
+
+resource_type:
+  name: idle_elasticache_cluster
+  human_name: Idle ElastiCache (Redis/Memcached) Cluster
+  human_name_zh: 空闲 ElastiCache(Redis/Memcached)集群
+  cfn: AWS::ElastiCache::CacheCluster
+  config: AWS::ElastiCache::CacheCluster
+  resource_explorer: AWS::ElastiCache::CacheCluster
+  cli_list: aws elasticache describe-cache-clusters
+  boto3:
+    client: elasticache
+    list_method: describe_cache_clusters
+  arn_pattern: arn:aws:elasticache:{region}:{account}:cluster:{cluster-id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    ElastiCache bills per node-hour. cache.t3.micro ≈ $0.017/h ≈
+    $13/month/node, cache.r6g.large ≈ $0.198/h ≈ $145/month/node.
+    A Redis cluster with 3 r6g.large nodes is ~$435/month even with
+    zero hits. Stale POC clusters are very common.
+  cur_product_codes:
+    - AmazonElastiCache
+  cur_usage_type_patterns:
+    - "*NodeUsage*"
+    - "*BackupUsage*"
+  free_tier: true   # 750 hr/month cache.t2.micro for the first 12 months
+  doc_pricing_page: https://aws.amazon.com/elasticache/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Some clusters back replication groups; use describe_replication_groups in production cleanup workflows. This scanner only flags standalone (cache_cluster_id present, replication_group_id absent) clusters to avoid touching primary nodes of a replication group.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Clusters.Delete.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A standalone cache cluster is idle when (a) CacheClusterStatus
+    == 'available' AND (b) ReplicationGroupId is empty AND (c) age
+    > 30 days AND (d) for Redis, NetworkBytesIn sum < 1 MiB over 30d
+    OR for Memcached, BytesUsedForItems / hits both 0 over 30d.
+  rule_pseudocode: |
+    for c in describe_cache_clusters():
+        if c.CacheClusterStatus != 'available': continue
+        if c.ReplicationGroupId: continue
+        if age(c.CacheClusterCreateTime) < 30d: continue
+        nbi = cw.metric('AWS/ElastiCache','NetworkBytesIn',
+                        {'CacheClusterId': c.id}, 30d, Sum)
+        if nbi < 1MiB: yield Orphan(c)
+  cleanup_command: aws elasticache delete-cache-cluster --cache-cluster-id {CacheClusterId}
+  cleanup_safety: destructive
+  iam_required:
+    - elasticache:DescribeCacheClusters
+    - cloudwatch:GetMetricStatistics
+    - elasticache:DeleteCacheCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    elasticache:DescribeCacheClusters returns all standalone clusters.
+    Replication group members are filtered out via ReplicationGroupId.
+    AWS/ElastiCache metrics are emitted continuously while the cluster
+    is available.
+  blind_spots:
+    - "Replication group primaries / replicas are intentionally skipped — deleting a primary breaks the group. A separate catalog entry can target idle replication groups."
+    - "Serverless ElastiCache uses a different API and is out of scope here."
+
+tags:
+  - billable
+  - orphan_prone
+  - cache
+  - high_value
+
+scan:
+  list:
+    boto3_client: elasticache
+    method: describe_cache_clusters
+    response_path: CacheClusters
+    id_field: CacheClusterId
+    name_field: CacheClusterId
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_elasticache_cluster:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 12.50  # cache.t3.micro baseline; cost engine multiplies by NumCacheNodes
+    unit_field: NumCacheNodes
+    fallback_monthly_usd: 12.50
+  cleanup:
+    boto3_method: delete_cache_cluster
+    args_template:
+      CacheClusterId: "{CacheClusterId}"
+    cli_command: aws elasticache delete-cache-cluster --cache-cluster-id {CacheClusterId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: elasticache-userguide-2025
+  contributor: goudan@auto
