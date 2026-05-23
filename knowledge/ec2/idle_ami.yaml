@@ -1,0 +1,111 @@
+schema_version: v1
+status: verified
+service: ec2
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: idle_ami
+  human_name: AMI (private, never used)
+  human_name_zh: 长期未使用的私有 AMI
+  cfn: AWS::EC2::Image
+  config: AWS::EC2::Image
+  resource_explorer: AWS::EC2::Image
+  cli_list: aws ec2 describe-images --owners self
+  boto3:
+    client: ec2
+    list_method: describe_images
+  arn_pattern: arn:aws:ec2:{region}::image/{id}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    AMIs are billed via the underlying EBS snapshots they reference
+    ($0.05/GB-month). A team that promotes "golden images" weekly
+    accumulates 50+ AMIs in a year — typically 4-20GB each.
+    
+    A private AMI not used to launch any instance in 90+ days, and
+    not referenced by any active Launch Template / Auto Scaling
+    Group / EC2 Image Builder pipeline, is pure waste.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*EBS:SnapshotUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ebs/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Deregistering an AMI does NOT delete the underlying snapshots; you must delete them separately.
+    - Active Launch Template / ASG referring to deregistered AMI will fail to launch.
+    - Cross-account shared AMIs may have downstream consumers; check Permissions.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/deregister-ami.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A private AMI is orphan when (a) OwnerId == own account AND
+    (b) State == 'available' AND (c) age > 90 days AND (d) NOT
+    referenced by any active Launch Template version.
+    
+    Image Usage CloudWatch metric is too coarse; we approximate
+    by checking Launch Template references — newest LT versions
+    only.
+  rule_pseudocode: |
+    for img in describe_images(Owners=['self']):
+        if img.State != 'available': continue
+        if age(img.CreationDate) < 90d: continue
+        # Check if any current LT version references this AMI
+        if ami_referenced_by_active_lt(img.ImageId):
+            continue
+        yield Orphan(img)
+  cleanup_command: aws ec2 deregister-image --image-id {ImageId}
+  cleanup_safety: destructive
+  iam_required:
+    - ec2:DescribeImages
+    - ec2:DescribeLaunchTemplates
+    - ec2:DescribeLaunchTemplateVersions
+    - ec2:DeregisterImage
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: best_effort
+  requires_setup: null
+  rationale: |
+    ec2:DescribeImages with Owners=['self'] is realtime. Launch
+    Template reference check is best-effort (we sample latest 5
+    versions per LT).
+  blind_spots:
+    - "AMIs referenced by Auto Scaling Groups via mixedInstancesPolicy / direct AMI ID may be missed; we check only Launch Templates."
+    - "Image Builder pipelines that produce AMIs may have rotation logic; cross-check their build history."
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_ami:list_images
+    id_field: ImageId
+    name_field: Name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_ami:is_orphan
+  cost_estimate:
+    monthly_usd: 0.50   # est ~10GB AMI × $0.05/GB-month
+  cleanup:
+    boto3_method: deregister_image
+    args_template:
+      ImageId: "{ImageId}"
+    cli_command: aws ec2 deregister-image --image-id {ImageId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: ec2-2025
+  contributor: goudan@auto

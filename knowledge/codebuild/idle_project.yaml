@@ -1,0 +1,103 @@
+schema_version: v1
+status: verified
+service: codebuild
+service_code_pricing: AmazonCodeBuild
+service_code_arn_namespace: codebuild
+
+resource_type:
+  name: idle_project
+  human_name: CodeBuild Project (no recent builds)
+  human_name_zh: 空闲 CodeBuild 项目
+  cfn: AWS::CodeBuild::Project
+  config: AWS::CodeBuild::Project
+  resource_explorer: AWS::CodeBuild::Project
+  cli_list: aws codebuild list-projects
+  boto3:
+    client: codebuild
+    list_method: list_projects
+  arn_pattern: arn:aws:codebuild:{region}:{account}:project/{name}
+
+billing:
+  billable: true
+  model: per-second
+  summary: |
+    CodeBuild bills only when builds run (per-minute by compute type:
+    $0.005/min general1.small to $0.20/min for graviton2.large). An
+    unused project costs $0 but is dead config: VPC ENIs, IAM service
+    roles, S3 cache buckets — all dead weight from a deleted pipeline.
+  cur_product_codes:
+    - AmazonCodeBuild
+  cur_usage_type_patterns:
+    - "*Build-Min*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/codebuild/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Build history (last 1000 builds) is preserved across project deletion.
+    - VPC ENIs auto-cleanup when last build finishes; check before delete.
+    - Webhook integrations (GitHub/Bitbucket) may need to be deregistered.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/codebuild/latest/userguide/delete-project.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A project is orphan when (a) lastModified > 90 days ago AND
+    (b) BuildsSucceeded + BuildsFailed sum == 0 over 90 days
+    (CloudWatch namespace AWS/CodeBuild).
+  rule_pseudocode: |
+    for p in list_projects():
+        info = batch_get_projects([p])[0]
+        if age(info.lastModified) < 90d: continue
+        builds_count = sum(
+            cw.metric('AWS/CodeBuild',m,{'ProjectName':p}, 90d, Sum)
+            for m in ['BuildsSucceeded','BuildsFailed']
+        )
+        if builds_count == 0: yield Orphan(p)
+  cleanup_command: aws codebuild delete-project --name {Name}
+  cleanup_safety: needs_review
+  iam_required:
+    - codebuild:ListProjects
+    - codebuild:BatchGetProjects
+    - cloudwatch:GetMetricStatistics
+    - codebuild:DeleteProject
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    codebuild:ListProjects + BatchGetProjects gives lastModified.
+    AWS/CodeBuild metrics per project surface activity.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - cicd
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_codebuild_project:list_projects
+    id_field: name
+    name_field: name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_codebuild_project:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_project
+    args_template:
+      name: "{name}"
+    cli_command: aws codebuild delete-project --name {name}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: codebuild-2025
+  contributor: goudan@auto

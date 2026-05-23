@@ -1,0 +1,102 @@
+schema_version: v1
+status: verified
+service: cloudwatch
+service_code_pricing: AmazonCloudWatch
+service_code_arn_namespace: cloudwatch
+
+resource_type:
+  name: broken_alarm
+  human_name: CloudWatch Alarm (broken / INSUFFICIENT_DATA)
+  human_name_zh: 失效的 CloudWatch 告警(无数据状态)
+  cfn: AWS::CloudWatch::Alarm
+  config: AWS::CloudWatch::Alarm
+  resource_explorer: AWS::CloudWatch::Alarm
+  cli_list: aws cloudwatch describe-alarms
+  boto3:
+    client: cloudwatch
+    list_method: describe_alarms
+  arn_pattern: arn:aws:cloudwatch:{region}:{account}:alarm:{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    CloudWatch Alarms cost $0.10/alarm/month (Standard Resolution),
+    $0.30/alarm/month (High Resolution). Alarms stuck in
+    INSUFFICIENT_DATA for weeks are paying-for-nothing — usually the
+    underlying resource was deleted (RDS instance / Lambda / EC2)
+    but the alarm still bills.
+    
+    100 broken alarms = $10/mo silent forever.
+  cur_product_codes:
+    - AmazonCloudWatch
+  cur_usage_type_patterns:
+    - "*Alarms*"
+    - "*HighResAlarms*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/cloudwatch/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Composite alarms reference other alarms; check before deleting.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Delete-CloudWatch-Alarm.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    An alarm is orphan when (a) StateValue == 'INSUFFICIENT_DATA' AND
+    (b) StateUpdatedTimestamp older than 30 days. Persistent
+    INSUFFICIENT_DATA means metric stopped reporting — almost always
+    because the resource was deleted.
+  rule_pseudocode: |
+    for a in describe_alarms():
+        if a.StateValue != 'INSUFFICIENT_DATA': continue
+        if age(a.StateUpdatedTimestamp) < 30d: continue
+        yield Orphan(a)
+  cleanup_command: aws cloudwatch delete-alarms --alarm-names {AlarmName}
+  cleanup_safety: needs_review
+  iam_required:
+    - cloudwatch:DescribeAlarms
+    - cloudwatch:DeleteAlarms
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    cloudwatch:DescribeAlarms returns StateValue + StateUpdatedTimestamp inline.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - monitoring
+  - quick_win
+
+scan:
+  list:
+    boto3_client: cloudwatch
+    method: describe_alarms
+    response_path: MetricAlarms
+    id_field: AlarmName
+    name_field: AlarmName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.broken_alarm:is_orphan
+  cost_estimate:
+    monthly_usd: 0.10
+  cleanup:
+    boto3_method: delete_alarms
+    args_template:
+      AlarmNames: ["{AlarmName}"]
+    cli_command: aws cloudwatch delete-alarms --alarm-names {AlarmName}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: cloudwatch-2025
+  contributor: goudan@auto

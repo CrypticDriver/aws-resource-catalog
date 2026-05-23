@@ -1,0 +1,99 @@
+schema_version: v1
+status: verified
+service: cognito-identity
+service_code_pricing: AmazonCognito
+service_code_arn_namespace: cognito-identity
+
+resource_type:
+  name: idle_identity_pool
+  human_name: Cognito Identity Pool (federated, never authenticated)
+  human_name_zh: 空闲 Cognito Identity Pool(从未联邦认证)
+  cfn: AWS::Cognito::IdentityPool
+  config: AWS::Cognito::IdentityPool
+  resource_explorer: AWS::Cognito::IdentityPool
+  cli_list: aws cognito-identity list-identity-pools --max-results 60
+  boto3:
+    client: cognito-identity
+    list_method: list_identity_pools
+  arn_pattern: arn:aws:cognito-identity:{region}:{account}:identitypool/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Cognito Identity Pools provide AWS credentials to federated/anonymous
+    users. Bills happen via STS AssumeRoleWithWebIdentity; the pool
+    itself is free. But unused pools mean dead IAM trust policies and
+    federated identity providers configured but never invoked — security
+    debt more than cost debt.
+  cur_product_codes:
+    - AmazonCognito
+  cur_usage_type_patterns:
+    - "*Cognito-Sync*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/cognito/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Pool deletion permanently removes all linked federated identities.
+    - Anonymous (unauth) role policies should be reviewed before delete.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-identity-management-create-and-customize-identity-pool.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A pool is orphan when the count of identities returned by
+    list_identities is zero AND the pool was created > 30 days ago.
+  rule_pseudocode: |
+    for p in list_identity_pools():
+        info = describe_identity_pool(p.IdentityPoolId)
+        ids = list_identities(IdentityPoolId=p.IdentityPoolId, MaxResults=1)
+        if ids.Identities: continue
+        yield Orphan(p)
+  cleanup_command: aws cognito-identity delete-identity-pool --identity-pool-id {IdentityPoolId}
+  cleanup_safety: needs_review
+  iam_required:
+    - cognito-identity:ListIdentityPools
+    - cognito-identity:DescribeIdentityPool
+    - cognito-identity:ListIdentities
+    - cognito-identity:DeleteIdentityPool
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    cognito-identity:ListIdentityPools returns Id + Name.
+    ListIdentities is a fast path to detect zero-membership pools.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - identity
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_identity_pool:list_identity_pools
+    id_field: IdentityPoolId
+    name_field: IdentityPoolName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_identity_pool:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_identity_pool
+    args_template:
+      IdentityPoolId: "{IdentityPoolId}"
+    cli_command: aws cognito-identity delete-identity-pool --identity-pool-id {IdentityPoolId}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: cognito-developerguide-2025
+  contributor: goudan@auto
