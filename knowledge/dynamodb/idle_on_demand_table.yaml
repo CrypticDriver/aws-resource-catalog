@@ -1,0 +1,111 @@
+schema_version: v1
+status: verified
+service: dynamodb
+service_code_pricing: AmazonDynamoDB
+service_code_arn_namespace: dynamodb
+
+resource_type:
+  name: idle_on_demand_table
+  human_name: DynamoDB Table (on-demand, idle)
+  human_name_zh: 空闲的 DynamoDB on-demand 表
+  cfn: AWS::DynamoDB::Table
+  config: AWS::DynamoDB::Table
+  resource_explorer: AWS::DynamoDB::Table
+  cli_list: aws dynamodb list-tables
+  boto3:
+    client: dynamodb
+    list_method: list_tables
+  arn_pattern: arn:aws:dynamodb:{region}:{account}:table/{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    On-demand mode bills per request + per-GB storage. An empty
+    on-demand table costs ~$0 but accumulates: storage cost on
+    even tiny tables, plus PITR backup ($0.20/GB/month) which is
+    OFTEN ON BY DEFAULT and bills proportional to table size + age.
+    
+    A table with zero reads/writes for 30 days that still has
+    PITR enabled is a quiet leak. Catalog-driven detection: complete
+    inactivity AND active backup config.
+  cur_product_codes:
+    - AmazonDynamoDB
+  cur_usage_type_patterns:
+    - "*PayPerRequest*"
+    - "*TimedStorage*"
+    - "*PITR-Storage*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/dynamodb/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - PITR data is unrecoverable after table delete unless explicit on-demand backups exist.
+    - Streams + replicas + GSI may have additional billing surfaces.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.deleting-table.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A table is orphan when (a) BillingModeSummary.BillingMode ==
+    'PAY_PER_REQUEST' AND (b) ConsumedReadCapacityUnits +
+    ConsumedWriteCapacityUnits sum == 0 over 30 days AND (c)
+    age > 30 days. Storage size and PITR status are surfaced for
+    operator decision.
+  rule_pseudocode: |
+    for t in list_tables():
+        info = describe_table(t).Table
+        if info.BillingModeSummary.BillingMode != 'PAY_PER_REQUEST': continue
+        if age(info.CreationDateTime) < 30d: continue
+        rcu = cw.metric('AWS/DynamoDB','ConsumedReadCapacityUnits',
+                        {'TableName':t}, 30d, Sum)
+        wcu = cw.metric('AWS/DynamoDB','ConsumedWriteCapacityUnits',
+                        {'TableName':t}, 30d, Sum)
+        if rcu + wcu == 0: yield Orphan(t)
+  cleanup_command: aws dynamodb delete-table --table-name {TableName}
+  cleanup_safety: destructive
+  iam_required:
+    - dynamodb:ListTables
+    - dynamodb:DescribeTable
+    - cloudwatch:GetMetricStatistics
+    - dynamodb:DeleteTable
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    DescribeTable returns BillingModeSummary + TableSizeBytes +
+    ItemCount inline. AWS/DynamoDB CapacityUnits metric is per-table.
+  blind_spots:
+    - "Tables in PROVISIONED mode have a separate cost shape (RCU/WCU/hr); we focus on on-demand to avoid double-counting with the legacy /idle_provisioned_table catalog."
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_on_demand_table:list_tables
+    id_field: TableName
+    name_field: TableName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_on_demand_table:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_table
+    args_template:
+      TableName: "{TableName}"
+    cli_command: aws dynamodb delete-table --table-name {TableName}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: dynamodb-2025
+  contributor: goudan@auto

@@ -45,14 +45,20 @@ orphan_detection:
   orphan_prone: true
   severity: low
   rule_human: |
-    A detector is "quiet" when (a) Status == 'ENABLED' AND (b) the
-    region has no running EC2 instances AND (c) age > 30 days. The
-    operator may still want it for compliance — flag for review,
-    don't auto-disable.
+    A detector is "quiet" when ALL of: (a) Status == 'ENABLED' AND
+    (b) the account is NOT in any AWS Organization AND
+    (c) the region has no running EC2 instances.
+    
+    The Organizations check is a hard skip — GuardDuty in Org
+    contexts is centrally managed, and disabling a detector in
+    an Org-managed account triggers automated re-enablement noise.
   rule_pseudocode: |
     for did in list_detectors():
         info = get_detector(did)
         if info.Status != 'ENABLED': continue
+        try: organizations.describe_organization()    # in Org? skip
+        except AWSOrganizationsNotInUseException: pass
+        else: continue
         if region_has_active_ec2(): continue
         yield Orphan(detector_id=did)
   cleanup_command: aws guardduty update-detector --detector-id {Id} --no-enable
@@ -60,6 +66,7 @@ orphan_detection:
   iam_required:
     - guardduty:ListDetectors
     - guardduty:GetDetector
+    - organizations:DescribeOrganization
     - ec2:DescribeInstances
     - guardduty:UpdateDetector
 

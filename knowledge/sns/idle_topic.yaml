@@ -1,0 +1,101 @@
+schema_version: v1
+status: verified
+service: sns
+service_code_pricing: AmazonSNS
+service_code_arn_namespace: sns
+
+resource_type:
+  name: idle_topic
+  human_name: SNS Topic (no subscriptions or no traffic)
+  human_name_zh: 空闲 SNS Topic(无订阅或无流量)
+  cfn: AWS::SNS::Topic
+  config: AWS::SNS::Topic
+  resource_explorer: AWS::SNS::Topic
+  cli_list: aws sns list-topics
+  boto3:
+    client: sns
+    list_method: list_topics
+  arn_pattern: arn:aws:sns:{region}:{account}:{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    SNS itself bills per request ($0.50/million publish + delivery).
+    A topic with 0 subscriptions and 0 publishes is exact $0 — but
+    is design-debt: usually left over from a deleted CloudWatch alarm
+    or stack. Cleanup is hygiene-driven.
+  cur_product_codes:
+    - AmazonSNS
+  cur_usage_type_patterns:
+    - "*Requests*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/sns/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Subscriptions are auto-deleted when topic is deleted.
+    - SES/CloudFormation may auto-create topics; check tags.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/sns/latest/dg/sns-delete-topic.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A topic is orphan when (a) ZERO subscriptions confirmed AND
+    (b) NumberOfMessagesPublished sum == 0 over 30 days.
+    Pending-confirmation subscriptions don't count as "wired up".
+  rule_pseudocode: |
+    for arn in list_topics():
+        attrs = get_topic_attributes(arn)
+        if int(attrs.SubscriptionsConfirmed) > 0: continue
+        pub = cw.metric('AWS/SNS','NumberOfMessagesPublished',
+                        {'TopicName':topic_name}, 30d, Sum)
+        if pub > 0: continue
+        yield Orphan(arn)
+  cleanup_command: aws sns delete-topic --topic-arn {TopicArn}
+  cleanup_safety: needs_review
+  iam_required:
+    - sns:ListTopics
+    - sns:GetTopicAttributes
+    - cloudwatch:GetMetricStatistics
+    - sns:DeleteTopic
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    sns:ListTopics + GetTopicAttributes return SubscriptionsConfirmed
+    inline. AWS/SNS NumberOfMessagesPublished metric per topic.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_sns_topic:list_topics
+    id_field: TopicArn
+    name_field: TopicName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_sns_topic:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_topic
+    args_template:
+      TopicArn: "{TopicArn}"
+    cli_command: aws sns delete-topic --topic-arn {TopicArn}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: sns-2025
+  contributor: goudan@auto

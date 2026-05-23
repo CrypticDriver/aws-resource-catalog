@@ -1,0 +1,104 @@
+schema_version: v1
+status: verified
+service: athena
+service_code_pricing: AmazonAthena
+service_code_arn_namespace: athena
+
+resource_type:
+  name: idle_workgroup
+  human_name: Athena Workgroup (no recent queries)
+  human_name_zh: 空闲 Athena Workgroup
+  cfn: AWS::Athena::WorkGroup
+  config: AWS::Athena::WorkGroup
+  resource_explorer: AWS::Athena::WorkGroup
+  cli_list: aws athena list-work-groups
+  boto3:
+    client: athena
+    list_method: list_work_groups
+  arn_pattern: arn:aws:athena:{region}:{account}:workgroup/{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Athena bills per TB scanned ($5/TB Standard). A workgroup itself
+    is free — no idle base fee. But a custom workgroup with no recent
+    queries is dead config: data usage budgets, encryption keys, S3
+    output locations all become stale governance debt.
+  cur_product_codes:
+    - AmazonAthena
+  cur_usage_type_patterns:
+    - "*DataScanned*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/athena/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - "'primary' workgroup cannot be deleted (default)."
+    - Query history retains for 90 days even if workgroup is renamed.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/athena/latest/ug/workgroups-create-update-delete.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A workgroup is orphan when (a) Name != 'primary' AND (b)
+    State == 'ENABLED' AND (c) ProcessedBytes / EngineExecutionTime
+    sum == 0 over 30 days. We use AWS/Athena.ProcessedBytes per
+    workgroup as the activity signal.
+  rule_pseudocode: |
+    for wg in list_work_groups():
+        if wg.Name == 'primary': continue
+        if wg.State != 'ENABLED': continue
+        scanned = cw.metric('AWS/Athena','ProcessedBytes',
+                            {'WorkGroup':wg.Name}, 30d, Sum)
+        if scanned > 0: continue
+        yield Orphan(wg)
+  cleanup_command: aws athena delete-work-group --work-group {Name}
+  cleanup_safety: needs_review
+  iam_required:
+    - athena:ListWorkGroups
+    - cloudwatch:GetMetricStatistics
+    - athena:DeleteWorkGroup
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    athena:ListWorkGroups returns Name + State.
+    AWS/Athena.ProcessedBytes has WorkGroup dimension.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - analytics
+  - low_value
+
+scan:
+  list:
+    boto3_client: athena
+    method: list_work_groups
+    response_path: WorkGroups
+    id_field: Name
+    name_field: Name
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_athena_workgroup:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_work_group
+    args_template:
+      WorkGroup: "{Name}"
+    cli_command: aws athena delete-work-group --work-group {Name}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: athena-2025
+  contributor: goudan@auto

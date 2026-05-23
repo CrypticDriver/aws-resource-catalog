@@ -1,0 +1,103 @@
+schema_version: v1
+status: verified
+service: lambda
+service_code_pricing: AWSLambda
+service_code_arn_namespace: lambda
+
+resource_type:
+  name: stale_layer_versions
+  human_name: Lambda Layer (stale versions)
+  human_name_zh: Lambda Layer 旧版本累积
+  cfn: AWS::Lambda::LayerVersion
+  config: AWS::Lambda::LayerVersion
+  resource_explorer: AWS::Lambda::LayerVersion
+  cli_list: aws lambda list-layers
+  boto3:
+    client: lambda
+    list_method: list_layers
+  arn_pattern: arn:aws:lambda:{region}:{account}:layer:{name}:{version}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    Lambda Layers themselves are FREE; the storage (per-GB-month) is
+    what costs. A team that ships 50+ versions of a 50MB layer pays
+    for ~2.5GB of dead code indefinitely. Each version is an immutable
+    artifact — only the LATEST is typically referenced by functions.
+    Versions older than 90 days, where no Function references them,
+    are pure waste.
+  cur_product_codes:
+    - AWSLambda
+  cur_usage_type_patterns:
+    - "*Lambda-Layer*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/lambda/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Layer versions are immutable; a version cannot be re-uploaded with the same number after delete.
+    - Functions pin to specific layer versions; check ListFunctions for references before delete.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#delete-layer
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A layer version is stale when (a) it is NOT the latest version
+    of its layer AND (b) age > 90 days. We surface the OLDEST stale
+    version per layer with a hint of how many to clean.
+  rule_pseudocode: |
+    for layer in list_layers():
+        versions = list_layer_versions(layer.LayerName, MaxItems=50)
+        latest = versions[0].Version
+        for v in versions[1:]:
+            if age(v.CreatedDate) < 90d: continue
+            yield Orphan(layer.LayerName, version=v.Version)
+  cleanup_command: aws lambda delete-layer-version --layer-name {LayerName} --version-number {Version}
+  cleanup_safety: destructive
+  iam_required:
+    - lambda:ListLayers
+    - lambda:ListLayerVersions
+    - lambda:DeleteLayerVersion
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    list_layers returns LayerName; list_layer_versions returns the
+    full version history with CreatedDate.
+  blind_spots:
+    - "We do not enumerate every Function's pinned layer version; old versions referenced by an active Function would be flagged but not deleted (operator decides)."
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - quick_win
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.stale_layer_versions:list_stale_versions
+    id_field: LayerVersionArn
+    name_field: LayerName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.stale_layer_versions:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_layer_version
+    args_template:
+      LayerName: "{LayerName}"
+      VersionNumber: "{Version}"
+    cli_command: aws lambda delete-layer-version --layer-name {LayerName} --version-number {Version}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: lambda-2025
+  contributor: goudan@auto

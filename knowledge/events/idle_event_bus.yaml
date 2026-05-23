@@ -44,10 +44,17 @@ orphan_detection:
   severity: low
   rule_human: |
     A custom event bus is orphan when (a) Name != 'default' AND
-    (b) age > 90 days AND (c) MatchedEvents sum == 0 over 90 days.
+    (b) it has ZERO enabled rules attached AND (c) MatchedEvents
+    sum == 0 over 90 days.
+    
+    Note: a bus with rules attached is treated as "wired up" even
+    if traffic is currently zero (rules represent design intent).
   rule_pseudocode: |
     for bus in list_event_buses():
         if bus.Name == 'default': continue
+        rules = events.list_rules(EventBusName=bus.Name)
+        enabled = [r for r in rules if r.State == 'ENABLED']
+        if enabled: continue   # has wiring → keep
         m = cw.metric('AWS/Events','MatchedEvents',
                       {'EventBusName':bus.Name}, 90d, Sum)
         if m == 0: yield Orphan(bus)
@@ -55,6 +62,7 @@ orphan_detection:
   cleanup_safety: needs_review
   iam_required:
     - events:ListEventBuses
+    - events:ListRules
     - cloudwatch:GetMetricStatistics
     - events:DeleteEventBus
 

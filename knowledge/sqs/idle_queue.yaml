@@ -1,0 +1,105 @@
+schema_version: v1
+status: verified
+service: sqs
+service_code_pricing: AWSSQS
+service_code_arn_namespace: sqs
+
+resource_type:
+  name: idle_queue
+  human_name: SQS Queue (no traffic, no consumers)
+  human_name_zh: 空闲 SQS 队列(无流量无消费者)
+  cfn: AWS::SQS::Queue
+  config: AWS::SQS::Queue
+  resource_explorer: AWS::SQS::Queue
+  cli_list: aws sqs list-queues
+  boto3:
+    client: sqs
+    list_method: list_queues
+  arn_pattern: arn:aws:sqs:{region}:{account}:{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    SQS bills per request: $0.40/million Standard, $0.50/million FIFO,
+    + data transfer. An empty queue with no consumers costs $0/mo,
+    but is dead weight from a deleted IaC stack — DLQs in particular
+    accumulate when their primary queue is gone.
+  cur_product_codes:
+    - AWSSQS
+  cur_usage_type_patterns:
+    - "*Requests*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/sqs/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - DLQs may have unprocessed messages worth investigating before delete.
+    - Check redrive policy chains (one queue may DLQ-feed another).
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-deleting-queue.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A queue is orphan when ALL: (a) ApproximateNumberOfMessages == 0,
+    (b) NumberOfMessagesSent over 30d == 0 (CloudWatch),
+    (c) NumberOfMessagesReceived over 30d == 0,
+    (d) the queue has no Lambda event source mapping pointing to it.
+  rule_pseudocode: |
+    for q_url in list_queues():
+        attrs = get_queue_attributes(q_url, ['All'])
+        if int(attrs.ApproximateNumberOfMessages) > 0: continue
+        sent = cw.metric('AWS/SQS','NumberOfMessagesSent',
+                         {'QueueName':q_name}, 30d, Sum)
+        if sent > 0: continue
+        recv = cw.metric('AWS/SQS','NumberOfMessagesReceived',
+                         {'QueueName':q_name}, 30d, Sum)
+        if recv > 0: continue
+        yield Orphan(q_url)
+  cleanup_command: aws sqs delete-queue --queue-url {QueueUrl}
+  cleanup_safety: needs_review
+  iam_required:
+    - sqs:ListQueues
+    - sqs:GetQueueAttributes
+    - cloudwatch:GetMetricStatistics
+    - sqs:DeleteQueue
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    sqs:ListQueues + GetQueueAttributes give backlog snapshot.
+    AWS/SQS metrics give 30d send/receive totals.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_sqs_queue:list_queues
+    id_field: QueueUrl
+    name_field: QueueName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_sqs_queue:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_queue
+    args_template:
+      QueueUrl: "{QueueUrl}"
+    cli_command: aws sqs delete-queue --queue-url {QueueUrl}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: sqs-2025
+  contributor: goudan@auto
