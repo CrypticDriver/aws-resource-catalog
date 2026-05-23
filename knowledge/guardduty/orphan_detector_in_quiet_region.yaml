@@ -1,0 +1,101 @@
+schema_version: v1
+status: verified
+service: guardduty
+service_code_pricing: AmazonGuardDuty
+service_code_arn_namespace: guardduty
+
+resource_type:
+  name: orphan_detector_in_quiet_region
+  human_name: GuardDuty Detector (enabled but in a region with no activity)
+  human_name_zh: 启用了但所在 region 几乎无活动的 GuardDuty Detector
+  cfn: AWS::GuardDuty::Detector
+  config: AWS::GuardDuty::Detector
+  resource_explorer: AWS::GuardDuty::Detector
+  cli_list: aws guardduty list-detectors
+  boto3:
+    client: guardduty
+    list_method: list_detectors
+  arn_pattern: arn:aws:guardduty:{region}:{account}:detector/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    GuardDuty bills per million CloudTrail events / per GB of VPC
+    Flow Logs / per GB of DNS logs analyzed. A Detector ENABLED in
+    a region with no active EC2/ECS/EKS workloads still costs nothing
+    in volume, but turn-down is recommended for cleanliness — and
+    turning OFF a Detector frees the customer to centralize via
+    delegated administration in security-tooling accounts.
+  cur_product_codes:
+    - AmazonGuardDuty
+  cur_usage_type_patterns:
+    - "*GuardDuty*"
+  free_tier: true   # 30-day free trial
+  doc_pricing_page: https://aws.amazon.com/guardduty/pricing/
+  
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Disabling stops billing; deleting forfeits findings history.
+    - In Organizations setups, only the delegated admin should manage Detectors.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_settings-disable.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A detector is "quiet" when (a) Status == 'ENABLED' AND (b) the
+    region has no running EC2 instances AND (c) age > 30 days. The
+    operator may still want it for compliance — flag for review,
+    don't auto-disable.
+  rule_pseudocode: |
+    for did in list_detectors():
+        info = get_detector(did)
+        if info.Status != 'ENABLED': continue
+        if region_has_active_ec2(): continue
+        yield Orphan(detector_id=did)
+  cleanup_command: aws guardduty update-detector --detector-id {Id} --no-enable
+  cleanup_safety: needs_review
+  iam_required:
+    - guardduty:ListDetectors
+    - guardduty:GetDetector
+    - ec2:DescribeInstances
+    - guardduty:UpdateDetector
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: best_effort
+  requires_setup: null
+  rationale: |
+    guardduty:ListDetectors + GetDetector + ec2:DescribeInstances
+    are realtime. The 'no activity' heuristic is best-effort —
+    operator should confirm before disabling.
+  blind_spots:
+    - "Detectors in security tooling accounts (Organizations delegated admin) may have no local EC2 activity but still process member-account data. Operator must verify."
+
+tags:
+  - billable
+  - orphan_prone
+  - security
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.guardduty_quiet_detector:list_detectors
+    id_field: DetectorId
+    name_field: DetectorId
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.guardduty_quiet_detector:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    cli_command: aws guardduty update-detector --detector-id {DetectorId} --no-enable
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: guardduty-2025
+  contributor: goudan@auto

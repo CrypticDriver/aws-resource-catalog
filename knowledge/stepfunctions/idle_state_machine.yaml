@@ -1,0 +1,101 @@
+schema_version: v1
+status: verified
+service: stepfunctions
+service_code_pricing: AmazonStates
+service_code_arn_namespace: states
+
+resource_type:
+  name: idle_state_machine
+  human_name: Step Functions State Machine (idle)
+  human_name_zh: 空闲 Step Functions 状态机
+  cfn: AWS::StepFunctions::StateMachine
+  config: AWS::StepFunctions::StateMachine
+  resource_explorer: AWS::StepFunctions::StateMachine
+  cli_list: aws stepfunctions list-state-machines
+  boto3:
+    client: stepfunctions
+    list_method: list_state_machines
+  arn_pattern: arn:aws:states:{region}:{account}:stateMachine:{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Step Functions itself bills per state transition (Standard
+    $0.025/1000 transitions, Express $1/million × ~$0.000016/1024 GB-s).
+    A long-untouched state machine costs nothing IDLE itself, but is
+    a strong signal of an abandoned IaC stack — the Lambdas, IAM
+    roles, log groups it references are usually worth deleting too.
+  cur_product_codes:
+    - AmazonStates
+  cur_usage_type_patterns:
+    - "*StepFunctions-StateTransitions*"
+  free_tier: true   # 4000 free transitions/mo for Standard
+  doc_pricing_page: https://aws.amazon.com/step-functions/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Active executions can prevent immediate delete; stop them first.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/step-functions/latest/dg/concepts-state-machine-deletion.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A state machine is orphan when (a) creationDate > 90 days ago
+    AND (b) AWS/States.ExecutionsStarted sum == 0 over 90 days.
+  rule_pseudocode: |
+    for sm in list_state_machines():
+        if age(sm.creationDate) < 90d: continue
+        starts = cw.metric('AWS/States','ExecutionsStarted',
+                           {'StateMachineArn':sm.stateMachineArn},90d,Sum)
+        if starts == 0: yield Orphan(sm)
+  cleanup_command: aws stepfunctions delete-state-machine --state-machine-arn {stateMachineArn}
+  cleanup_safety: needs_review
+  iam_required:
+    - states:ListStateMachines
+    - cloudwatch:GetMetricStatistics
+    - states:DeleteStateMachine
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    states:ListStateMachines returns name + arn + creationDate inline.
+    AWS/States.ExecutionsStarted is per-stateMachine and emits while
+    the machine exists.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - low_value
+
+scan:
+  list:
+    boto3_client: stepfunctions
+    method: list_state_machines
+    response_path: stateMachines
+    id_field: stateMachineArn
+    name_field: name
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_state_machine:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_state_machine
+    args_template:
+      stateMachineArn: "{stateMachineArn}"
+    cli_command: aws stepfunctions delete-state-machine --state-machine-arn {stateMachineArn}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: stepfunctions-2025
+  contributor: goudan@auto

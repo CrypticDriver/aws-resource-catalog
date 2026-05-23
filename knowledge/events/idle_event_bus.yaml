@@ -1,0 +1,99 @@
+schema_version: v1
+status: verified
+service: events
+service_code_pricing: AmazonCloudWatch
+service_code_arn_namespace: events
+
+resource_type:
+  name: idle_event_bus
+  human_name: EventBridge Custom Event Bus (idle)
+  human_name_zh: 空闲的 EventBridge 自定义事件总线
+  cfn: AWS::Events::EventBus
+  config: AWS::Events::EventBus
+  resource_explorer: AWS::Events::EventBus
+  cli_list: aws events list-event-buses
+  boto3:
+    client: events
+    list_method: list_event_buses
+  arn_pattern: arn:aws:events:{region}:{account}:event-bus/{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Custom event buses bill $1.00/million events published. An idle
+    bus itself costs $0, but is a strong signal of abandoned event-
+    driven architecture — the rules + targets attached to it usually
+    aren't free (Lambdas / SQS / SNS targets continue to operate).
+  cur_product_codes:
+    - AmazonCloudWatch
+  cur_usage_type_patterns:
+    - "*Events*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/eventbridge/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Rules attached to the bus must be removed first.
+    - Default event bus cannot be deleted (built-in).
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A custom event bus is orphan when (a) Name != 'default' AND
+    (b) age > 90 days AND (c) MatchedEvents sum == 0 over 90 days.
+  rule_pseudocode: |
+    for bus in list_event_buses():
+        if bus.Name == 'default': continue
+        m = cw.metric('AWS/Events','MatchedEvents',
+                      {'EventBusName':bus.Name}, 90d, Sum)
+        if m == 0: yield Orphan(bus)
+  cleanup_command: aws events delete-event-bus --name {Name}
+  cleanup_safety: needs_review
+  iam_required:
+    - events:ListEventBuses
+    - cloudwatch:GetMetricStatistics
+    - events:DeleteEventBus
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    events:ListEventBuses returns custom buses inline.
+    AWS/Events.MatchedEvents has EventBusName dimension.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+
+scan:
+  list:
+    boto3_client: events
+    method: list_event_buses
+    response_path: EventBuses
+    id_field: Name
+    name_field: Name
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_event_bus:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_event_bus
+    args_template:
+      Name: "{Name}"
+    cli_command: aws events delete-event-bus --name {Name}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: eventbridge-2025
+  contributor: goudan@auto

@@ -1,0 +1,105 @@
+schema_version: v1
+status: verified
+service: cognito-idp
+service_code_pricing: AmazonCognito
+service_code_arn_namespace: cognito-idp
+
+resource_type:
+  name: idle_user_pool
+  human_name: Cognito User Pool (no recent sign-ins)
+  human_name_zh: 长期无登录的 Cognito User Pool
+  cfn: AWS::Cognito::UserPool
+  config: AWS::Cognito::UserPool
+  resource_explorer: AWS::Cognito::UserPool
+  cli_list: aws cognito-idp list-user-pools --max-results 60
+  boto3:
+    client: cognito-idp
+    list_method: list_user_pools
+  arn_pattern: arn:aws:cognito-idp:{region}:{account}:userpool/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Cognito User Pools bill per Monthly Active User (MAU): first 50k
+    MAU free, then $0.0055/MAU. A pool with 0 MAU costs $0, but ones
+    that haven't seen sign-ins for 90+ days are abandoned identity
+    surface — risk compounds (stale OAuth secrets, federation edges).
+  cur_product_codes:
+    - AmazonCognito
+  cur_usage_type_patterns:
+    - "*Cognito*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/cognito/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Apps + clients + federated identity providers must be removed first.
+    - User data is permanently deleted; export first if needed.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A user pool is idle when (a) age > 90 days AND (b) EstimatedNumberOfUsers
+    == 0 OR all users have LastModifiedDate older than 90 days.
+    We use AdminListUsers (limit 5) to peek without enumerating.
+  rule_pseudocode: |
+    for up in list_user_pools(MaxResults=60):
+        info = describe_user_pool(up.Id)
+        if age(info.CreationDate) < 90d: continue
+        if info.EstimatedNumberOfUsers == 0:
+            yield Orphan(up, reason='zero users')
+            continue
+        # peek 5 users; if all have stale last-mod, flag
+        users = admin_list_users(up.Id, Limit=5)
+        if all(age(u.UserLastModifiedDate) > 90d for u in users):
+            yield Orphan(up, reason='all users inactive 90+d')
+  cleanup_command: aws cognito-idp delete-user-pool --user-pool-id {Id}
+  cleanup_safety: destructive
+  iam_required:
+    - cognito-idp:ListUserPools
+    - cognito-idp:DescribeUserPool
+    - cognito-idp:ListUsers
+    - cognito-idp:DeleteUserPool
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: best_effort
+  requires_setup: null
+  rationale: |
+    cognito-idp:ListUserPools returns Id + Name + CreationDate.
+    DescribeUserPool exposes EstimatedNumberOfUsers (a daily-rounded
+    counter; we use it as a coarse signal).
+  blind_spots:
+    - "EstimatedNumberOfUsers updates with delay; users created in the past hour may not be reflected. We tolerate this by also scanning AdminListUsers."
+
+tags:
+  - billable
+  - orphan_prone
+  - identity
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_user_pool:list_user_pools
+    id_field: Id
+    name_field: Name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_user_pool:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_user_pool
+    args_template:
+      UserPoolId: "{Id}"
+    cli_command: aws cognito-idp delete-user-pool --user-pool-id {Id}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: cognito-developerguide-2025
+  contributor: goudan@auto

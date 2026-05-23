@@ -1,0 +1,100 @@
+schema_version: v1
+status: verified
+service: backup
+service_code_pricing: AmazonBackup
+service_code_arn_namespace: backup
+
+resource_type:
+  name: empty_backup_vault
+  human_name: AWS Backup Vault (empty / unused)
+  human_name_zh: 空的 AWS Backup Vault
+  cfn: AWS::Backup::BackupVault
+  config: AWS::Backup::BackupVault
+  resource_explorer: AWS::Backup::BackupVault
+  cli_list: aws backup list-backup-vaults
+  boto3:
+    client: backup
+    list_method: list_backup_vaults
+  arn_pattern: arn:aws:backup:{region}:{account}:backup-vault:{name}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    AWS Backup vaults themselves are free; storage is billed per-GB
+    based on the underlying resource type and tier (Warm vs Cold).
+    An EMPTY vault doesn't bill, but is dead weight: pre-allocated
+    encryption key, default lifecycle config, IAM permissions. Often
+    left over from a CloudFormation stack delete that the vault was
+    excluded from.
+  cur_product_codes:
+    - AmazonBackup
+  cur_usage_type_patterns:
+    - "*Backup-Storage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/backup/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Default vault cannot be deleted.
+    - Vault must be empty (no recovery points) to delete.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/aws-backup/latest/devguide/deleting-a-vault.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A vault is orphan when (a) NumberOfRecoveryPoints == 0 AND
+    (b) BackupVaultName != 'Default' AND (c) age > 30 days.
+  rule_pseudocode: |
+    for v in list_backup_vaults():
+        if v.BackupVaultName == 'Default': continue
+        if v.NumberOfRecoveryPoints > 0: continue
+        if age(v.CreationDate) < 30d: continue
+        yield Orphan(v)
+  cleanup_command: aws backup delete-backup-vault --backup-vault-name {BackupVaultName}
+  cleanup_safety: needs_review
+  iam_required:
+    - backup:ListBackupVaults
+    - backup:DeleteBackupVault
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    backup:ListBackupVaults returns NumberOfRecoveryPoints inline.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - low_value
+
+scan:
+  list:
+    boto3_client: backup
+    method: list_backup_vaults
+    response_path: BackupVaultList
+    id_field: BackupVaultName
+    name_field: BackupVaultName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.empty_backup_vault:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_backup_vault
+    args_template:
+      BackupVaultName: "{BackupVaultName}"
+    cli_command: aws backup delete-backup-vault --backup-vault-name {BackupVaultName}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: backup-2025
+  contributor: goudan@auto

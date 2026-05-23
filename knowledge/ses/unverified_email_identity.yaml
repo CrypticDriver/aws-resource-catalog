@@ -1,0 +1,104 @@
+schema_version: v1
+status: verified
+service: ses
+service_code_pricing: AmazonSES
+service_code_arn_namespace: ses
+
+resource_type:
+  name: unverified_email_identity
+  human_name: SES Email Identity (unverified or unused)
+  human_name_zh: 未验证或长期未使用的 SES Email Identity
+  cfn: AWS::SES::EmailIdentity
+  config: AWS::SES::EmailIdentity
+  resource_explorer: AWS::SES::EmailIdentity
+  cli_list: aws sesv2 list-email-identities
+  boto3:
+    client: sesv2
+    list_method: list_email_identities
+  arn_pattern: arn:aws:ses:{region}:{account}:identity/{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    SES bills per email sent ($0.10/1000 + $0.12/GB attached). An
+    UNVERIFIED identity costs $0 but is dead weight from a deleted
+    integration. A verified identity that has not sent any email in
+    90 days is also abandoned. Cleanup is hygiene-driven: minimize
+    the surface area for compliance/audit.
+  cur_product_codes:
+    - AmazonSES
+  cur_usage_type_patterns:
+    - "*SES-Email*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/ses/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Production sending domains may have UNVERIFIED status briefly during DKIM rotation; check before deleting.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/ses/latest/dg/manage-identities.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    An email identity is orphan when (a) VerificationStatus !=
+    'SUCCESS' AND age > 30 days. We do NOT flag verified-and-used
+    identities even if quiet — false positives on prod sending
+    domains are too risky.
+  rule_pseudocode: |
+    for ei in list_email_identities():
+        info = get_email_identity(ei.IdentityName)
+        if info.VerificationStatus == 'SUCCESS': continue
+        # FailedVerificationOnDate or oldest record — best-effort age
+        if not info.CreatedTimestamp: continue
+        if age(info.CreatedTimestamp) < 30d: continue
+        yield Orphan(ei)
+  cleanup_command: aws sesv2 delete-email-identity --email-identity {EmailIdentity}
+  cleanup_safety: needs_review
+  iam_required:
+    - ses:ListEmailIdentities
+    - ses:GetEmailIdentity
+    - ses:DeleteEmailIdentity
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    sesv2:ListEmailIdentities returns name + status. GetEmailIdentity
+    augments with verification details.
+  blind_spots:
+    - "Send activity isn't tied to identity in the Stats API; we don't probe sending volume per identity."
+
+tags:
+  - billable
+  - orphan_prone
+  - email
+
+scan:
+  list:
+    boto3_client: sesv2
+    method: list_email_identities
+    response_path: EmailIdentities
+    id_field: IdentityName
+    name_field: IdentityName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.unverified_email_identity:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_email_identity
+    args_template:
+      EmailIdentity: "{IdentityName}"
+    cli_command: aws sesv2 delete-email-identity --email-identity {IdentityName}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: ses-2025
+  contributor: goudan@auto
