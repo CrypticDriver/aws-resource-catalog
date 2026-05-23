@@ -80,22 +80,15 @@ tags:
 
 scan:
   list:
-    boto3_client: emrwal
-    method: list_workspaces
-    response_path: Workspaces
+    custom_module: shared.scanner_modules.emrwal:list_workspaces
     id_field: WorkspaceName
-    name_field: WorkspaceName
-    paginated: true
+    name_field: RootDir
   orphan_check:
-    type: parent_terminated
-    parent_resource: emr_cluster
-    min_age_days: 30
+    type: custom
+    custom_module: shared.scanner_modules.emrwal:is_orphan
   cost_estimate:
     monthly_usd: 50
   cleanup:
-    boto3_method: delete_workspace
-    args_template:
-      WorkspaceName: "{WorkspaceName}"
     cli_command: emrwal deleteWorkspace -w {WorkspaceName}
     safety: needs_review
 
