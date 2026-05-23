@@ -1,0 +1,103 @@
+schema_version: v1
+status: verified
+service: ec2
+service_code_pricing: AmazonVPC
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: idle_vpn_connection
+  human_name: VPC Site-to-Site VPN Connection (idle)
+  human_name_zh: 空闲 Site-to-Site VPN 连接
+  cfn: AWS::EC2::VPNConnection
+  config: AWS::EC2::VPNConnection
+  resource_explorer: AWS::EC2::VPNConnection
+  cli_list: aws ec2 describe-vpn-connections
+  boto3:
+    client: ec2
+    list_method: describe_vpn_connections
+  arn_pattern: arn:aws:ec2:{region}:{account}:vpn-connection/{id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    Site-to-Site VPN bills $0.05/connection-hour ≈ $36.50/month per
+    connection regardless of tunnel state or traffic. A failed
+    one-time PoC VPN that nobody removed silently costs $438/year.
+  cur_product_codes:
+    - AmazonVPC
+  cur_usage_type_patterns:
+    - "*VPN-Usage-Hours*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/vpn/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Customer Gateway and Virtual Private Gateway / Transit Gateway must remain for the connection to be useful; cleanup leaves them.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/vpc/latest/userguide/vpn-connections.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A VPN connection is idle when (a) State == 'available' AND (b)
+    age > 30 days AND (c) ALL tunnel telemetry shows DOWN OR (d)
+    AWS/VPN.TunnelDataIn sum < 1 MiB across both tunnels over 30 days.
+  rule_pseudocode: |
+    for v in describe_vpn_connections():
+        if v.State != 'available': continue
+        tunnels_up = any(t.Status == 'UP' for t in v.VgwTelemetry)
+        if not tunnels_up:
+            yield Orphan(v, reason='all tunnels down')
+            continue
+        di = cw.metric('AWS/VPN','TunnelDataIn',
+                       {'VpnId':v.VpnConnectionId},30d,Sum)
+        if di < 1MiB: yield Orphan(v, reason='zero tunnel traffic')
+  cleanup_command: aws ec2 delete-vpn-connection --vpn-connection-id {VpnConnectionId}
+  cleanup_safety: destructive
+  iam_required:
+    - ec2:DescribeVpnConnections
+    - cloudwatch:GetMetricStatistics
+    - ec2:DeleteVpnConnection
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    ec2:DescribeVpnConnections returns every connection with
+    VgwTelemetry tunnel state inline. AWS/VPN metrics emit while
+    the connection exists.
+  blind_spots:
+    - "Client VPN endpoints have a separate API (describe_client_vpn_endpoints) and are out of scope here."
+
+tags:
+  - billable
+  - orphan_prone
+  - network
+
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_vpn_connections
+    response_path: VpnConnections
+    id_field: VpnConnectionId
+    name_field: VpnConnectionId
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_vpn_connection:is_orphan
+  cost_estimate:
+    monthly_usd: 36.50
+  cleanup:
+    boto3_method: delete_vpn_connection
+    args_template:
+      VpnConnectionId: "{VpnConnectionId}"
+    cli_command: aws ec2 delete-vpn-connection --vpn-connection-id {VpnConnectionId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: vpc-userguide-2025
+  contributor: goudan@auto

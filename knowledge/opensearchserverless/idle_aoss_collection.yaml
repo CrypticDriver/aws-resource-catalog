@@ -1,0 +1,101 @@
+schema_version: v1
+status: verified
+service: opensearchserverless
+service_code_pricing: AmazonES
+service_code_arn_namespace: aoss
+
+resource_type:
+  name: idle_aoss_collection
+  human_name: OpenSearch Serverless Collection (idle)
+  human_name_zh: 空闲 OpenSearch Serverless Collection
+  cfn: AWS::OpenSearchServerless::Collection
+  config: null
+  resource_explorer: null
+  cli_list: aws opensearchserverless list-collections
+  boto3:
+    client: opensearchserverless
+    list_method: list_collections
+  arn_pattern: arn:aws:aoss:{region}:{account}:collection/{id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    OpenSearch Serverless bills per OCU-hour ($0.24/OCU-h, with a
+    2 OCU minimum for indexing + 2 OCU minimum for search). Even an
+    idle collection bills 4 OCU × $0.24 × 730 ≈ $700/month minimum.
+    No 'pause' option; you must delete the collection.
+  cur_product_codes:
+    - AmazonES
+  cur_usage_type_patterns:
+    - "*AOSS:OCU*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/opensearch-service/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - No final snapshot; data deleted on collection delete.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-overview.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    Any ACTIVE collection older than 30 days with zero search/index
+    activity is flagged. AWS/AOSS.SearchRequestCount and
+    IngestionRequestCount = 0 over 30d signals abandoned collection.
+  rule_pseudocode: |
+    for c in list_collections():
+        if c.status != 'ACTIVE': continue
+        if age(c.createdDate) < 30d: continue
+        s = cw.metric('AWS/AOSS','SearchRequestCount',
+                      {'CollectionId':c.id,'CollectionName':c.name},30d,Sum)
+        i = cw.metric('AWS/AOSS','IngestionRequestCount',
+                      {'CollectionId':c.id,'CollectionName':c.name},30d,Sum)
+        if s == 0 and i == 0: yield Orphan(c)
+  cleanup_command: aws opensearchserverless delete-collection --id {id}
+  cleanup_safety: destructive
+  iam_required:
+    - aoss:ListCollections
+    - aoss:BatchGetCollection
+    - cloudwatch:GetMetricStatistics
+    - aoss:DeleteCollection
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    aoss:ListCollections returns every collection with status,
+    createdDate. AWS/AOSS metrics are emitted continuously.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - search
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_aoss_collection:list_collections
+    id_field: id
+    name_field: name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_aoss_collection:is_orphan
+  cost_estimate:
+    monthly_usd: 700.80   # 4 OCU × 0.24 × 730 baseline
+  cleanup:
+    boto3_method: delete_collection
+    args_template:
+      id: "{id}"
+    cli_command: aws opensearchserverless delete-collection --id {id}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: aoss-2025
+  contributor: goudan@auto

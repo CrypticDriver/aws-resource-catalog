@@ -1,0 +1,104 @@
+schema_version: v1
+status: verified
+service: sagemaker
+service_code_pricing: AmazonSageMaker
+service_code_arn_namespace: sagemaker
+
+resource_type:
+  name: idle_studio_app
+  human_name: SageMaker Studio App (running, idle)
+  human_name_zh: 空闲的 SageMaker Studio App(JupyterServer/KernelGateway/CodeEditor)
+  cfn: null   # Apps are managed under domains, not directly via CFN
+  config: null
+  resource_explorer: null
+  cli_list: aws sagemaker list-apps
+  boto3:
+    client: sagemaker
+    list_method: list_apps
+  arn_pattern: arn:aws:sagemaker:{region}:{account}:app/{domain-id}/{user-or-space}/{type}/{name}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    SageMaker Studio Apps bill per instance-hour while in InService.
+    ml.t3.medium ≈ $0.05/h ≈ $36/month, ml.m5.large ≈ $0.115/h ≈
+    $84/month. Default JupyterServer apps are 'system' (free), but
+    KernelGateway and CodeEditor on real instances bill 24×7 until
+    Stopped/Deleted. Common 'left a notebook running over the
+    weekend' leak.
+  cur_product_codes:
+    - AmazonSageMaker
+  cur_usage_type_patterns:
+    - "*Studio*"
+    - "*-Notebook-*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/sagemaker/pricing/
+
+lifecycle:
+  parent_resource: studio_user_or_space
+  parent_link: |
+    App is a child of (Domain, UserProfile|Space). Stopping or
+    deleting the user/space removes its apps.
+  auto_delete_on_parent_delete: true
+  retention_caveats:
+    - "'system' apps (JupyterServer with free instance type) are excluded — they don't bill."
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/sagemaker/latest/dg/notebooks-update-runtime.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A Studio app is idle when (a) Status == 'InService' AND (b)
+    AppType in {'KernelGateway','CodeEditor','JupyterLab'} AND (c)
+    ResourceSpec.InstanceType is not 'system' AND (d) age > 7 days.
+    7d is aggressive but real; people genuinely forget weekend
+    GPU sessions.
+  rule_pseudocode: |
+    for app in list_apps():
+        if app.Status != 'InService': continue
+        if app.ResourceSpec.InstanceType in (None,'system'): continue
+        if age(app.CreationTime) < 7d: continue
+        yield Orphan(app)
+  cleanup_command: aws sagemaker delete-app --domain-id {DomainId} --user-profile-name {UserProfileName} --app-type {AppType} --app-name {AppName}
+  cleanup_safety: needs_review
+  iam_required:
+    - sagemaker:ListApps
+    - sagemaker:DescribeApp
+    - sagemaker:DeleteApp
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    sagemaker:ListApps returns every app + status + creation time.
+    Per-app instance-hour billing is structural — InService = billing.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - ml
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_sagemaker_studio_app:list_apps
+    id_field: AppArn
+    name_field: AppName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_sagemaker_studio_app:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 36.50   # ml.t3.medium baseline
+    unit_field: InstanceCount
+    fallback_monthly_usd: 36.50
+  cleanup:
+    cli_command: aws sagemaker delete-app --domain-id {DomainId} --user-profile-name {UserProfileName} --app-type {AppType} --app-name {AppName}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: sagemaker-developerguide-2025
+  contributor: goudan@auto

@@ -1,0 +1,101 @@
+schema_version: v1
+status: verified
+service: apigatewayv2
+service_code_pricing: AmazonApiGateway
+service_code_arn_namespace: apigateway
+
+resource_type:
+  name: idle_http_api
+  human_name: API Gateway HTTP API (idle)
+  human_name_zh: 空闲 API Gateway HTTP API
+  cfn: AWS::ApiGatewayV2::Api
+  config: AWS::ApiGatewayV2::Api
+  resource_explorer: AWS::ApiGatewayV2::Api
+  cli_list: aws apigatewayv2 get-apis
+  boto3:
+    client: apigatewayv2
+    list_method: get_apis
+  arn_pattern: arn:aws:apigateway:{region}::/apis/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    HTTP APIs bill $1.00/million requests (cheaper than REST APIs).
+    Idle HTTP APIs themselves cost nothing, but typically point to
+    a Lambda + custom domain + CloudWatch Logs stack worth deleting
+    together.
+  cur_product_codes:
+    - AmazonApiGateway
+  cur_usage_type_patterns:
+    - "*ApiGatewayHttpApi-Requests*"
+  free_tier: true   # 1M requests/mo for first 12 months
+  doc_pricing_page: https://aws.amazon.com/api-gateway/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Custom domain mappings need separate cleanup.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-overview.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    HTTP API is idle when (a) age > 30 days AND (b) AWS/ApiGateway.Count
+    sum == 0 across all stages over 30 days. ApiName dimension form
+    is the api name; use ApiId-based dimension for Stage='$default'.
+  rule_pseudocode: |
+    for api in get_apis():
+        if age(api.CreatedDate) < 30d: continue
+        c = cw.metric('AWS/ApiGateway','Count',
+                      {'ApiId':api.ApiId,'Stage':'$default'},
+                      30d, Sum)
+        if c == 0: yield Orphan(api)
+  cleanup_command: aws apigatewayv2 delete-api --api-id {ApiId}
+  cleanup_safety: needs_review
+  iam_required:
+    - apigateway:GET
+    - cloudwatch:GetMetricStatistics
+    - apigateway:DELETE
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    apigatewayv2:GetApis lists all HTTP / WebSocket APIs.
+  blind_spots:
+    - "REST APIs (apigateway v1) are listed via a separate client; covered by the REST API entry."
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - low_value
+
+scan:
+  list:
+    boto3_client: apigatewayv2
+    method: get_apis
+    response_path: Items
+    id_field: ApiId
+    name_field: Name
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_apigwv2:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_api
+    args_template:
+      ApiId: "{ApiId}"
+    cli_command: aws apigatewayv2 delete-api --api-id {ApiId}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: apigateway-v2-2025
+  contributor: goudan@auto

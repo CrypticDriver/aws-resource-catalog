@@ -1,0 +1,100 @@
+schema_version: v1
+status: verified
+service: firehose
+service_code_pricing: AmazonKinesisFirehose
+service_code_arn_namespace: firehose
+
+resource_type:
+  name: idle_delivery_stream
+  human_name: Kinesis Data Firehose Delivery Stream (idle)
+  human_name_zh: 空闲 Firehose Delivery Stream
+  cfn: AWS::KinesisFirehose::DeliveryStream
+  config: AWS::KinesisFirehose::DeliveryStream
+  resource_explorer: AWS::KinesisFirehose::DeliveryStream
+  cli_list: aws firehose list-delivery-streams
+  boto3:
+    client: firehose
+    list_method: list_delivery_streams
+  arn_pattern: arn:aws:firehose:{region}:{account}:deliverystream/{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Firehose bills per data ingested ($0.029/GB) plus optional format
+    conversion / VPC delivery / dynamic partitioning. An idle stream
+    bills near zero, but its destination (S3 prefix, OpenSearch index,
+    Splunk endpoint) often points to abandoned downstream stacks
+    worth pruning together.
+  cur_product_codes:
+    - AmazonKinesisFirehose
+  cur_usage_type_patterns:
+    - "*FH-Ingested-Bytes*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/kinesis/data-firehose/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Buffered data may be lost on delete; flush first if needed.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A delivery stream is idle when (a) DeliveryStreamStatus ==
+    'ACTIVE' AND (b) age > 30 days AND (c)
+    AWS/Firehose.IncomingRecords sum == 0 over 30 days.
+  rule_pseudocode: |
+    for n in list_delivery_streams():
+        info = describe_delivery_stream(n)
+        if info.DeliveryStreamStatus != 'ACTIVE': continue
+        if age(info.CreateTimestamp) < 30d: continue
+        r = cw.metric('AWS/Firehose','IncomingRecords',
+                      {'DeliveryStreamName':n}, 30d, Sum)
+        if r == 0: yield Orphan(info)
+  cleanup_command: aws firehose delete-delivery-stream --delivery-stream-name {DeliveryStreamName}
+  cleanup_safety: destructive
+  iam_required:
+    - firehose:ListDeliveryStreams
+    - firehose:DescribeDeliveryStream
+    - cloudwatch:GetMetricStatistics
+    - firehose:DeleteDeliveryStream
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    firehose:ListDeliveryStreams + DescribeDeliveryStream returns
+    status and creation time. AWS/Firehose metrics emit while ACTIVE.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - streaming
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_firehose_stream:list_streams
+    id_field: DeliveryStreamName
+    name_field: DeliveryStreamName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_firehose_stream:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_delivery_stream
+    args_template:
+      DeliveryStreamName: "{DeliveryStreamName}"
+    cli_command: aws firehose delete-delivery-stream --delivery-stream-name {DeliveryStreamName}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: firehose-2025
+  contributor: goudan@auto

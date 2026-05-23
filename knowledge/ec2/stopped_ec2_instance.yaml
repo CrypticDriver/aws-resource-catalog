@@ -1,0 +1,98 @@
+schema_version: v1
+status: verified
+service: ec2
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: stopped_ec2_instance
+  human_name: EC2 Instance Stopped > 30 Days (storage still bills)
+  human_name_zh: 停止超过 30 天的 EC2 实例(EBS 卷继续扣费)
+  cfn: AWS::EC2::Instance
+  config: AWS::EC2::Instance
+  resource_explorer: AWS::EC2::Instance
+  cli_list: aws ec2 describe-instances
+  boto3:
+    client: ec2
+    list_method: describe_instances
+  arn_pattern: arn:aws:ec2:{region}:{account}:instance/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    A stopped EC2 instance does NOT bill for compute hours but DOES
+    keep billing every attached EBS volume per GB-month
+    ($0.08/GB-month gp3 typical). A 100 GB-rooted m5.xlarge stopped
+    'temporarily' for a year is $96 in pure waste storage. Also keeps
+    its private IP / EIP attachment / security groups occupied.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*EBS:VolumeUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ec2/pricing/on-demand/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Take an AMI snapshot before terminating if data matters.
+    - Termination protection often enabled for prod-like instances.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    An instance is wasting storage when (a) State == 'stopped' AND
+    (b) StateTransitionTime > 30 days ago. Aggressive deletes risk
+    losing data; recommend AMI + terminate workflow.
+  rule_pseudocode: |
+    for inst in describe_instances():
+        if inst.State.Name != 'stopped': continue
+        if age(inst.StateTransitionReason_time) < 30d: continue
+        yield Orphan(inst)
+  cleanup_command: aws ec2 terminate-instances --instance-ids {InstanceId}
+  cleanup_safety: destructive
+  iam_required:
+    - ec2:DescribeInstances
+    - ec2:CreateImage
+    - ec2:TerminateInstances
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    ec2:DescribeInstances returns State + StateTransitionReason
+    inline. Sufficient signal — no metric dependency.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - compute
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.stopped_ec2_instance:list_stopped
+    id_field: InstanceId
+    name_field: InstanceId
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.stopped_ec2_instance:is_orphan
+  cost_estimate:
+    monthly_usd_per_gb: 0.08
+    size_field: TotalStorageGB
+  cleanup:
+    boto3_method: terminate_instances
+    args_template:
+      InstanceIds: ["{InstanceId}"]
+    cli_command: aws ec2 terminate-instances --instance-ids {InstanceId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: ec2-userguide-2025
+  contributor: goudan@auto

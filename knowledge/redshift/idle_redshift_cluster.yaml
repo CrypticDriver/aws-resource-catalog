@@ -1,0 +1,106 @@
+schema_version: v1
+status: verified
+service: redshift
+service_code_pricing: AmazonRedshift
+service_code_arn_namespace: redshift
+
+resource_type:
+  name: idle_redshift_cluster
+  human_name: Redshift Provisioned Cluster (idle)
+  human_name_zh: 空闲 Redshift Provisioned 集群
+  cfn: AWS::Redshift::Cluster
+  config: AWS::Redshift::Cluster
+  resource_explorer: AWS::Redshift::Cluster
+  cli_list: aws redshift describe-clusters
+  boto3:
+    client: redshift
+    list_method: describe_clusters
+  arn_pattern: arn:aws:redshift:{region}:{account}:cluster:{name}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    Provisioned Redshift bills per node-hour. ra3.xlplus ≈ $1.086/h
+    ≈ $793/month/node, plus managed storage ($0.024/GB-month). A
+    2-node ra3.xlplus dev cluster idles at ~$1,586/month with zero
+    queries. Pause/resume helps but is often forgotten.
+  cur_product_codes:
+    - AmazonRedshift
+  cur_usage_type_patterns:
+    - "*Redshift:Node*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/redshift/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Final snapshot mandatory unless skipped explicitly.
+    - Pause via aws redshift pause-cluster stops compute charges; storage continues.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/redshift/latest/mgmt/managing-clusters-console.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A cluster is idle when (a) ClusterStatus == 'available' AND (b)
+    age > 30 days AND (c) AWS/Redshift.DatabaseConnections sum == 0
+    over 30 days. Paused clusters bill near-zero compute and are
+    excluded.
+  rule_pseudocode: |
+    for c in describe_clusters():
+        if c.ClusterStatus != 'available': continue
+        if age(c.ClusterCreateTime) < 30d: continue
+        conn = cw.metric('AWS/Redshift','DatabaseConnections',
+                         {'ClusterIdentifier':c.id}, 30d, Sum)
+        if conn == 0: yield Orphan(c)
+  cleanup_command: aws redshift pause-cluster --cluster-identifier {ClusterIdentifier}
+  cleanup_safety: safe   # pause is reversible
+  iam_required:
+    - redshift:DescribeClusters
+    - cloudwatch:GetMetricStatistics
+    - redshift:PauseCluster
+    - redshift:DeleteCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    redshift:DescribeClusters returns NumberOfNodes, NodeType,
+    ClusterStatus inline. AWS/Redshift.DatabaseConnections emits
+    while available.
+  blind_spots:
+    - "Redshift Serverless workgroups have a separate catalog entry."
+
+tags:
+  - billable
+  - orphan_prone
+  - analytics
+  - high_value
+
+scan:
+  list:
+    boto3_client: redshift
+    method: describe_clusters
+    response_path: Clusters
+    id_field: ClusterIdentifier
+    name_field: ClusterIdentifier
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_redshift_cluster:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 793.0   # ra3.xlplus baseline
+    unit_field: NumberOfNodes
+    fallback_monthly_usd: 793.0
+  cleanup:
+    cli_command: aws redshift pause-cluster --cluster-identifier {ClusterIdentifier}
+    safety: safe
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: redshift-mgmt-2025
+  contributor: goudan@auto
