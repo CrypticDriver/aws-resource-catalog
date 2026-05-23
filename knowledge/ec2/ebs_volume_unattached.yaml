@@ -60,6 +60,15 @@ orphan_detection:
     - ec2:DescribeVolumes
     - ec2:DeleteVolume
 
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    EC2 DescribeVolumes returns every volume in the region.
+  blind_spots: []
+
 tags:
   - billable
   - orphan_prone

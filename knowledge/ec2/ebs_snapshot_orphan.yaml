@@ -64,6 +64,18 @@ orphan_detection:
     - ec2:DescribeImages
     - ec2:DeleteSnapshot
 
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    EC2 DescribeSnapshots(OwnerIds=['self']) returns all customer-owned
+    snapshots. AMI/Backup cross-references add reliability but listing
+    itself is realtime.
+  blind_spots:
+    - "Snapshots shared via Lake Formation or other accounts are excluded by design (OwnerIds=self)."
+
 tags:
   - billable
   - orphan_prone

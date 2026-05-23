@@ -64,6 +64,16 @@ orphan_detection:
     - cloudwatch:GetMetricStatistics
     - ec2:DeleteNatGateway
 
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    EC2 DescribeNatGateways returns all NAT gateways with State info.
+    Orphan check (no_traffic) does need CloudWatch but listing is realtime.
+  blind_spots: []
+
 tags:
   - billable
   - orphan_prone

@@ -118,6 +118,41 @@
       "items": {"type": "string"},
       "description": "Free-form labels: billable / orphan_prone / storage / network / serverless ..."
     },
+    "discovery": {
+      "type": "object",
+      "description": "How an external auditor can enumerate live instances of this resource. Different resources expose different signals; this field tells the scanner which path is reliable and how stale the data may be.",
+      "required": ["method", "latency", "completeness"],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["aws_api", "cloudwatch_metric", "cur_athena", "tagging_api", "cluster_internal", "hybrid"],
+          "description": "aws_api: standard SDK list (best). cloudwatch_metric: only resources that emit metrics are visible. cur_athena: only billing-positive resources show up, with multi-hour to day-plus lag. tagging_api: only tagged resources. cluster_internal: must run inside a customer-managed runtime (e.g. EMR cluster's emrwalcli). hybrid: combine multiple signals."
+        },
+        "latency": {
+          "type": "string",
+          "enum": ["realtime", "minutes", "hours", "day_plus"],
+          "description": "Worst-case staleness between the resource being created/used and the scanner being able to see it."
+        },
+        "completeness": {
+          "type": "string",
+          "enum": ["complete", "metric_emitting_only", "billing_positive_only", "tagged_only", "best_effort"],
+          "description": "What the scanner can and cannot enumerate. metric_emitting_only: resource is invisible until it emits a CloudWatch metric. billing_positive_only: invisible until it generates a CUR line item. tagged_only: invisible without tags. best_effort: combination, may miss niche cases."
+        },
+        "requires_setup": {
+          "type": ["string", "null"],
+          "description": "Customer-side prerequisites (e.g. 'CUR + Athena workgroup', 'Resource Explorer index'). null if no prereq."
+        },
+        "blind_spots": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Documented scenarios where this discovery method will fail to surface an orphan. Be honest."
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Why this method instead of the others. Cite AWS doc anchors when possible."
+        }
+      }
+    },
     "scan": {
       "type": "object",
       "description": "Machine-readable scan configuration for the orphan-scanner engine.",

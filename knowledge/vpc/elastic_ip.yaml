@@ -58,6 +58,16 @@ orphan_detection:
     - ec2:DescribeAddresses
     - ec2:ReleaseAddress
 
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    EC2 DescribeAddresses returns every Elastic IP allocation regardless of
+    association state. Standard SDK call, no metric prerequisites.
+  blind_spots: []
+
 tags:
   - billable
   - orphan_prone

@@ -71,6 +71,23 @@ orphan_detection:
     - elasticmapreduce:ListClusters
     - elasticmapreduce:DescribeCluster
 
+discovery:
+  method: cloudwatch_metric
+  latency: hours
+  completeness: metric_emitting_only
+  requires_setup: null
+  rationale: |
+    EMR WAL has no public list API: boto3 has no emrwal client, AWS CLI
+    has no emrwal subcommand, Resource Explorer does not index the
+    namespace, and the only first-class CLI (emrwalcli) only runs inside
+    an EMR cluster. The only externally visible signal is the
+    EMRWALCount/EMRWALWorkspaceCount metric AWS publishes per
+    workspace once HBase has actually written WAL data.
+    Doc: https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-hbase-wal-metrics.html
+  blind_spots:
+    - "A workspace that exists but has never written a WAL emits no metric, so the scanner cannot see it. This is acceptable: such a workspace also generates no billing, so it cannot be an orphan in the cost-leak sense."
+    - "Metric publication can lag several hours behind the first WAL write, so a brand-new orphan may be invisible until then."
+
 tags:
   - billable
   - orphan_prone
