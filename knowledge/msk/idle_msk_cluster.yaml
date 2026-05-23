@@ -1,0 +1,120 @@
+schema_version: v1
+status: verified
+service: msk
+service_code_pricing: AmazonMSK
+service_code_arn_namespace: kafka
+
+resource_type:
+  name: idle_msk_cluster
+  human_name: Idle Amazon MSK (Kafka) Cluster
+  human_name_zh: 空闲 MSK(Kafka)集群
+  cfn: AWS::MSK::Cluster
+  config: AWS::MSK::Cluster
+  resource_explorer: AWS::MSK::Cluster
+  cli_list: aws kafka list-clusters-v2
+  boto3:
+    client: kafka
+    list_method: list_clusters_v2
+  arn_pattern: arn:aws:kafka:{region}:{account}:cluster/{name}/{uuid}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Provisioned MSK is billed per broker-hour (kafka.m5.large
+    ~$0.21/h ≈ $153/broker/month) plus EBS for log data and data
+    transfer. A 3-broker dev cluster left running idles at >$450/mo
+    even with zero throughput. Serverless MSK is billed by
+    partition-hour + GB and is out of scope for this entry.
+  cur_product_codes:
+    - AmazonMSK
+  cur_usage_type_patterns:
+    - "*Kafka.Broker*"
+    - "*Kafka-Storage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/msk/pricing/
+
+lifecycle:
+  parent_resource: null
+  parent_link: |
+    A cluster is a top-level resource. Brokers are inside it; the cluster
+    keeps charging per broker-hour as long as the cluster is ACTIVE,
+    regardless of producer/consumer activity.
+  auto_delete_on_parent_delete: false
+  retention_after_parent_delete: null
+  retention_caveats:
+    - Deletion can take 15-20 minutes; broker-hours stop accruing immediately at delete time.
+    - Cluster scaling-down only affects future hours, not refund prior hours.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/msk/latest/developerguide/msk-delete-cluster.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A provisioned MSK cluster is idle when (a) cluster State == ACTIVE
+    AND (b) BytesInPerSec sum across all brokers is ~0 over the last
+    30 days AND (c) cluster age > 30 days. The 30-day floor avoids
+    flagging a brand-new cluster that hasn't been wired up yet.
+  rule_pseudocode: |
+    for c in list_clusters_v2(ClusterTypeFilter='PROVISIONED'):
+        if c.State != 'ACTIVE' or age(c) < 30d: continue
+        bytes_in = cloudwatch.get_metric_statistics(
+            Namespace='AWS/Kafka',
+            MetricName='BytesInPerSec',
+            Dimensions={'Cluster Name': c.ClusterName},
+            lookback=30d, period=86400, stat='Sum',
+        )
+        if total(bytes_in) < 1MB: yield Orphan(c)
+  cleanup_command: aws kafka delete-cluster --cluster-arn {ClusterArn}
+  cleanup_safety: destructive
+  iam_required:
+    - kafka:ListClustersV2
+    - kafka:DescribeClusterV2
+    - cloudwatch:GetMetricStatistics
+    - kafka:DeleteCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    kafka:ListClustersV2 returns every MSK cluster, both PROVISIONED
+    and SERVERLESS, with State and broker count. Idle judgment leans
+    on the AWS/Kafka CloudWatch namespace which is always populated
+    for ACTIVE clusters.
+  blind_spots:
+    - "MSK Serverless clusters are excluded — billing model differs (partition-hour) and idle definition needs a different threshold."
+
+tags:
+  - billable
+  - orphan_prone
+  - streaming
+  - high_value
+
+scan:
+  list:
+    boto3_client: kafka
+    method: list_clusters_v2
+    response_path: ClusterInfoList
+    id_field: ClusterArn
+    name_field: ClusterName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_msk_cluster:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 153.30   # 0.21/h × 730h, kafka.m5.large baseline
+    unit_field: BrokerCount
+    fallback_monthly_usd: 153.30
+  cleanup:
+    boto3_method: delete_cluster
+    args_template:
+      ClusterArn: "{ClusterArn}"
+    cli_command: aws kafka delete-cluster --cluster-arn {ClusterArn}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: msk-developerguide-2025
+  contributor: goudan@auto

@@ -1,0 +1,114 @@
+schema_version: v1
+status: verified
+service: rds
+service_code_pricing: AmazonRDS
+service_code_arn_namespace: rds
+
+resource_type:
+  name: stopped_db_instance
+  human_name: RDS DB Instance Stopped > 7 Days
+  human_name_zh: 停止超过 7 天的 RDS 实例(AWS 7 天后自动启回来仍计费存储)
+  cfn: AWS::RDS::DBInstance
+  config: AWS::RDS::DBInstance
+  resource_explorer: AWS::RDS::DBInstance
+  cli_list: aws rds describe-db-instances
+  boto3:
+    client: rds
+    list_method: describe_db_instances
+  arn_pattern: arn:aws:rds:{region}:{account}:db:{instance-id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    A stopped RDS instance does NOT bill for compute hours, but DOES
+    bill for: provisioned storage (~$0.115/GB-month gp3), backup
+    storage beyond free tier, and any reserved instance you bought.
+    AWS auto-starts a stopped DB after 7 days. After the auto-start
+    you pay full compute again until you stop it back. Operators
+    forget — the storage line item just keeps running.
+  cur_product_codes:
+    - AmazonRDS
+  cur_usage_type_patterns:
+    - "*RDS:GP2-Storage*"
+    - "*RDS:StorageIOUsage*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/rds/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - "AWS auto-starts a stopped DB after 7 days. If you really need it down, snapshot + delete instead."
+    - "DeletionProtection may be set; operator must clear it first."
+    - "Take a final snapshot before delete unless explicit BackupRetentionPeriod=0."
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_StopInstance.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A DB instance is wasting storage when (a) DBInstanceStatus ==
+    'stopped' AND (b) it has been in stopped state for > 7 days
+    (AWS will auto-start it). Recommendation: snapshot + delete the
+    instance. Manual snapshots persist independently and cost ~10x
+    less than a stopped instance's allocated storage.
+  rule_pseudocode: |
+    for db in describe_db_instances():
+        if db.DBInstanceStatus != 'stopped': continue
+        # Prefer InstanceCreateTime fallback; the actual stop event timestamp
+        # would need CloudTrail. 7d floor catches anyone past auto-restart.
+        if age_in_status(db) < 7d: continue
+        yield Orphan(db, monthly_storage = AllocatedStorage * 0.115)
+  cleanup_command: aws rds delete-db-instance --db-instance-identifier {DBInstanceIdentifier} --skip-final-snapshot
+  cleanup_safety: destructive
+  iam_required:
+    - rds:DescribeDBInstances
+    - rds:DeleteDBInstance
+    - rds:CreateDBSnapshot
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    rds:DescribeDBInstances returns DBInstanceStatus and
+    AllocatedStorage inline. Standard SDK call.
+  blind_spots:
+    - "Aurora cluster instances behave differently; out of scope for this entry."
+
+tags:
+  - billable
+  - orphan_prone
+  - database
+
+scan:
+  list:
+    boto3_client: rds
+    method: describe_db_instances
+    response_path: DBInstances
+    id_field: DBInstanceIdentifier
+    name_field: DBInstanceIdentifier
+    paginated: true
+  orphan_check:
+    type: field_check
+    field: DBInstanceStatus
+    condition: equals
+    value: stopped
+    min_age_days: 7
+  cost_estimate:
+    monthly_usd_per_gb: 0.115
+    size_field: AllocatedStorage
+  cleanup:
+    boto3_method: delete_db_instance
+    args_template:
+      DBInstanceIdentifier: "{DBInstanceIdentifier}"
+      SkipFinalSnapshot: false
+    cli_command: aws rds delete-db-instance --db-instance-identifier {DBInstanceIdentifier} --skip-final-snapshot
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: rds-userguide-2025
+  contributor: goudan@auto

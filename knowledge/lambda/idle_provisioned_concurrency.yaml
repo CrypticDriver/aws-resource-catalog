@@ -1,0 +1,114 @@
+schema_version: v1
+status: verified
+service: lambda
+service_code_pricing: AWSLambda
+service_code_arn_namespace: lambda
+
+resource_type:
+  name: idle_provisioned_concurrency
+  human_name: Lambda Provisioned Concurrency (idle)
+  human_name_zh: 空闲的 Lambda Provisioned Concurrency
+  cfn: AWS::Lambda::Function   # configured via PutProvisionedConcurrencyConfig
+  config: AWS::Lambda::Function
+  resource_explorer: AWS::Lambda::Function
+  cli_list: aws lambda list-provisioned-concurrency-configs --function-name <name>
+  boto3:
+    client: lambda
+    list_method: list_provisioned_concurrency_configs
+  arn_pattern: arn:aws:lambda:{region}:{account}:function:{name}:{qualifier}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Provisioned Concurrency (PC) keeps Lambda execution environments
+    warm 24×7, billed at ~$0.0000041667/GB-second. A small 512 MB
+    Lambda with PC=1 runs $0.0000041667 × 0.5 GB × 2_592_000 sec ≈
+    $5.40/month. PC=10 ≈ $54/mo. Regular Lambda only bills on
+    invocation; PC bills whether you invoke or not. Frequent forgotten
+    'I set PC to handle the launch' configs.
+  cur_product_codes:
+    - AWSLambda
+  cur_usage_type_patterns:
+    - "*Lambda-Provisioned-Concurrency*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/lambda/pricing/
+
+lifecycle:
+  parent_resource: lambda_function
+  parent_link: |
+    PC is configured per function alias/version. Deleting the alias
+    drops the PC config; deleting the function itself drops everything.
+  auto_delete_on_parent_delete: true
+  retention_caveats:
+    - PC is invoiced regardless of how busy the function is. Set to 0 (delete-provisioned-concurrency-config) to stop billing without removing the function.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A PC config is wasteful when (a) AllocatedProvisionedConcurrentExecutions > 0
+    AND (b) over the past 30d, ProvisionedConcurrencyUtilization metric
+    averages < 5% (i.e. you're paying for warm capacity nobody uses).
+    Cleanup: aws lambda delete-provisioned-concurrency-config — function
+    keeps working, just falls back to standard cold-start pricing.
+  rule_pseudocode: |
+    for fn in list_functions():
+        for cfg in list_provisioned_concurrency_configs(FunctionName=fn.Name):
+            if cfg.AllocatedProvisionedConcurrentExecutions == 0: continue
+            util = cloudwatch.get_metric(
+                Namespace='AWS/Lambda',
+                MetricName='ProvisionedConcurrencyUtilization',
+                Dimensions={'FunctionName': fn.Name, 'Resource': fn.Name+':'+cfg.Qualifier},
+                lookback=30d, stat='Average',
+            )
+            if avg(util) < 0.05:
+                yield Orphan(cfg)
+  cleanup_command: aws lambda delete-provisioned-concurrency-config --function-name {FunctionName} --qualifier {Qualifier}
+  cleanup_safety: safe
+  iam_required:
+    - lambda:ListFunctions
+    - lambda:ListProvisionedConcurrencyConfigs
+    - cloudwatch:GetMetricStatistics
+    - lambda:DeleteProvisionedConcurrencyConfig
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    lambda:ListFunctions + ListProvisionedConcurrencyConfigs walks
+    every function/qualifier combo with PC. ProvisionedConcurrency-
+    Utilization metric is always emitted while PC is allocated,
+    making the idle judgment realtime.
+  blind_spots:
+    - "Functions without any PC config are excluded — regular Lambda only bills on invoke."
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_provisioned_concurrency:list_pc_configs
+    id_field: ResourceArn
+    name_field: ResourceArn
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_provisioned_concurrency:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 5.40   # ≈ 1 PC unit × 512 MB baseline (per-PC adjust at runtime)
+    unit_field: AllocatedProvisionedConcurrentExecutions
+    fallback_monthly_usd: 5.40
+  cleanup:
+    cli_command: aws lambda delete-provisioned-concurrency-config --function-name {FunctionName} --qualifier {Qualifier}
+    safety: safe
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: lambda-developerguide-2025
+  contributor: goudan@auto

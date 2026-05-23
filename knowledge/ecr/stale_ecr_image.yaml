@@ -1,0 +1,108 @@
+schema_version: v1
+status: verified
+service: ecr
+service_code_pricing: AmazonECR
+service_code_arn_namespace: ecr
+
+resource_type:
+  name: stale_ecr_image
+  human_name: Stale ECR Image (untagged or old)
+  human_name_zh: 陈旧 ECR 镜像(无 tag 或长期未拉取)
+  cfn: null
+  config: AWS::ECR::Repository
+  resource_explorer: AWS::ECR::Repository
+  cli_list: aws ecr describe-images --repository-name <name>
+  boto3:
+    client: ecr
+    list_method: describe_images
+  arn_pattern: arn:aws:ecr:{region}:{account}:repository/{name}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    ECR storage is billed per GB-month (~$0.10/GB-month). Repos
+    accumulate untagged or long-unused images that nothing pulls.
+    A medium repo with no lifecycle policy can hit hundreds of GB
+    over a few years.
+  cur_product_codes:
+    - AmazonECR
+  cur_usage_type_patterns:
+    - "*ECR-Storage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ecr/pricing/
+
+lifecycle:
+  parent_resource: ecr_repository
+  parent_link: |
+    Image is a child of repository. Deleting the repository deletes all
+    its images. Lifecycle policies on the repository will purge images
+    automatically — but a repo without a policy holds everything.
+  auto_delete_on_parent_delete: true
+  retention_after_parent_delete: null
+  retention_caveats:
+    - Untagged images may still be pulled by digest; a build pipeline doing 'docker pull repo@sha256:...' would break.
+    - Aim a default 'keep last 10 untagged' lifecycle policy rather than mass-delete from the catalog.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AmazonECR/latest/userguide/LifecyclePolicies.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    An ECR image is wasting money when (a) it's UNTAGGED or has no
+    'latest'-style tag AND (b) imagePushedAt > 90 days ago AND (c)
+    lastRecordedPullTime is null or > 90 days ago. We do NOT delete by
+    default — we recommend the lifecycle-policy fix.
+  rule_pseudocode: |
+    for repo in describe_repositories():
+        for img in describe_images(repo):
+            if (img.imageTags is empty or no_release_tag(img.imageTags)) \
+               and age(img.imagePushedAt) > 90d \
+               and (img.lastRecordedPullTime is None or
+                    age(img.lastRecordedPullTime) > 90d):
+                yield Orphan(img)
+  cleanup_command: aws ecr put-lifecycle-policy --repository-name {repositoryName} --lifecycle-policy-text '{"rules":[{"rulePriority":1,"description":"untagged>30d","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":30},"action":{"type":"expire"}}]}'
+  cleanup_safety: needs_review
+  iam_required:
+    - ecr:DescribeRepositories
+    - ecr:DescribeImages
+    - ecr:PutLifecyclePolicy
+    - ecr:GetLifecyclePolicy
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    ecr:DescribeRepositories + ecr:DescribeImages walks every repo and
+    every image with imagePushedAt, imageSizeInBytes, imageTags and
+    lastRecordedPullTime. No metric or CUR dependency.
+  blind_spots:
+    - "Cross-account 'pull through cache' images and ECR Public images are excluded by design (different APIs)."
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - container
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.stale_ecr_image:list_stale_images
+    id_field: imageDigest
+    name_field: repositoryName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.stale_ecr_image:is_orphan
+  cost_estimate:
+    monthly_usd_per_gb: 0.10
+    size_field: imageSize_gb
+  cleanup:
+    cli_command: aws ecr batch-delete-image --repository-name {repositoryName} --image-ids imageDigest={imageDigest}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: ecr-userguide-2025
+  contributor: goudan@auto
