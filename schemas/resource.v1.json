@@ -163,6 +163,9 @@
           "properties": {
             "monthly_usd": {"type": "number", "description": "Hard-coded monthly USD per orphan."},
             "monthly_usd_per_gb": {"type": "number", "description": "Per-GB monthly when storage based."},
+            "monthly_usd_per_unit": {"type": "number", "description": "Per-unit monthly (e.g. per WAL, per region)."},
+            "unit_field": {"type": "string", "description": "Field on the resource that holds the unit count."},
+            "fallback_monthly_usd": {"type": "number", "description": "Used if the unit count is unknown."},
             "size_field": {"type": "string", "description": "Field on the resource that holds size in GB."},
             "cur_usage_type": {"type": "string"}
           }
