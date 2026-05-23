@@ -1,0 +1,114 @@
+schema_version: v1
+status: verified
+service: docdb
+service_code_pricing: AmazonDocDB
+service_code_arn_namespace: rds
+
+resource_type:
+  name: idle_docdb_cluster
+  human_name: DocumentDB Cluster (idle)
+  human_name_zh: 空闲 DocumentDB 集群
+  cfn: AWS::DocDB::DBCluster
+  config: AWS::RDS::DBCluster
+  resource_explorer: AWS::RDS::DBCluster
+  cli_list: aws docdb describe-db-clusters
+  boto3:
+    client: docdb
+    list_method: describe_db_clusters
+  arn_pattern: arn:aws:rds:{region}:{account}:cluster:{name}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    DocumentDB bills per instance-hour. db.r6g.large ≈ $0.265/h ≈
+    $193/month/instance. Storage at $0.10/GB-month. A 2-instance
+    DocDB cluster idles at ~$386/month with zero connections.
+    Common 'we POC'd MongoDB on AWS and forgot it' artifact.
+  cur_product_codes:
+    - AmazonDocDB
+  cur_usage_type_patterns:
+    - "*DocDB:Instance*"
+    - "*DocDB:Storage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/documentdb/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - DeletionProtection often enabled; clear before delete.
+    - Final snapshot mandatory unless skip-final-snapshot.
+    - Member instances must be deleted first.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/documentdb/latest/developerguide/get-started.delete-cluster.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A DocDB cluster is idle when (a) Status == 'available' AND (b)
+    age > 30 days AND (c) AWS/DocDB.DatabaseConnections sum == 0
+    over 30 days for ALL member instances.
+  rule_pseudocode: |
+    for c in describe_db_clusters():
+        if c.Status != 'available': continue
+        if age(c.ClusterCreateTime) < 30d: continue
+        any_used = False
+        for member in c.DBClusterMembers:
+            conn = cw.metric('AWS/DocDB','DatabaseConnections',
+                             {'DBInstanceIdentifier':member.DBInstanceIdentifier},
+                             30d, Sum)
+            if conn > 0: any_used = True; break
+        if not any_used: yield Orphan(c)
+  cleanup_command: aws docdb delete-db-cluster --db-cluster-identifier {DBClusterIdentifier} --skip-final-snapshot
+  cleanup_safety: destructive
+  iam_required:
+    - rds:DescribeDBClusters   # docdb shares the rds:* prefix
+    - rds:DescribeDBInstances
+    - cloudwatch:GetMetricStatistics
+    - rds:ModifyDBCluster
+    - rds:DeleteDBInstance
+    - rds:DeleteDBCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    DocDB shares the rds:DescribeDBClusters API but with engine
+    filter; we filter Engine in {'docdb'} to avoid double-flagging
+    Aurora clusters that already have their own catalog entry.
+    AWS/DocDB.DatabaseConnections is the canonical idle signal.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - database
+  - high_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_docdb_cluster:list_clusters
+    id_field: DBClusterIdentifier
+    name_field: DBClusterIdentifier
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_docdb_cluster:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 193.45
+    unit_field: MemberCount
+    fallback_monthly_usd: 193.45
+  cleanup:
+    boto3_method: delete_db_cluster
+    args_template:
+      DBClusterIdentifier: "{DBClusterIdentifier}"
+      SkipFinalSnapshot: false
+    cli_command: aws docdb delete-db-cluster --db-cluster-identifier {DBClusterIdentifier} --skip-final-snapshot
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: docdb-developerguide-2025
+  contributor: goudan@auto

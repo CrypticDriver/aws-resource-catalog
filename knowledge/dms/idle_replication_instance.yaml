@@ -1,0 +1,105 @@
+schema_version: v1
+status: verified
+service: dms
+service_code_pricing: AWSDatabaseMigrationSvc
+service_code_arn_namespace: dms
+
+resource_type:
+  name: idle_replication_instance
+  human_name: DMS Replication Instance (idle)
+  human_name_zh: 空闲 DMS 复制实例
+  cfn: AWS::DMS::ReplicationInstance
+  config: AWS::DMS::ReplicationInstance
+  resource_explorer: null
+  cli_list: aws dms describe-replication-instances
+  boto3:
+    client: dms
+    list_method: describe_replication_instances
+  arn_pattern: arn:aws:dms:{region}:{account}:rep:{id}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    DMS replication instances bill per instance-hour. dms.t3.medium ≈
+    $0.044/h ≈ $32/month. dms.r5.large ≈ $0.18/h ≈ $131/month. Common
+    'one-time migration done, instance forgotten' leak — typical
+    duration after migration completes is unbounded.
+  cur_product_codes:
+    - AWSDatabaseMigrationSvc
+  cur_usage_type_patterns:
+    - "*DMS:Instance*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/dms/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Active replication tasks must be stopped & deleted before instance.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A replication instance is idle when (a) ReplicationInstanceStatus
+    == 'available' AND (b) age > 30 days AND (c) the instance has zero
+    replication tasks attached, OR all attached tasks are STOPPED /
+    FAILED for > 30 days.
+  rule_pseudocode: |
+    for ri in describe_replication_instances():
+        if ri.Status != 'available': continue
+        if age(ri.InstanceCreateTime) < 30d: continue
+        tasks = describe_replication_tasks(filter=ri.Arn)
+        if not tasks:
+            yield Orphan(ri, reason='no replication tasks')
+            continue
+        if all(t.Status in {'stopped','failed'} and age(t.LastStatusChange)>30d for t in tasks):
+            yield Orphan(ri, reason='all tasks stopped/failed >30d')
+  cleanup_command: aws dms delete-replication-instance --replication-instance-arn {ReplicationInstanceArn}
+  cleanup_safety: destructive
+  iam_required:
+    - dms:DescribeReplicationInstances
+    - dms:DescribeReplicationTasks
+    - dms:DeleteReplicationInstance
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    dms:DescribeReplicationInstances + DescribeReplicationTasks are
+    realtime. No metric dependency for the 'no tasks' path.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - database
+
+scan:
+  list:
+    boto3_client: dms
+    method: describe_replication_instances
+    response_path: ReplicationInstances
+    id_field: ReplicationInstanceIdentifier
+    name_field: ReplicationInstanceIdentifier
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_dms_instance:is_orphan
+  cost_estimate:
+    monthly_usd: 32.12   # dms.t3.medium baseline
+  cleanup:
+    boto3_method: delete_replication_instance
+    args_template:
+      ReplicationInstanceArn: "{ReplicationInstanceArn}"
+    cli_command: aws dms delete-replication-instance --replication-instance-arn {ReplicationInstanceArn}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: dms-userguide-2025
+  contributor: goudan@auto

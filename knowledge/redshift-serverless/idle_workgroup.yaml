@@ -1,0 +1,110 @@
+schema_version: v1
+status: verified
+service: redshift-serverless
+service_code_pricing: AmazonRedshift
+service_code_arn_namespace: redshift-serverless
+
+resource_type:
+  name: idle_workgroup
+  human_name: Redshift Serverless Workgroup (idle)
+  human_name_zh: 空闲的 Redshift Serverless Workgroup
+  cfn: AWS::RedshiftServerless::Workgroup
+  config: AWS::RedshiftServerless::Workgroup
+  resource_explorer: AWS::RedshiftServerless::Workgroup
+  cli_list: aws redshift-serverless list-workgroups
+  boto3:
+    client: redshift-serverless
+    list_method: list_workgroups
+  arn_pattern: arn:aws:redshift-serverless:{region}:{account}:workgroup/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    Redshift Serverless bills per RPU-hour ($0.375/RPU-hour, 8 RPU
+    minimum baseline). An always-on workgroup at the 8-RPU minimum
+    bills ~$2,190/month even if you never run a query — the 'serverless'
+    label is misleading. Auto-pause on idle is configurable but off by
+    default. A POC workgroup is one of the most expensive forgotten
+    resources on AWS.
+  cur_product_codes:
+    - AmazonRedshift
+  cur_usage_type_patterns:
+    - "*RedshiftServerless:RPU-Hours*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/redshift/pricing/
+
+lifecycle:
+  parent_resource: namespace
+  parent_link: |
+    Workgroup is the compute unit; namespace holds the data. Deleting
+    the workgroup stops the meter; namespace continues to bill storage.
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Take a final snapshot of the namespace before workgroup delete if data matters.
+    - Workgroup endpoint connections must be removed first.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/redshift/latest/mgmt/serverless-workgroup-delete.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A workgroup is idle when (a) status == 'AVAILABLE' AND (b) age
+    > 30 days AND (c) AWS/Redshift-Serverless.QueriesCompletedPerSecond
+    OR ComputeCapacity datapoint shows zero queries over 30 days.
+  rule_pseudocode: |
+    for wg in list_workgroups():
+        if wg.status != 'AVAILABLE': continue
+        if age(wg.creationDate) < 30d: continue
+        q = cw.metric('AWS/Redshift-Serverless','QueriesCompletedPerSecond',
+                      {'Workgroup':wg.workgroupName}, 30d, Sum)
+        if q == 0: yield Orphan(wg)
+  cleanup_command: aws redshift-serverless delete-workgroup --workgroup-name {workgroupName}
+  cleanup_safety: destructive
+  iam_required:
+    - redshift-serverless:ListWorkgroups
+    - cloudwatch:GetMetricStatistics
+    - redshift-serverless:DeleteWorkgroup
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    redshift-serverless:ListWorkgroups returns workgroup info inline.
+    AWS/Redshift-Serverless metrics emit while the workgroup exists.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - analytics
+  - high_value
+
+scan:
+  list:
+    boto3_client: redshift-serverless
+    method: list_workgroups
+    response_path: workgroups
+    id_field: workgroupName
+    name_field: workgroupName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_redshift_serverless:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 273.75   # 8 RPU baseline × 0.375/h × 730h ÷ 8 = 273.75 per RPU-month
+    unit_field: BaseCapacity
+    fallback_monthly_usd: 2190.0
+  cleanup:
+    boto3_method: delete_workgroup
+    args_template:
+      workgroupName: "{workgroupName}"
+    cli_command: aws redshift-serverless delete-workgroup --workgroup-name {workgroupName}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: redshift-serverless-2025
+  contributor: goudan@auto

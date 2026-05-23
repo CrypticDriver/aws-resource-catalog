@@ -1,0 +1,106 @@
+schema_version: v1
+status: verified
+service: fsx
+service_code_pricing: AmazonFSx
+service_code_arn_namespace: fsx
+
+resource_type:
+  name: idle_fsx_filesystem
+  human_name: FSx File System (idle)
+  human_name_zh: 空闲 FSx 文件系统
+  cfn: AWS::FSx::FileSystem
+  config: AWS::FSx::FileSystem
+  resource_explorer: AWS::FSx::FileSystem
+  cli_list: aws fsx describe-file-systems
+  boto3:
+    client: fsx
+    list_method: describe_file_systems
+  arn_pattern: arn:aws:fsx:{region}:{account}:file-system/{id}
+
+billing:
+  billable: true
+  model: per-gb-month
+  summary: |
+    FSx storage prices vary by type (Lustre PERSISTENT_2 ~$0.145/GB-mo,
+    Windows ~$0.13/GB-mo, NetApp ONTAP ~$0.20/GB-mo) plus per-throughput
+    capacity. A 1 TiB Lustre PERSISTENT FS bills ~$148/month even with
+    zero IO. Common 'we ran a HPC job a year ago' relic.
+  cur_product_codes:
+    - AmazonFSx
+  cur_usage_type_patterns:
+    - "*FSx-LustreStorage*"
+    - "*FSx-WindowsStorage*"
+    - "*FSx-OntapStorage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/fsx/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Final backup mandatory unless skipped explicitly.
+    - Lustre PERSISTENT_2 deletes immediately, SCRATCH_2 may take hours.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/fsx/latest/LustreGuide/delete-fs.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A file system is idle when (a) Lifecycle == 'AVAILABLE' AND (b)
+    age > 30 days AND (c) AWS/FSx.DataReadBytes sum + DataWriteBytes
+    sum < 1 MiB over 30 days.
+  rule_pseudocode: |
+    for fs in describe_file_systems():
+        if fs.Lifecycle != 'AVAILABLE': continue
+        if age(fs.CreationTime) < 30d: continue
+        rd = cw.metric('AWS/FSx','DataReadBytes',{'FileSystemId':fs.FileSystemId},30d,Sum)
+        wr = cw.metric('AWS/FSx','DataWriteBytes',{'FileSystemId':fs.FileSystemId},30d,Sum)
+        if (rd or 0) + (wr or 0) < 1MiB: yield Orphan(fs)
+  cleanup_command: aws fsx delete-file-system --file-system-id {FileSystemId}
+  cleanup_safety: destructive
+  iam_required:
+    - fsx:DescribeFileSystems
+    - cloudwatch:GetMetricStatistics
+    - fsx:DeleteFileSystem
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    fsx:DescribeFileSystems returns every FS with type, capacity, and
+    storage info. AWS/FSx metrics emit continuously while AVAILABLE.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - high_value
+
+scan:
+  list:
+    boto3_client: fsx
+    method: describe_file_systems
+    response_path: FileSystems
+    id_field: FileSystemId
+    name_field: FileSystemId
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_fsx_filesystem:is_orphan
+  cost_estimate:
+    monthly_usd_per_gb: 0.145
+    size_field: StorageCapacity_GB
+  cleanup:
+    boto3_method: delete_file_system
+    args_template:
+      FileSystemId: "{FileSystemId}"
+    cli_command: aws fsx delete-file-system --file-system-id {FileSystemId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: fsx-2025
+  contributor: goudan@auto

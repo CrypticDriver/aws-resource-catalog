@@ -1,0 +1,103 @@
+schema_version: v1
+status: verified
+service: memorydb
+service_code_pricing: AmazonMemoryDB
+service_code_arn_namespace: memorydb
+
+resource_type:
+  name: idle_memorydb_cluster
+  human_name: MemoryDB for Redis Cluster (idle)
+  human_name_zh: 空闲 MemoryDB for Redis 集群
+  cfn: AWS::MemoryDB::Cluster
+  config: null
+  resource_explorer: null
+  cli_list: aws memorydb describe-clusters
+  boto3:
+    client: memorydb
+    list_method: describe_clusters
+  arn_pattern: arn:aws:memorydb:{region}:{account}:cluster/{name}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    MemoryDB bills per node-hour PLUS per-GB-hour for written data
+    (snapshots). db.r6g.large ≈ $0.339/h ≈ $247/month/node. A
+    3-node cluster idles at ~$742/month with zero traffic.
+  cur_product_codes:
+    - AmazonMemoryDB
+  cur_usage_type_patterns:
+    - "*MemoryDB:NodeUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/memorydb/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Final snapshot mandatory unless --no-final-snapshot.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/memorydb/latest/devguide/clusters.delete.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    A MemoryDB cluster is idle when (a) Status == 'available' AND
+    (b) age > 30 days AND (c) AWS/MemoryDB.NewConnections sum == 0
+    over 30 days.
+  rule_pseudocode: |
+    for c in describe_clusters():
+        if c.Status != 'available': continue
+        if age(c.ARN_creation) < 30d: continue
+        nc = cw.metric('AWS/MemoryDB','NewConnections',
+                       {'ClusterName':c.Name}, 30d, Sum)
+        if nc == 0: yield Orphan(c)
+  cleanup_command: aws memorydb delete-cluster --cluster-name {Name} --final-snapshot-name {Name}-final
+  cleanup_safety: destructive
+  iam_required:
+    - memorydb:DescribeClusters
+    - cloudwatch:GetMetricStatistics
+    - memorydb:DeleteCluster
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    memorydb:DescribeClusters returns Name, Status, NumberOfShards,
+    NodeType, ARN. AWS/MemoryDB metrics emit while available.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - cache
+  - high_value
+
+scan:
+  list:
+    boto3_client: memorydb
+    method: describe_clusters
+    response_path: Clusters
+    id_field: Name
+    name_field: Name
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_memorydb_cluster:is_orphan
+  cost_estimate:
+    monthly_usd_per_unit: 247.47
+    unit_field: NumberOfNodes
+    fallback_monthly_usd: 247.47
+  cleanup:
+    boto3_method: delete_cluster
+    args_template:
+      ClusterName: "{Name}"
+    cli_command: aws memorydb delete-cluster --cluster-name {Name} --final-snapshot-name {Name}-final
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: memorydb-2025
+  contributor: goudan@auto

@@ -1,0 +1,103 @@
+schema_version: v1
+status: verified
+service: workspaces
+service_code_pricing: AmazonWorkSpaces
+service_code_arn_namespace: workspaces
+
+resource_type:
+  name: idle_workspace
+  human_name: WorkSpace VDI (unused)
+  human_name_zh: 长期未连接的 WorkSpace 桌面
+  cfn: AWS::WorkSpaces::Workspace
+  config: AWS::WorkSpaces::Workspace
+  resource_explorer: null
+  cli_list: aws workspaces describe-workspaces
+  boto3:
+    client: workspaces
+    list_method: describe_workspaces
+  arn_pattern: arn:aws:workspaces:{region}:{account}:workspace/{id}
+
+billing:
+  billable: true
+  model: complex
+  summary: |
+    WorkSpaces Standard bundle on ALWAYS_ON billing ≈ $35/month
+    (per workspace) regardless of usage. AUTO_STOP billing only
+    charges per hour of connected use (~$0.30/hour) plus a small
+    monthly fixed fee. An ALWAYS_ON workspace that nobody has logged
+    into for 60+ days is a clear leak.
+  cur_product_codes:
+    - AmazonWorkSpaces
+  cur_usage_type_patterns:
+    - "*WorkSpaces:Bundle*"
+    - "*WorkSpaces:Storage*"
+  free_tier: true   # 750 hr/month for first 12 months Value bundle
+  doc_pricing_page: https://aws.amazon.com/workspaces/pricing/
+
+lifecycle:
+  parent_resource: directory
+  parent_link: |
+    WorkSpace requires an AD Connector / Simple AD / Microsoft AD
+    directory. Deleting the WorkSpace stops the meter; directory
+    persists.
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Operator should snapshot the user's data via WorkSpace recycle if needed.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/workspaces/latest/adminguide/delete-workspace.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: medium
+  rule_human: |
+    A WorkSpace is unused when (a) State == 'AVAILABLE' AND (b) for
+    ALWAYS_ON billing OR AUTO_STOP, the most recent
+    LastKnownUserConnectionTimestamp is more than 60 days old. We
+    only flag ALWAYS_ON because AUTO_STOP already bills near-zero
+    when idle.
+  rule_pseudocode: |
+    for ws in describe_workspaces():
+        if ws.State != 'AVAILABLE': continue
+        if ws.WorkspaceProperties.RunningMode != 'ALWAYS_ON': continue
+        last = ws.LastKnownUserConnectionTimestamp
+        if not last or age(last) > 60d: yield Orphan(ws)
+  cleanup_command: aws workspaces terminate-workspaces --terminate-workspace-requests WorkspaceId={WorkspaceId}
+  cleanup_safety: destructive
+  iam_required:
+    - workspaces:DescribeWorkspaces
+    - workspaces:DescribeWorkspacesConnectionStatus
+    - workspaces:TerminateWorkspaces
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    workspaces:DescribeWorkspaces returns every workspace with
+    State + WorkspaceProperties inline. DescribeWorkspacesConnectionStatus
+    augments with LastKnownUserConnectionTimestamp.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - eud
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_workspace:list_workspaces
+    id_field: WorkspaceId
+    name_field: UserName
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_workspace:is_orphan
+  cost_estimate:
+    monthly_usd: 35.0
+  cleanup:
+    cli_command: aws workspaces terminate-workspaces --terminate-workspace-requests WorkspaceId={WorkspaceId}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: workspaces-2025
+  contributor: goudan@auto

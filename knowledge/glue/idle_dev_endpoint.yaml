@@ -1,0 +1,109 @@
+schema_version: v1
+status: verified
+service: glue
+service_code_pricing: AWSGlue
+service_code_arn_namespace: glue
+
+resource_type:
+  name: idle_dev_endpoint
+  human_name: AWS Glue Dev Endpoint (idle)
+  human_name_zh: 空闲的 Glue Dev Endpoint
+  cfn: AWS::Glue::DevEndpoint
+  config: null
+  resource_explorer: null
+  cli_list: aws glue get-dev-endpoints
+  boto3:
+    client: glue
+    list_method: get_dev_endpoints
+  arn_pattern: arn:aws:glue:{region}:{account}:devEndpoint/{name}
+
+billing:
+  billable: true
+  model: per-hour
+  summary: |
+    Glue Dev Endpoint bills per DPU-hour ($0.44/DPU-h). Default 5 DPU
+    ≈ $1605/month always-on. AWS officially recommended migrating to
+    interactive sessions and notebook clients; many customers still
+    have legacy dev endpoints from 2019-2021 burning money.
+  cur_product_codes:
+    - AWSGlue
+  cur_usage_type_patterns:
+    - "*GlueETLJobRunUsage*"
+    - "*GlueDevEndpoints*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/glue/pricing/
+
+lifecycle:
+  parent_resource: null
+  auto_delete_on_parent_delete: false
+  retention_caveats:
+    - Notebook server / SageMaker notebook attachment may need separate cleanup.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/glue/latest/dg/dev-endpoint.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    Any READY Glue Dev Endpoint older than 30 days is flagged for
+    review. There's no per-endpoint 'last command' metric in
+    CloudWatch; the resource itself is so expensive that any
+    long-running endpoint deserves a 'is this still needed?' nudge.
+  rule_pseudocode: |
+    for e in get_dev_endpoints():
+        if e.Status != 'READY': continue
+        if age(e.CreatedTimestamp) < 30d: continue
+        yield Orphan(e)
+  cleanup_command: aws glue delete-dev-endpoint --endpoint-name {EndpointName}
+  cleanup_safety: destructive
+  iam_required:
+    - glue:GetDevEndpoints
+    - glue:DeleteDevEndpoint
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    glue:GetDevEndpoints returns every dev endpoint with NumberOfNodes,
+    Status, CreatedTimestamp inline. Per-endpoint usage metrics are
+    not published, so this scanner uses age + status as the signal —
+    intentionally aggressive given the cost.
+  blind_spots:
+    - "If an endpoint is actively used the operator must confirm before delete; we surface ALL READY endpoints > 30 days."
+
+tags:
+  - billable
+  - orphan_prone
+  - analytics
+  - high_value
+
+scan:
+  list:
+    boto3_client: glue
+    method: get_dev_endpoints
+    response_path: DevEndpoints
+    id_field: EndpointName
+    name_field: EndpointName
+    paginated: true
+  orphan_check:
+    type: field_check
+    field: Status
+    condition: equals
+    value: READY
+    min_age_days: 30
+  cost_estimate:
+    monthly_usd_per_unit: 321.20   # 0.44/DPU-h × 730 ÷ 1
+    unit_field: NumberOfNodes
+    fallback_monthly_usd: 1606.0
+  cleanup:
+    boto3_method: delete_dev_endpoint
+    args_template:
+      EndpointName: "{EndpointName}"
+    cli_command: aws glue delete-dev-endpoint --endpoint-name {EndpointName}
+    safety: destructive
+
+verification:
+  last_verified: "2026-05-23"
+  source_doc_version: glue-developerguide-2025
+  contributor: goudan@auto
