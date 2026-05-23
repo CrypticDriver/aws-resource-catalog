@@ -124,16 +124,20 @@
       "properties": {
         "list": {
           "type": "object",
-          "required": ["boto3_client", "method"],
           "properties": {
             "boto3_client": {"type": "string", "description": "boto3 client name, e.g. 'ec2'."},
             "method": {"type": "string", "description": "boto3 method name, e.g. 'describe_addresses'."},
+            "custom_module": {"type": "string", "description": "Python 'pkg.mod:func' returning the item list. Mutually exclusive with boto3_client/method."},
             "args": {"type": "object", "description": "Static kwargs for the call."},
             "response_path": {"type": "string", "description": "Key in the response that holds the resource list."},
             "id_field": {"type": "string", "description": "Field name on each item that uniquely identifies the resource."},
             "name_field": {"type": "string", "description": "Field name to use as a human-readable label."},
             "paginated": {"type": "boolean", "default": false}
-          }
+          },
+          "anyOf": [
+            {"required": ["boto3_client", "method"]},
+            {"required": ["custom_module"]}
+          ]
         },
         "orphan_check": {
           "type": "object",
