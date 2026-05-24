@@ -1,4 +1,5 @@
 schema_version: v1
+status: in_review
 service: emr
 service_code_pricing: ElasticMapReduce
 service_code_arn_namespace: emrwal
@@ -72,21 +73,33 @@ orphan_detection:
     - elasticmapreduce:DescribeCluster
 
 discovery:
-  method: cloudwatch_metric
-  latency: hours
-  completeness: metric_emitting_only
-  requires_setup: null
+  method: cur_athena
+  latency: day_plus
+  completeness: billing_positive_only
+  requires_setup: "Customer must enable CUR (Cost & Usage Report) → S3 → Athena to query EMR-WAL line items per workspace."
   rationale: |
-    EMR WAL has no public list API: boto3 has no emrwal client, AWS CLI
-    has no emrwal subcommand, Resource Explorer does not index the
-    namespace, and the only first-class CLI (emrwalcli) only runs inside
-    an EMR cluster. The only externally visible signal is the
-    EMRWALCount/EMRWALWorkspaceCount metric AWS publishes per
-    workspace once HBase has actually written WAL data.
-    Doc: https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-hbase-wal-metrics.html
+    Empirically validated 2026-05-23: AWS publishes EMRWALCount and
+    EMRWALWorkspaceCount in their internal CloudWatch namespace, but
+    these metrics are NOT exposed to the customer. After 22 hours of
+    monitoring an active workspace (defaultWALworkspace, account
+    904233099348, us-east-1) post-cluster-terminate:
+    
+      AWS/EMRWAL namespace          → empty
+      EMRWALWorkspaceCount metric   → empty
+      EMRWALCount metric            → empty
+      Cost Explorer USE1-EMR-WAL-WriteRequestGiB → $0.0000056384 ✅
+    
+    Only Cost Explorer surfaces real billing. The AWS Release Guide
+    documentation (https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-hbase-wal-metrics.html)
+    references metrics that appear to be AWS-internal-only.
+    
+    To detect orphan EMR WAL workspaces with confidence, customers
+    must configure CUR + Athena and query for line items matching
+    USE1-EMR-WAL-* / USE2-EMR-WAL-* / EU-EMR-WAL-* patterns.
   blind_spots:
-    - "A workspace that exists but has never written a WAL emits no metric, so the scanner cannot see it. This is acceptable: such a workspace also generates no billing, so it cannot be an orphan in the cost-leak sense."
-    - "Metric publication can lag several hours behind the first WAL write, so a brand-new orphan may be invisible until then."
+    - "Without CUR + Athena, EMR WAL workspaces are externally invisible."
+    - "Default scanners cannot detect EMR WAL orphans without customer-configured Athena queries (out of scope for the realtime scan)."
+    - "Cost Explorer per-resource API does not surface EMR-WAL workspace IDs."
 
 tags:
   - billable
