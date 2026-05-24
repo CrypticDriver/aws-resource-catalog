@@ -1,0 +1,111 @@
+schema_version: v1
+status: verified
+service: lambda
+service_code_pricing: AWSLambda
+service_code_arn_namespace: lambda
+
+resource_type:
+  name: idle_function
+  human_name: Lambda Function (never invoked or stale)
+  human_name_zh: 长期未调用的 Lambda 函数
+  cfn: AWS::Lambda::Function
+  config: AWS::Lambda::Function
+  resource_explorer: AWS::Lambda::Function
+  cli_list: aws lambda list-functions
+  boto3:
+    client: lambda
+    list_method: list_functions
+  arn_pattern: arn:aws:lambda:{region}:{account}:function:{name}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    Lambda bills per request + per ms × memory. An UNINVOKED function
+    bills $0. But each idle function carries:
+    - ENI provisioned in VPC mode (~$0/mo unless you have many)
+    - CloudWatch Log Group with retention (counted by never_expiring_loggroup)
+    - IAM execution role (free but cleanup hygiene)
+    - Layer references (counted by stale_layer_versions)
+    
+    A function with zero invocations in 90 days is almost certainly
+    abandoned. The function package storage IS billed (50KB/free for
+    first 75GB but generally counted as "free tier covered").
+  cur_product_codes:
+    - AWSLambda
+  cur_usage_type_patterns:
+    - "*Lambda-GB-Second*"
+    - "*Lambda-Edge-*"
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/lambda/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Deletion is permanent (function code lost; backup .zip if needed).
+    - Lambda@Edge functions cannot be deleted while attached to CloudFront.
+    - Reserved concurrency / provisioned concurrency must be removed first.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/lambda/latest/dg/configuration-function-common.html#configuration-function-delete
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A function is orphan when (a) State == 'Active' AND
+    (b) LastModified > 90 days ago AND
+    (c) Invocations sum == 0 over 90 days (CloudWatch metric).
+  rule_pseudocode: |
+    for f in list_functions():
+        if f.State != 'Active': continue
+        if age(f.LastModified) < 90d: continue
+        inv = cw.metric('AWS/Lambda','Invocations',
+                        {'FunctionName':f.FunctionName}, 90d, Sum)
+        if inv == 0: yield Orphan(f)
+  cleanup_command: aws lambda delete-function --function-name {FunctionName}
+  cleanup_safety: needs_review
+  iam_required:
+    - lambda:ListFunctions
+    - cloudwatch:GetMetricStatistics
+    - lambda:DeleteFunction
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    lambda:ListFunctions returns LastModified inline.
+    AWS/Lambda.Invocations metric per FunctionName surfaces activity.
+  blind_spots:
+    - "Functions invoked only via API Gateway / CloudFront / S3 events still appear in Invocations metric, so we won't miss those."
+    - "Lambda@Edge functions show up in 'us-east-1' but bill globally; we don't replicate-check yet."
+
+tags:
+  - billable
+  - orphan_prone
+  - serverless
+
+scan:
+  list:
+    boto3_client: lambda
+    method: list_functions
+    response_path: Functions
+    id_field: FunctionArn
+    name_field: FunctionName
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_lambda_function:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_function
+    args_template:
+      FunctionName: "{FunctionName}"
+    cli_command: aws lambda delete-function --function-name {FunctionName}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-24"
+  source_doc_version: lambda-2025
+  contributor: goudan@auto

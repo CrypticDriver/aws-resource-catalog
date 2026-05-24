@@ -1,0 +1,100 @@
+schema_version: v1
+status: verified
+service: glue
+service_code_pricing: AWSGlue
+service_code_arn_namespace: glue
+
+resource_type:
+  name: idle_crawler
+  human_name: Glue Crawler (no recent runs)
+  human_name_zh: 空闲 Glue Crawler
+  cfn: AWS::Glue::Crawler
+  config: AWS::Glue::Crawler
+  resource_explorer: AWS::Glue::Crawler
+  cli_list: aws glue list-crawlers
+  boto3:
+    client: glue
+    list_method: list_crawlers
+  arn_pattern: arn:aws:glue:{region}:{account}:crawler/{name}
+
+billing:
+  billable: true
+  model: per-second
+  summary: |
+    Glue Crawlers bill per DPU-hour ($0.44/DPU-hour) only WHEN running.
+    Idle crawlers cost $0. But:
+    - A crawler scheduled but pointing at deleted S3 buckets still
+      runs (and bills) but produces no useful catalog updates.
+    - Crawlers without a recent run are abandoned IaC config;
+      cleanup hygiene matters because they reference IAM roles
+      that should be cleaned up too.
+  cur_product_codes:
+    - AWSGlue
+  cur_usage_type_patterns:
+    - "*Crawler-DPU-Hour*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/glue/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Crawler deletion does NOT remove discovered tables in Data Catalog.
+    - Schedule must be paused before delete (or it will retrigger).
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/glue/latest/dg/console-crawlers.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A crawler is orphan when (a) State == 'READY' (idle, not running) AND
+    (b) LastCrawl.StartTime > 90 days ago OR no LastCrawl on record.
+  rule_pseudocode: |
+    for name in list_crawlers().CrawlerNames:
+        info = get_crawler(name).Crawler
+        if info.State != 'READY': continue
+        last = info.LastCrawl
+        if not last: yield Orphan(name, 'never crawled')
+        elif age(last.StartTime) > 90d: yield Orphan(name, f'last {age}d ago')
+  cleanup_command: aws glue delete-crawler --name {Name}
+  cleanup_safety: needs_review
+  iam_required:
+    - glue:ListCrawlers
+    - glue:GetCrawler
+    - glue:DeleteCrawler
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    glue:ListCrawlers + GetCrawler return State + LastCrawl inline.
+  blind_spots: []
+
+tags:
+  - billable
+  - orphan_prone
+  - analytics
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_glue_crawler:list_crawlers
+    id_field: Name
+    name_field: Name
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_glue_crawler:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_crawler
+    args_template:
+      Name: "{Name}"
+    cli_command: aws glue delete-crawler --name {Name}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-24"
+  source_doc_version: glue-2025
+  contributor: goudan@auto

@@ -1,0 +1,109 @@
+schema_version: v1
+status: verified
+service: iam
+service_code_pricing: AmazonIAM
+service_code_arn_namespace: iam
+
+resource_type:
+  name: stale_access_key
+  human_name: IAM Access Key (long-unused, security risk)
+  human_name_zh: 长期未使用的 IAM Access Key
+  cfn: AWS::IAM::AccessKey
+  config: AWS::IAM::AccessKey
+  resource_explorer: AWS::IAM::User
+  cli_list: aws iam list-users
+  boto3:
+    client: iam
+    list_method: list_users
+  arn_pattern: arn:aws:iam::{account}:user/{user}/access-key/{access_key_id}
+
+billing:
+  billable: false
+  model: free
+  summary: |
+    IAM is free. Stale access keys are a SECURITY hygiene issue, not
+    a billing one — but they're the #1 root cause of cloud breaches.
+    Long-unused keys means the key is forgotten, can be leaked
+    without anyone noticing, and provides standing access to AWS APIs.
+    
+    Best practice: rotate every 90 days, deactivate keys not used in
+    90+ days. Surface them ranked by inactivity.
+  cur_product_codes: []
+  cur_usage_type_patterns: []
+  free_tier: true
+  doc_pricing_page: https://aws.amazon.com/iam/pricing/
+
+lifecycle:
+  parent_resource: iam_user
+  retention_caveats:
+    - Deactivating is reversible (set Status=Inactive); deletion is permanent.
+    - Active applications using the key will fail when key is deactivated.
+    - Always notify the user before deactivating production keys.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: high
+  rule_human: |
+    An access key is stale when (a) Status == 'Active' AND
+    (b) LastUsedDate is null AND age > 90 days, OR
+    LastUsedDate older than 90 days.
+    
+    Severity HIGH because security risk grows linearly with age:
+    a key unused for 6 months may have been leaked 5 months ago
+    and nobody would know.
+  rule_pseudocode: |
+    for user in list_users():
+        for key in list_access_keys(user.UserName).AccessKeyMetadata:
+            if key.Status != 'Active': continue
+            last = get_access_key_last_used(key.AccessKeyId).AccessKeyLastUsed.LastUsedDate
+            if last is None:
+                if age(key.CreateDate) >= 90d: yield Orphan(user, key, 'never used')
+            elif age(last) >= 90d:
+                yield Orphan(user, key, f'last used {age(last)}d ago')
+  cleanup_command: aws iam update-access-key --access-key-id {AccessKeyId} --status Inactive --user-name {UserName}
+  cleanup_safety: needs_review
+  iam_required:
+    - iam:ListUsers
+    - iam:ListAccessKeys
+    - iam:GetAccessKeyLastUsed
+    - iam:UpdateAccessKey
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: complete
+  requires_setup: null
+  rationale: |
+    iam:ListUsers + ListAccessKeys + GetAccessKeyLastUsed are all
+    realtime. IAM is global, so scan from any region.
+  blind_spots: []
+
+tags:
+  - security
+  - orphan_prone
+  - quick_win
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.stale_access_key:list_keys
+    id_field: AccessKeyId
+    name_field: AccessKeyId
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.stale_access_key:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: update_access_key
+    args_template:
+      AccessKeyId: "{AccessKeyId}"
+      UserName: "{UserName}"
+      Status: Inactive
+    cli_command: aws iam update-access-key --access-key-id {AccessKeyId} --status Inactive --user-name {UserName}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-24"
+  source_doc_version: iam-2025
+  contributor: goudan@auto

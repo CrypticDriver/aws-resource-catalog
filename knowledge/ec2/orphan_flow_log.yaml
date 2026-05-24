@@ -1,0 +1,117 @@
+schema_version: v1
+status: verified
+service: ec2
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: ec2
+
+resource_type:
+  name: orphan_flow_log
+  human_name: VPC Flow Log (orphan — no traffic captured / target unused)
+  human_name_zh: 孤儿 VPC Flow Log(无流量或目标已删除)
+  cfn: AWS::EC2::FlowLog
+  config: AWS::EC2::FlowLog
+  resource_explorer: AWS::EC2::FlowLog
+  cli_list: aws ec2 describe-flow-logs
+  boto3:
+    client: ec2
+    list_method: describe_flow_logs
+  arn_pattern: arn:aws:ec2:{region}:{account}:vpc-flow-log/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    VPC Flow Logs are billed per volume of logs ingested:
+    - To CloudWatch Logs: $0.50/GB ingested + $0.03/GB stored/month
+    - To S3: $0.25/GB delivered + S3 storage rates
+    - To Kinesis Data Firehose: $0.025/GB delivered
+    
+    A flow log attached to a deleted VPC/subnet/ENI captures NOTHING,
+    yet may continue to bill in some configurations. More commonly:
+    flow logs are enabled on a busy VPC, then forgotten — no one ever
+    queries them, but they accumulate $X/month silently.
+    
+    A flow log writing to a destination that hasn't been read in 90+
+    days is a hygiene issue.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*VPCFlowLogs*"
+    - "*PaidEventsRecorded*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/cloudwatch/pricing/
+
+lifecycle:
+  parent_resource: vpc
+  retention_caveats:
+    - Deletion only stops new captures; historical logs in destination remain.
+    - Compliance/audit policies may mandate retention even if unused.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/vpc/latest/userguide/working-with-flow-logs.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A flow log is orphan when (a) FlowLogStatus == 'ACTIVE' AND
+    (b) the target ResourceId (VPC/subnet/ENI) no longer exists, OR
+    (c) FlowLogStatus == 'ACTIVE' but TrafficType captures no recent
+    data (CloudWatch metric: AWS/Logs IncomingBytes per LogGroup
+    over 30 days).
+    
+    Conservative: flag only when target resource is GONE. The
+    "no traffic" path is too lossy for low-traffic VPCs.
+  rule_pseudocode: |
+    for fl in describe_flow_logs():
+        if fl.FlowLogStatus != 'ACTIVE': continue
+        rid = fl.ResourceId  # vpc-xxx / subnet-xxx / eni-xxx
+        if not resource_still_exists(rid):
+            yield Orphan(fl, reason=f'target {rid} deleted')
+  cleanup_command: aws ec2 delete-flow-logs --flow-log-ids {FlowLogId}
+  cleanup_safety: needs_review
+  iam_required:
+    - ec2:DescribeFlowLogs
+    - ec2:DescribeVpcs
+    - ec2:DescribeSubnets
+    - ec2:DescribeNetworkInterfaces
+    - ec2:DeleteFlowLogs
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: best_effort
+  requires_setup: null
+  rationale: |
+    ec2:DescribeFlowLogs returns ResourceId + FlowLogStatus inline.
+    Target existence checks use VPC / Subnet / NetworkInterface APIs.
+  blind_spots:
+    - "Flow logs whose target exists but receives little traffic look 'active' — we don't flag those (would be too noisy in low-utilization regions)."
+
+tags:
+  - billable
+  - orphan_prone
+  - networking
+
+scan:
+  list:
+    boto3_client: ec2
+    method: describe_flow_logs
+    response_path: FlowLogs
+    id_field: FlowLogId
+    name_field: FlowLogId
+    paginated: true
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.orphan_flow_log:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: delete_flow_logs
+    args_template:
+      FlowLogIds: ["{FlowLogId}"]
+    cli_command: aws ec2 delete-flow-logs --flow-log-ids {FlowLogId}
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-24"
+  source_doc_version: vpc-flowlogs-2025
+  contributor: goudan@auto

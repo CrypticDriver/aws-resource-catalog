@@ -1,0 +1,113 @@
+schema_version: v1
+status: verified
+service: dlm
+service_code_pricing: AmazonEC2
+service_code_arn_namespace: dlm
+
+resource_type:
+  name: idle_lifecycle_policy
+  human_name: DLM Lifecycle Policy (no recent execution)
+  human_name_zh: 空闲 DLM 数据生命周期策略
+  cfn: AWS::DLM::LifecyclePolicy
+  config: AWS::DLM::LifecyclePolicy
+  resource_explorer: AWS::DLM::LifecyclePolicy
+  cli_list: aws dlm get-lifecycle-policies
+  boto3:
+    client: dlm
+    list_method: get_lifecycle_policies
+  arn_pattern: arn:aws:dlm:{region}:{account}:policy/{id}
+
+billing:
+  billable: true
+  model: per-request
+  summary: |
+    DLM (Data Lifecycle Manager) automates EBS snapshot creation +
+    AMI lifecycle. The policy itself is free, but each EXECUTION
+    generates EBS snapshots ($0.05/GB-month). A policy targeting
+    deleted instances will fail silently and (in the worst case)
+    keep accruing snapshots from old volumes.
+    
+    A policy that has not executed successfully in 30+ days is
+    almost always pointing at deleted infrastructure.
+  cur_product_codes:
+    - AmazonEC2
+  cur_usage_type_patterns:
+    - "*EBS:SnapshotUsage*"
+  free_tier: false
+  doc_pricing_page: https://aws.amazon.com/ec2/pricing/
+
+lifecycle:
+  parent_resource: null
+  retention_caveats:
+    - Disabling DOES NOT delete existing snapshots — those continue to bill.
+    - Re-enabling resumes scheduled actions immediately.
+  doc_lifecycle_anchor: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snapshot-lifecycle.html
+
+orphan_detection:
+  orphan_prone: true
+  severity: low
+  rule_human: |
+    A policy is orphan when (a) State == 'ENABLED' AND
+    (b) DateModified > 30 days ago AND (c) the
+    PolicyDetails.ResourceTypes / TargetTags reference resources
+    that don't exist anymore.
+    
+    Conservative scope: flag only when policy has not been modified
+    in 30+ days AND its target tags are absent from any current
+    resource. We don't auto-disable — operators should review.
+  rule_pseudocode: |
+    for p in get_lifecycle_policies():
+        info = get_lifecycle_policy(p.PolicyId)
+        if info.State != 'ENABLED': continue
+        if age(info.DateModified) < 30d: continue
+        # Check if any volume/instance matches policy target tags
+        if has_targeted_resources(info.PolicyDetails): continue
+        yield Orphan(p)
+  cleanup_command: aws dlm update-lifecycle-policy --policy-id {PolicyId} --state DISABLED
+  cleanup_safety: needs_review
+  iam_required:
+    - dlm:GetLifecyclePolicies
+    - dlm:GetLifecyclePolicy
+    - ec2:DescribeVolumes
+    - ec2:DescribeInstances
+    - dlm:UpdateLifecyclePolicy
+
+discovery:
+  method: aws_api
+  latency: realtime
+  completeness: best_effort
+  requires_setup: null
+  rationale: |
+    dlm:GetLifecyclePolicies returns State + DateModified inline.
+    Targeted-resource lookup uses tag filters via EC2 APIs.
+  blind_spots:
+    - "We do not enumerate all snapshots created by the policy; the policy may be 'idle' yet still produce snapshots if its schedule is monthly. Conservative 30-day lookback may miss those."
+
+tags:
+  - billable
+  - orphan_prone
+  - storage
+  - low_value
+
+scan:
+  list:
+    custom_module: shared.scanner_modules.idle_dlm_policy:list_policies
+    id_field: PolicyId
+    name_field: PolicyId
+  orphan_check:
+    type: custom
+    custom_module: shared.scanner_modules.idle_dlm_policy:is_orphan
+  cost_estimate:
+    monthly_usd: 0.0
+  cleanup:
+    boto3_method: update_lifecycle_policy
+    args_template:
+      PolicyId: "{PolicyId}"
+      State: DISABLED
+    cli_command: aws dlm update-lifecycle-policy --policy-id {PolicyId} --state DISABLED
+    safety: needs_review
+
+verification:
+  last_verified: "2026-05-24"
+  source_doc_version: dlm-2025
+  contributor: goudan@auto
